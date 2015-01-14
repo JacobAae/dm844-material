@@ -1,0 +1,128 @@
+buildscript {
+	repositories {
+		jcenter()
+		mavenCentral()
+		maven { url 'http://dl.bintray.com/robfletcher/gradle-plugins' }
+	}
+
+	dependencies {
+		classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.2'
+		classpath 'org.gradle.plugins:gradle-compass:1.0.7'
+		classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.6'
+	}
+}
+
+apply plugin: 'org.asciidoctor.convert'
+apply plugin: 'compass'
+
+wrapper {
+    gradleVersion '2.2.1'
+}
+
+asciidoctorj {
+	version = '1.5.2'
+}
+
+compass {
+    cssDir = file('docs/css/css')
+    sassDir = file('src/sass')
+}
+
+
+
+import org.asciidoctor.gradle.AsciidoctorTask
+
+// common settings
+tasks.withType(AsciidoctorTask) { docTask ->
+	sourceDir = new File('src/asciidoc')
+	options = [
+			template_dirs: ["${projectDir}/asciidoctor-backends/haml".toString()],
+	]
+
+}
+
+task generateHTML (type: AsciidoctorTask, description: 'Generates single and multiple HTML documentation.', group: 'Documentation') {
+	backends = ['html5']
+	outputDir = new File('docs')
+
+	attributes 	'require': 'asciidoctor-diagram',
+			'source-highlighter': 'coderay',
+			'source-language': 'html',
+			'imagesdir':'./images',
+			'navigation':'',
+			'goto':'',
+			'toc':'right',
+			'menu':'',
+			'status':'',
+			'split':'',
+			'blank':'',
+			'icons':'font',
+			'customcss': 'css/custom.css',
+			'viewport': 'width=800, user-scalable=yes',
+			'sectids!': '',
+			'showtitle':''
+
+}
+
+task generateSlides (type: AsciidoctorTask, description: 'Generates DOCBOOK documentation.', group: 'Documentation') {
+	backends = ['deckjs']
+	outputDir = new File('docs')
+
+	resources {
+/*
+		from (sourceDir) {
+			include 'images*/
+/**'
+		}
+*/
+		from ( buildDir ) {
+			include 'deck.js/**'
+		}
+	}
+
+
+	attributes 	'require': 'asciidoctor-diagram',
+			'source-highlighter': 'coderay',
+			'source-language': 'html',
+			'deckjs_theme': 'web-2.0', // 'web-2.0' , 'swiss', 'neon'
+			'deckjs_transition': 'horizontal-slide', // 'fade', 'horizontal-slide' , 'vertical-slide'
+			'imagesdir':'./images',
+			'navigation':'',
+			'goto':'',
+			'menu':'',
+			'status':'',
+			'split':'',
+			'blank':'',
+			'icons':'font',
+			'customcss': 'css/custom.css',
+			'viewport': 'width=800, user-scalable=yes',
+			'sectids!': '',
+			'showtitle':''
+
+}
+
+generateHTML.dependsOn compileSass
+generateSlides.dependsOn compileSass
+
+task copyCss(type: Copy) {
+	from 'docs/css'
+	into 'docs/deckjs'
+}
+
+task copyDeckjs(type: Copy) {
+	from 'src/libs'
+	into 'docs/deckjs'
+}
+
+task copyImagesA(type: Copy) {
+	from 'src/images'
+	into 'docs/deckjs/images'
+}
+task copyImagesB(type: Copy) {
+	from 'src/images'
+	into 'docs/html5/images'
+}
+
+
+
+defaultTasks 'generateHTML', 'generateSlides', 'copyCss', 'copyDeckjs', 'copyImagesA', 'copyImagesB'
