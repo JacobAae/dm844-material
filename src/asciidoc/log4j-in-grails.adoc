@@ -1,0 +1,678 @@
+= Log4j in Grails
+Jacob Aae Mikkelsen
+
+
+
+//
+
+[#file-in-use]
+== Files to edit
+
+* `grails-app/conf/config.groovy`
+* Some file where we log something
+
+
+//
+[#basics]
+== The Basics
+
+IMPORTANT: *All controllers, domain classes and services have a variable `log` injected, you can use for logging.*
+
+[float]
+==== Configuration
+In `grails-app/conf/config.groovy` you can define your logging properties. 
+
+It is in the `log4j` closure
+
+[source,groovy,indent=0]
+----
+log4j.main = {
+  error  'org.codehaus.groovy.grails.web.servlet', // controllers
+         'org.codehaus.groovy.grails.web.pages',   // GSP
+         'org.codehaus.groovy.grails.web.sitemesh',// layouts
+         'org.hibernate',
+         'net.sf.ehcache.hibernate'
+
+  info    'dk.imada'
+}
+----
+
+
+//
+[#logging-levels]
+== Logging levels
+
+Standard logging levels, in descending priority
+
+- off
+- fatal
+- error
+- warn
+- info
+- debug
+- trace
+- all
+
+
+//
+[#logging]
+== Logging in your code
+
+You explicit log to a level, when logging in you code
+
+[source,groovy]
+----
+log.trace("${controllerName}-${actionName}")
+log.debug("Input parameters: ${params}")
+log.info("Odd, someone is trying this")
+log.warn("Remote webservice is not responding!")
+log.error("Damn, something is not going as planned")
+log.fatal("Argh..... dying")
+----
+
+NOTE: You cannot log to `all` or `off`, they are only used in configuration
+
+For all statements, versions where you log a Throwable (Exception etc.) is available
+
+[source,groovy]
+----
+catch(Exception e) {
+    log.error("We should not ignore the error like this", e) <1>
+}
+----
+<1> The Throwable goes as the second argument.
+
+
+
+//
+[#loggers]
+== Loggers
+
+* A logger is the object you log messages to, so in the call `log.debug(msg)`, log is a logger instance of type Log.
+
+* Loggers are cached and uniquely identified by name, so if two separate classes use loggers with the same name, those loggers are actually the same instance.
+
+* In domain classes, controllers and services by the injected `log` instance, identified by: 'grails.app.<type>.<className>',
+where type is the type of the artifact, for example 'controllers' or 'services', and className is the fully qualified name
+of the artifact. For example, if you have the service below, the name of the logger will be 'grails.app.services.org.example.MyService'.
+[source,groovy]
+----
+package org.example
+class MyService {
+    …
+}
+----
+* Everywhere else as an instance variable by `private static final log = LogFactory.getLog(this)`. Here, the logger is identified only by the package and class names.
+
+
+
+
+
+
+//
+
+[#configuring-loggers]
+== Configuring Loggers
+
+
+[source,groovy]
+----
+log4j.main = {
+    info "grails.app"                               <1>
+    debug "grails.app.controllers.YourController"   <2>
+    debug "grails.app.domain.org.example.Book"      <3>
+    warn "grails.app.taglib"                        <4>
+}
+----
+<1> Set info level for all application artifacts
+<2> Set debug level for a specific controller in the default package
+<3> Set debug level for a specific domain class
+<4> Set warn level for all taglibs
+
+
+TIP: Notice that log configuration is hierarchical.
+
+
+
+
+
+
+//
+[#root-logger]
+== Root Logger
+
+Unless specified othervise, all logger objects inherits their configuration from the root logger, and in grails it is set to default
+
+* Only handle *error* and above
+* Print to the console
+
+It can be customized in the log4j closure
+[source,groovy,indent=0]
+----
+log4j = {
+    root {
+        info()
+    }
+...
+}
+----
+
+TIP: This is covering the use-case of every log message being send to the console, but what if we wish to have it send to a file, emailed if there are errors etc?
+Appenders can help us with that
+
+
+
+
+
+//
+[#appenders-1]
+== Appenders
+
+image::images/logging.png[Appenders in the logging pipeline, 50%]
+
+
+One logger instance can have multiple appenders  attached to it.
+In a standard Grails configuration, the console appender named 'stdout' is attached to all loggers through the default root logger configuration.
+
+
+//
+[#appenders-2]
+== Appenders
+
+Adding more appenders can be done in the appenders block
+
+[source,groovy,indent=0]
+----
+log4j.main = {
+    appenders {
+        console(
+            name:'stdout'
+        )
+	    file(
+            name:'file',
+            file:'/tmp/myAppName.log'
+        )
+    }
+    info    'grails.app'
+
+	root {
+        error 'file','stdout'
+    }
+}
+----
+TIP: In the example above, everything from our application with level INFO and above gets logged to the console and to a file. From everything else (from  Framework), only ERROR are logged.
+
+
+//
+[#appenders-3]
+== Appenders
+
+
+Default available appenders
+|===
+| Name |Class | Description
+
+| console
+| ConsoleAppender
+| Logs to the console.
+
+| file
+| FileAppender
+| Logs to a single file.
+
+| rollingFile
+| RollingFileAppender
+| Logs to rolling files, for example a new file each day.
+
+| jdbc
+| JDBCAppender
+| Logs to a JDBC connection.
+
+|===
+
+The arguments you pass to each appender are passed to the underlying implementation.
+
+
+
+
+//
+[#layouts]
+== Layouts
+The appenders each take a layout parameters, defining the output format.
+
+[horizontal]
+xml::  Create an XML log file
+html:: Creates an HTML log file
+simple:: A simple textual log
+pattern:: A Pattern layout
+
+TIP: The default is *pattern*
+
+The next slides show examples of a logger activated in a controller like this: +
+`log.error("I'm the error message in the controller")`
+
+
+//
+[#layouts-xml]
+== Layouts - xml
+Configuration:
+[source,groovy,indent=0]
+----
+file(
+	name:'file',
+	file:'/tmp/myAppName.log',
+	layout: xml
+)
+----
+
+Result:
+[source,xml,indent=0]
+----
+<log4j:event logger="grails.app.controllers.dk.imada.SmalltalkController" timestamp="1408279341189" level="ERROR" thread="http-bio-8080-exec-4">
+<log4j:message><![CDATA[I'm the error message in the controller]]></log4j:message>
+</log4j:event>
+----
+
+//
+[#layouts-html]
+== Layouts - html
+Configuration:
+[source,groovy,indent=0]
+----
+file(
+	name:'file',
+	file:'/tmp/myAppName.log',
+	layout: html
+)
+----
+
+Result:
+[source,html,indent=0]
+----
+... Header etc omitted ...
+<tr>
+<td>0</td>
+<td title="http-bio-8080-exec-4 thread">http-bio-8080-exec-4</td>
+<td title="Level"><font color="#993300"><strong>ERROR</strong></font></td>
+<td title="grails.app.controllers.dk.imada.SmalltalkController category">grails.app.controllers.dk.imada.SmalltalkController</td>
+<td title="Message">I'm the error message in the controller</td>
+</tr>
+----
+
+//
+[#layouts-simple]
+== Layouts - simple
+Configuration:
+[source,groovy,indent=0]
+----
+file(
+	name:'file',
+	file:'/tmp/myAppName.log',
+	layout: simple
+)
+----
+
+Result:
+[source,html,indent=0]
+----
+ERROR - I'm the error message in the controller
+----
+
+
+//
+[#layouts-pattern]
+== Layouts - pattern
+Configuration:
+[source,groovy,indent=0]
+----
+file(
+	name:'file',
+	file:'/tmp/myAppName.log',
+	layout: pattern(conversionPattern: "%d{HH:mm:ss,SSS} [%-5p] [%c{1}] %m %n")
+)
+----
+
+Result:
+[source,html,indent=0]
+----
+14:42:21,189 [ERROR] [SmalltalkController] I'm the error message in the controller
+----
+
+TIP: This format is very configurable, as we shall se next
+
+
+//
+[#patternlayout]
+== Pattern layout
+Documentation is http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html[here].
+Be aware that some of the elements in the pattern can be very expensive, and should not be used in production, for performance reasons.
+
+Each conversion specifier starts with a percent sign (%) and is followed by optional _format modifiers_, a _conversion character_, and optional _parameters_ in brackets.
+
+[source,groovy,indent=0]
+----
+log4j.main = {
+    appenders {
+        console(
+            name:'stdout',
+            layout: pattern(conversionPattern: "%d{HH:mm:ss,SSS} [%-5p] [%c{1}] %m %n") <1>
+        )
+    }
+ ...
+}
+----
+<1> With the following parameters that are parsed
+
+[horizontal]
+`d{HH:mm:ss,SSS}`:: Time with format defined
+`-5p`:: The log level with a fixed width of 5
+`c{1}`:: The class name from the logging request, with no package name
+`m`:: The log message
+`n`:: Line break
+
+
+
+//
+[#environment]
+== Environment specific configuration
+
+
+
+
+
+//
+[#masking-params]
+== Masking parameters
+
+And filtering stacktraces
+
+
+
+//
+[#logger-inheritance]
+== Logger inheritance
+
+
+
+
+//
+[#error-mails]
+== Mail Appender
+
+
+
+
+
+//
+[#controllers]
+== Logging in controller
+
+[source,groovy]
+----
+def beforeInterceptor = {
+    log.debug("${controllerName}.${actionName}(${params})")
+}
+
+----
+
+
+
+
+
+//
+[#logback]
+== Other Logging Libraries
+
+Logback
+
+Howto
+
+
+
+//
+[#advanced-config]
+== Advanced configuration
+
+You can get access directly to the root logger, by letting the log4j closure have a root parameter. It is an instance of `org.apache.log4j.Logger`, you can work with directly.
+
+[source,groovy]
+----
+log4j.main = { root ->
+    root.level = org.apache.log4j.Level.DEBUG
+    …
+}
+----
+
+
+//
+[#literature]
+== Litterature
+
+
+ * http://grails.org/doc/latest/guide/conf.html#logging
+
+
+
+
+////
+
+
+TIP: Tip
+
+IMPORTANT: Important
+
+WARNING: Warning
+
+CAUTION: Caution
+
+NOTE: Note
+
+icon:exclamation[] ruby, asciidoctor
+
+icon:tags[role="blue"] ruby, asciidoctor
+
+icon:shield[rotate=90, flip=vertical]
+
+
+
+//
+
+[#how-to-overview]
+== How to Make a Deck
+
+[steps.headings]
+Write Slides::
+Slide content is simple HTML.
+
+Choose Themes::
+One for slide styles and one for deck transitions.
+
+Include Extensions::
+Add extra functionality to your deck, or leave it stripped down.
+
+
+
+
+//
+
+[#quick-start]
+== Quick Start
+
+When you {download-link} deck.js, it will include a file named +boilerplate.html+.
+You can immediately start editing slides in this page and viewing them in your web browser.
+Later on, when you are comfortable customizing the deck, you can edit the various pieces of the boilerplate or make your own to suit your needs.
+
+//
+
+[#markup]
+== The Markup
+
+Slides are just HTML elements with a slide of +slide+.
+
+[source]
+----
+<section class="slide">
+  <h2>How to Make a Deck</h2>
+  <ol>
+    <li>
+      <h3>Write Slides</h3>
+      <p>Slide content is simple HTML.</p>
+    </li>
+    <li>
+      <h3>Choose Themes</h3>
+      <p>One for slide styles and one for deck transitions.</p>
+    </li>
+  </ol>
+</section>
+----
+
+//
+
+[#themes]
+== Style Themes
+
+Customizes the colors, typography, and layout of slide content.
+
+[source]
+----
+<link rel="stylesheet" href="/path/to/css/style-theme.css">
+----
+
+[float]
+== Transition Themes
+
+Defines transitions between slides using CSS3 transitions.
+Less capable browsers fall back to cutaways.
+But *you* aren't using _those_ browsers to give your presentations, are you...
+
+[source]
+----
+<link rel="stylesheet" href="/path/to/css/transition-theme.css">
+----
+
+//
+
+[#extensions]
+== Extensions
+
+Core gives you basic slide functionality with left and right arrow navigation, but you may want more.
+Here are the ones included in this deck:
+
+[%step]
+- *deck.goto*:
+  Adds a shortcut key to jump to any slide number.
+  Hit g, type in the slide number, and hit enter.
+
+- *deck.hash*:
+  Enables internal linking within slides, deep linking to individual slides, and updates the address bar & a permalink anchor with each slide change.
+
+- *deck.menu*:
+  Adds a menu view, letting you see all slides in a grid.
+  Hit m to toggle to menu view, continue navigating your deck, and hit m to return to normal view.
+  Touch devices can double-tap the deck to switch between views.
+
+- *deck.navigation*:
+  Adds clickable left and right buttons for the less keyboard inclined.
+
+- *deck.status*:
+  Adds a page number indicator. (current/total)
+
+- *deck.scale*:
+  Scales each slide to fit within the deck container using CSS Transforms for those browsers that support them.
+
+[#extension-folders.slide]
+Each extension folder in the download package contains the necessary JavaScript, CSS, and HTML files.
+For a complete list of extension modules included in deck.js, check out the {docs-link}.
+
+//
+
+[#nested]
+== Nested Slides
+
+That last slide had a few steps.
+To create substeps in slides, just nest them:
+
+[source]
+----
+<section class="slide">
+  <h2>Extensions</h2>
+  <p>Core gives you basic slide functionality...</p>
+  <ul>
+    <li class="slide">
+      <h3>deck.goto</h3>
+      <p>Adds a shortcut key to jump to any slide number...</p>
+    </li>
+    <li class="slide">...</li>
+    <li class="slide">...</li>
+    <li class="slide">...</li>
+  </ul>
+</section>
+----
+
+//
+
+[#elements-images]
+== Other Elements: Images
+
+image::http://placekitten.com/600/375[Kitties]
+
+[source]
+----
+<img src="http://placekitten.com/600/375" alt="Kitties">
+----
+
+//
+
+[#elements-blockquotes]
+== Other Elements: Blockquotes
+
+[quote,Fran Lebowitz]
+Food is an important part of a balanced diet.
+
+[source]
+----
+<blockquote cite="http://example.org">
+  <p>Food is an important part of a balanced diet.</p>
+  <p><cite>Fran Lebowitz</cite></p>
+</blockquote>
+----
+
+//
+
+[#elements-videos]
+== Other Elements: Video Embeds
+
+Embed videos from your favorite online video service or with an HTML5 video element.
+
+video::1063136[vimeo,400,225]
+
+[source]
+----
+<iframe src="http://player.vimeo.com/video/1063136?title=0&amp;byline=0&amp;portrait=0" width="400" height="225" frameborder="0"></iframe>
+----
+
+//
+
+[#elements-source-code]
+== Source code
+
+[source,ruby]
+----
+require 'asciidoctor'  # <1>
+
+puts Asciidoctor.render_file('sample.adoc', :header_footer => true)  # <2>
+----
+<1> Imports the library
+<2> Reads, parses and renders the file
+
+
+
+
+//
+
+[#digging-deeper]
+== Digging Deeper
+
+If you want to learn about making your own themes, extending deck.js, and more, check out the {docs-link}.
+
+////

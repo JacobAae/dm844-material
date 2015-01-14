@@ -1,0 +1,265 @@
+= Groovy Introduction (for JAVA Programmers)
+
+== Groovy?
+
+* OO language for the JVM
+* Java-like syntax
+* Optional types
+* Compiled
+* Dynamic or Static - your choice!
+
+== Compilation
+
+
+
+image::groovy-compiled.png[]
+
+== Source Code included
+
+[source,groovy]
+.HelloWorld.groovy
+----
+include::../groovy/HelloWorld.groovy[]
+----
+
+
+== Groovy intro
+
+*Battle against verbosity*
+
+* No semicolons
+* Not all parenthesis are needed
+* Elvis operator
+* == vs. .equals
+* Not necessary with constructors
+* Groovy truth
+* return keyword is optional
+* Default imports
+* Strings, and GStrings
+
+
+== Optional Typing
+
+TIP: *Duck typing*: If it walks and talks like a duck, consider it a duck.
+
+image::duck-typing.png[]
+
+*Duck typing* != weak typing
+
+[source,groovy]
+----
+class Duck {
+	String name
+	void quack() {
+		println 'Quack quack'
+	}
+}
+
+def duck = new Duck()
+
+def method = 'quack'
+duck."$method"
+duck."name"
+----
+
+== Properties
+
+[source,groovy] 
+----
+class Battlestar {
+	String name
+	Integer crewsize
+	Date produced
+}
+----
+
+* Default everything is public
+* Groovy creates getters and setters
+** But you can override these, if they should have side-effects
+** Not generated for private fields
+
+
+== Conversion example
+
+
+TODO: Make this sample in code
+
+
+
+
+== Inspecting Groovy Code
+
+*AST Browser*
+
+* Open `groovyConsole`
+* Goto AST Browser (CTRL + T)
+
+*Decompile*
+
+* `javap yourfile.class` -> Method signatures
+* `javap -c yourfile.class` -> Readable form of bytecode
+
+
+
+
+== Collections
+
+Lots of great extensions to the Java collection framework
+
+=== Lists
+
+[source,java]
+----
+List<String> battlestars = new ArrayList<String>();
+battlestars.add("Pegasus");
+battlestars.add("Galactica");
+----
+
+[source,groovy]
+----
+def battlestars = ['Pegasus',"Galactica"]
+
+assert battlestars.first() == 'Pegasus'
+assert battlestars[0] == 'Pegasus'
+assert battlestars[-1] == "Galactica"
+----
+
+
+=== Maps
+
+[source,groovy]
+----
+def crewSize = ['Pegasus': 1752, 'Galactica': 2662]
+
+println "Crew on Galactica=${crewSize['Galactica']}"
+println "Crew on Pegasus=${crewSize.Pegasus}"
+----
+
+=== Range
+
+
+
+== Groovy Truth
+
+
+== Constructors
+
+
+
+
+
+== Closures
+
+* Pieces of code that can be saved as a variable
+* Powerfull, fx when building DSL
+* Similar to function pointers in c
+* Can access nonfinal variables outside of their scope
+
+[source,groovy]
+----
+def countdownRange = { int i -> i < 0 ? return  }
+
+assert countdown.call() == '3....2....1'
+assert countdown() == '3....2....1'
+----
+
+Closures can have parameters, typed or not
+
+[source,groovy]
+----
+def countdown = { return '3....2....1' }
+
+assert countdown.call() == '3....2....1'
+assert countdown() == '3....2....1'
+----
+
+
+== When is Java not Groovy
+
+* Initialization of arrays (Groovy uses brackets for closures)
+
+int[] oddUnderTen = { 1, 3, 5, 7, 9 };
+
+Use
+
+def oddUnderTen = [1, 3, 5, 7, 9] as int[]
+
+* New keywords: def and in
+
+* No do/while loop in Groovy
+
+
+
+== The Groovy JDK (GDK)
+
+
+== Special operators
+
+=== Null-Safe Dereference
+
+  ?.
+
+=== Elvis
+
+Condence ternary opertors
+
+ ?:
+
+=== Spread
+
+ *.
+
+=== Spaceship
+
+ <=> 
+
+
+== Coersion using *as*
+
+as Set
+
+== Shortcut for contails: *in*
+
+assert 1 in [1, 2, 5]
+assert !(3 in [1, 2, 5])
+
+
+== Being 'Too Groovy'
+(Styleguide)
+
+* Work smarter, but not harder
+** Take advantage of smart features, but don't overdo it (making the code hard to understand)
+* Overuse of`def` keyword
+** Ok on left side of assignment with clear right side
+*** Clear is ot a method invocation
+* for/in loop vs. each
+** You can break out of the for loop
+* Use closures where it is necessary, and use methods where you can
+** Methods specify retrn type
+
+
+----------- Part two - advanced Groovy
+
+== TypeChecked, CompileStatic, and invokedynamic
+
+== Operator overloading
+
+
+
+
+== Metaprogramming and MOP
+
+
+
+== Closure magic: Owner, Delegate, this
+
+== Method Reference
+
+The .& operator lets you get a reference to a method and treat it like a closure.
+
+
+
+
+== Exercises
+
+Make some of the Project Euler problems
