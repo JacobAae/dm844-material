@@ -1,5 +1,6 @@
-= Groovy Introduction (for JAVA Programmers)
+= Groovy Introduction
 
+[#groovy]
 == Groovy?
 
 * OO language for the JVM
@@ -8,60 +9,84 @@
 * Compiled
 * Dynamic or Static - your choice!
 
+[#compilation]
 == Compilation
-
-
 
 image::groovy-compiled.png[]
 
-== Source Code included
 
-[source,groovy]
+[source,groovy,indent=0]
 .HelloWorld.groovy
 ----
-include::../groovy/HelloWorld.groovy[]
+include::../main/groovy/HelloWorld.groovy[]
+----
+
+ groovy HelloWorld.groovy
+
+[#battle-against-verbosity]
+== Battle against verbosity
+
+* No semicolons
+* Default imports
+* Not all parenthesis are needed
+* Not necessary with constructors
+* `return` keyword is optional
+* Elvis operator and other handy extensions
+
+
+[#bsg]
+== Examples inspired by
+
+image::bsg.jpg[]
+
+[#conversion-example]
+== Conversion example
+
+[source,java,indent=0]
+.JavaPlane.groovy
+----
+include::../main/java/dk/dm844/groovyintro/JavaPlane.java[tags=plane]
+----
+
+<<<
+
+[source,groovy,indent=0]
+.HelloWorld.groovy
+----
+include::../main/groovy/dk/dm844/groovyintro/GroovyPlane.groovy[tags=plane]
 ----
 
 
-== Groovy intro
 
-*Battle against verbosity*
 
-* No semicolons
-* Not all parenthesis are needed
-* Elvis operator
-* == vs. .equals
-* Not necessary with constructors
+[#other-features]
+== Other features
+
+* `==` vs `.equals()`
 * Groovy truth
-* return keyword is optional
-* Default imports
+* Lot of extra methods for collections etc.
 * Strings, and GStrings
+* ... (More later)
 
 
+[#optional-typing]
 == Optional Typing
 
 TIP: *Duck typing*: If it walks and talks like a duck, consider it a duck.
 
-image::duck-typing.png[]
+image::duck-typing.jpg[]
 
-*Duck typing* != weak typing
+WARNING: *Duck typing* != weak typing
 
-[source,groovy]
+<<<
+
+[source,groovy,indent=0]
+.DuckExample.groovy
 ----
-class Duck {
-	String name
-	void quack() {
-		println 'Quack quack'
-	}
-}
-
-def duck = new Duck()
-
-def method = 'quack'
-duck."$method"
-duck."name"
+include::../main/groovy/dk/dm844/groovyintro/DuckExample.groovy[tags=duck]
 ----
 
+[#properties]
 == Properties
 
 [source,groovy] 
@@ -79,14 +104,10 @@ class Battlestar {
 ** Not generated for private fields
 
 
-== Conversion example
-
-
-TODO: Make this sample in code
 
 
 
-
+[#inspecting-groovy-code]
 == Inspecting Groovy Code
 
 *AST Browser*
@@ -101,53 +122,65 @@ TODO: Make this sample in code
 
 
 
-
+[#collections]
 == Collections
 
+[TIP]
+====
 Lots of great extensions to the Java collection framework
+====
 
-=== Lists
+[#lists]
+== Lists
 
-[source,java]
+[source,java,indent=0]
+.Java
 ----
-List<String> battlestars = new ArrayList<String>();
-battlestars.add("Pegasus");
-battlestars.add("Galactica");
+include::../main/java/dk/dm844/groovyintro/JavaCollectionSamples.java[tags=lists]
 ----
 
-[source,groovy]
+[source,groovy,indent=0]
+.Groovy
 ----
-def battlestars = ['Pegasus',"Galactica"]
-
-assert battlestars.first() == 'Pegasus'
-assert battlestars[0] == 'Pegasus'
-assert battlestars[-1] == "Galactica"
+include::../main/groovy/dk/dm844/groovyintro/GroovyCollectionSamples.groovy[tags=lists]
 ----
 
 
-=== Maps
+[#maps]
+== Maps
 
-[source,groovy]
+[source,groovy,indent=0]
+.Groovy
 ----
-def crewSize = ['Pegasus': 1752, 'Galactica': 2662]
-
-println "Crew on Galactica=${crewSize['Galactica']}"
-println "Crew on Pegasus=${crewSize.Pegasus}"
+include::../main/groovy/dk/dm844/groovyintro/GroovyCollectionSamples.groovy[tags=maps]
 ----
 
-=== Range
+[#range]
+== Range
+
+Ranges allow you to create a list of sequential values.
+
+They are created with `..` and both start and end values are included
+
+[source,groovy,indent=0]
+.Groovy
+----
+include::../main/groovy/dk/dm844/groovyintro/GroovyCollectionSamples.groovy[tags=range]
+----
 
 
-
+[#groovy-truth]
 == Groovy Truth
 
 
+[#constructors]
 == Constructors
 
 
 
 
 
+[#closures]
 == Closures
 
 * Pieces of code that can be saved as a variable
@@ -174,6 +207,7 @@ assert countdown() == '3....2....1'
 ----
 
 
+[#jave-not-groovy]
 == When is Java not Groovy
 
 * Initialization of arrays (Groovy uses brackets for closures)
@@ -190,9 +224,11 @@ def oddUnderTen = [1, 3, 5, 7, 9] as int[]
 
 
 
+[#groovy-gdk]
 == The Groovy JDK (GDK)
 
 
+[#special-operators]
 == Special operators
 
 === Null-Safe Dereference

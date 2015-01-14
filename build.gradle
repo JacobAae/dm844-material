@@ -1,7 +1,35 @@
+apply plugin: "groovy"
+
+
+version = "1.0-SNAPSHOT"
+description = "Material for DM844"
+
+def langLevel = 1.7
+sourceCompatibility = langLevel
+targetCompatibility = langLevel
+
+
+repositories {
+		jcenter()
+		mavenLocal()
+		mavenCentral()
+		maven { url 'http://oss.sonatype.org/content/repositories/snapshots/' }
+		maven { url 'http://dl.bintray.com/robfletcher/gradle-plugins' }
+}
+
+dependencies {
+		// mandatory dependencies for using Spock
+		compile "org.codehaus.groovy:groovy-all:2.3.8"
+		testCompile "org.spockframework:spock-core:1.0-groovy-2.3-SNAPSHOT"
+
+}
+
 buildscript {
 	repositories {
 		jcenter()
+		mavenLocal()
 		mavenCentral()
+		maven { url 'http://oss.sonatype.org/content/repositories/snapshots/' }
 		maven { url 'http://dl.bintray.com/robfletcher/gradle-plugins' }
 	}
 
@@ -12,8 +40,10 @@ buildscript {
 	}
 }
 
+
 apply plugin: 'org.asciidoctor.convert'
 apply plugin: 'compass'
+
 
 wrapper {
     gradleVersion '2.2.1'
@@ -28,6 +58,13 @@ compass {
     sassDir = file('src/sass')
 }
 
+// Can be omitted, but is here to display tests as they are run
+tasks.withType(Test) {
+	testLogging {
+		events "passed", "failed", "skipped", "standardOut", "standardError"
+		showExceptions true
+	}
+}
 
 
 import org.asciidoctor.gradle.AsciidoctorTask
@@ -69,12 +106,6 @@ task generateSlides (type: AsciidoctorTask, description: 'Generates DOCBOOK docu
 	outputDir = new File('docs')
 
 	resources {
-/*
-		from (sourceDir) {
-			include 'images*/
-/**'
-		}
-*/
 		from ( buildDir ) {
 			include 'deck.js/**'
 		}
@@ -122,7 +153,5 @@ task copyImagesB(type: Copy) {
 	from 'src/images'
 	into 'docs/html5/images'
 }
-
-
 
 defaultTasks 'generateHTML', 'generateSlides', 'copyCss', 'copyDeckjs', 'copyImagesA', 'copyImagesB'
