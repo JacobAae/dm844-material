@@ -1,7 +1,7 @@
 .gradle
 build/
 *~
-slides.iml
+*.iml
 docs/
 .jruby
 .sass-cache
