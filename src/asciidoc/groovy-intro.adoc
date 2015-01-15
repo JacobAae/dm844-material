@@ -311,6 +311,10 @@ def oddUnderTen = [1, 3, 5, 7, 9] as int[]
 [#groovy-gdk]
 == The Groovy JDK (GDK)
 
+Documentation at http://beta.groovy-lang.org/docs/latest/html/groovy-jdk/[]
+
+
+
 
 [#special-operators]
 == Special operators
