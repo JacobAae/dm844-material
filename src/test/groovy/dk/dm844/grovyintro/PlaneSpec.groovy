@@ -11,7 +11,6 @@ class PlaneSpec extends Specification {
     @Unroll
     void "Test JavaPlane and GroovyPlane works same way"() {
         expect:
-        plane.getQuadron() == 'Starboard air group'
         plane.type == 'Viper'
         plane.currentPilot == 'Starbuck'
         plane.getFormerPilots() == []
@@ -26,8 +25,8 @@ class PlaneSpec extends Specification {
 
         where:
         plane << [
-                new GroovyPlane(quadron: 'Starboard air group', type: 'Viper', currentPilot: 'Starbuck'),
-                new JavaPlane('Starboard air group', 'Viper', 'Starbuck')
+                new GroovyPlane(type: 'Viper', currentPilot: 'Starbuck'),
+                new JavaPlane('Viper', 'Starbuck')
         ]
     }
 }

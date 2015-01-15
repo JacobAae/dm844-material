@@ -8,21 +8,15 @@ import java.util.ArrayList;
  */
 public class JavaPlane {
 
-    private String quadron;
     private String type;
     private String currentPilot;
     private ArrayList<String> formerPilots;
 
-    public JavaPlane(String quadron, String type, String currentPilot) {
-        this.quadron = quadron;
+    public JavaPlane(String type, String currentPilot) {
         this.type = type;
         this.currentPilot = currentPilot;
         this.formerPilots = new ArrayList<String>();
     }
-
-    public String getQuadron() { return quadron; }
-
-    public void setQuadron(String quadron) { this.quadron = quadron; }
 
     public String getType() { return type; }
 

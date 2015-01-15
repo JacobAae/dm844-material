@@ -42,8 +42,12 @@ image::bsg.jpg[]
 [#conversion-example]
 == Conversion example
 
+image::viper.jpg[]
+
+<<<
+
 [source,java,indent=0]
-.JavaPlane.groovy
+.JavaPlane.java
 ----
 include::../main/java/dk/dm844/groovyintro/JavaPlane.java[tags=plane]
 ----
@@ -51,7 +55,7 @@ include::../main/java/dk/dm844/groovyintro/JavaPlane.java[tags=plane]
 <<<
 
 [source,groovy,indent=0]
-.HelloWorld.groovy
+.GroovyPlane.groovy
 ----
 include::../main/groovy/dk/dm844/groovyintro/GroovyPlane.groovy[tags=plane]
 ----
@@ -77,6 +81,8 @@ TIP: *Duck typing*: If it walks and talks like a duck, consider it a duck.
 image::duck-typing.jpg[]
 
 WARNING: *Duck typing* != weak typing
+
+You can use the `def` keyword to declare an arbitrary type.
 
 <<<
 
@@ -130,6 +136,8 @@ class Battlestar {
 Lots of great extensions to the Java collection framework
 ====
 
+image::bsg-collection.jpg[]
+
 [#lists]
 == Lists
 
@@ -172,11 +180,86 @@ include::../main/groovy/dk/dm844/groovyintro/GroovyCollectionSamples.groovy[tags
 [#groovy-truth]
 == Groovy Truth
 
+Standard boolean values
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/GroovyTruth.groovy[tags=truth1]
+----
+
+* Empty collections -> false
+* Non empty collections -> true
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/GroovyTruth.groovy[tags=truth2]
+----
+
+The empty String is false, non-empty strings are true
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/GroovyTruth.groovy[tags=truth3]
+----
+
+<<<
+
+* The number 0 -> false (known from c)
+* Any non-zero number -> true
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/GroovyTruth.groovy[tags=truth4]
+----
+
+The `null` value is false, not null objects are true
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/GroovyTruth.groovy[tags=truth5]
+----
+
+<<<
+
+But! You can create your own boolean evaluation for objects
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/Raptor.groovy[tags=raptor]
+----
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/GroovyTruth.groovy[tags=truth6]
+----
+
+
+
 
 [#constructors]
 == Constructors
 
+You typically leave out constructors in Groovy, and the compiler adds a default constructor.
 
+You can then use named parameters, which is equivalent to calling the setters after the object is created
+
+[source,groovy,indent=0]
+.Battlestar.groovy
+----
+include::../main/groovy/dk/dm844/groovyintro/Battlestar.groovy[tags=battlestar]
+----
+
+This initialization
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/GroovyTruth.groovy[tags=constructor1]
+----
+
+is the same as
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/GroovyTruth.groovy[tags=constructor2]
+----
 
 
 
@@ -190,6 +273,7 @@ include::../main/groovy/dk/dm844/groovyintro/GroovyCollectionSamples.groovy[tags
 
 [source,groovy]
 ----
+TODO So far so good
 def countdownRange = { int i -> i < 0 ? return  }
 
 assert countdown.call() == '3....2....1'
@@ -260,6 +344,7 @@ assert 1 in [1, 2, 5]
 assert !(3 in [1, 2, 5])
 
 
+[#style-guide]
 == Being 'Too Groovy'
 (Styleguide)
 
@@ -271,8 +356,26 @@ assert !(3 in [1, 2, 5])
 * for/in loop vs. each
 ** You can break out of the for loop
 * Use closures where it is necessary, and use methods where you can
-** Methods specify retrn type
+** Methods specify return type
 
+
+For the official style guide: http://beta.groovy-lang.org/style-guide.html[]
+
+Groovy Lead Guilaume Laforge have given a presentation on Groovy Style: https://skillsmatter.com/skillscasts/4957-groovy-with-style[]
+
+[#part-2-later]
+== Later we will study
+
+* TypeChecked, CompileStatic, and invokedynamic
+* Operator overloading
+* Regular Expression
+* Metaprogramming and MOP
+* Closure magic: Owner, Delegate, this
+* Method Reference
+
+
+
+////
 
 ----------- Part two - advanced Groovy
 
@@ -281,6 +384,7 @@ assert !(3 in [1, 2, 5])
 == Operator overloading
 
 
+== Regular Expressions
 
 
 == Metaprogramming and MOP
@@ -294,7 +398,7 @@ assert !(3 in [1, 2, 5])
 The .& operator lets you get a reference to a method and treat it like a closure.
 
 
-
+////
 
 == Exercises
 

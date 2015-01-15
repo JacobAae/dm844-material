@@ -25,6 +25,12 @@ class GroovyCollectionSamples {
         assert crewSize['Galactica'] == 2662
         assert crewSize.Pegasus == 1752
         assert crewSize.get('Colonial One') == 27
+
+        crewSize.Demetrius = 18
+        crewSize['Astral Queen'] = 1500
+
+        assert crewSize['Demetrius'] == 18
+        assert crewSize.'Astral Queen' == 1500
         //end::maps[]
 
         return crewSize
