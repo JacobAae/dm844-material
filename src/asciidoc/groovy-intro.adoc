@@ -92,6 +92,15 @@ You can use the `def` keyword to declare an arbitrary type.
 include::../main/groovy/dk/dm844/groovyintro/DuckExample.groovy[tags=duck]
 ----
 
+[#type-safety]
+== Type Safety
+
+"Safety in type safety is as comforting as security in social security"
+-- Venkat Subramaniam
+
+
+
+
 [#properties]
 == Properties
 
@@ -128,6 +137,18 @@ class Battlestar {
 
 
 
+
+[#strings]
+== Strings and GStrings
+
+There are several valid string types in Groovy
+
+// TODO
+
+single quotes, double quotes, tripple quotes,
+
+
+
 [#collections]
 == Collections
 
@@ -137,6 +158,7 @@ Lots of great extensions to the Java collection framework
 ====
 
 image::bsg-collection.jpg[]
+
 
 [#lists]
 == Lists
@@ -262,33 +284,154 @@ include::../main/groovy/dk/dm844/groovyintro/GroovyTruth.groovy[tags=constructor
 ----
 
 
+[#special-operators]
+== Special operators
 
-[#closures]
+Groovy adds a few handy operators
+
+* `?.` Null-safe dereferencing
+* `?:` Elvis operator
+* `*.` Spread-dot operator
+* `< = >` Spaceship operator
+
+
+== Null-Safe Dereference
+
+Assume we have this class
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/SpecialOperators.groovy[tags=military-person]
+----
+
+With the safe dereference operator `?.` we guard against nullpointer exceptions
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/SpecialOperators.groovy[tags=safe-reference]
+----
+
+
+== Elvis operator
+
+Often you assign a default value, if something is null.
+
+The Elvis operator, `?:` is a condenced ternary operator
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/SpecialOperators.groovy[tags=elvis]
+----
+
+
+== Spread-dot
+
+If you with to collect a property from all elements of a list, the spread-dot operator
+`*.` is usefull
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/SpecialOperators.groovy[tags=spread-dot]
+----
+
+
+
+== Spaceship
+
+For comparisons the spaceship operator is handy: `< = >`
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/SpecialOperators.groovy[tags=spaceship1]
+----
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/SpecialOperators.groovy[tags=spaceship2]
+----
+
+It is also usefull for sorting, example will come later
+
+
+
+[#closures1]
 == Closures
+
+image::adama-roslin.jpg[]
+
+[#closures2]
+== Closures
+
 
 * Pieces of code that can be saved as a variable
 * Powerfull, fx when building DSL
 * Similar to function pointers in c
 * Can access nonfinal variables outside of their scope
+* Basic syntax is
 
-[source,groovy]
+ { a1, a2 -> statements }
+
+But there are shorter versions a we will see
+
+
+<<<
+
+Collections have a `findAll` method that takes a closure as argument, and the closure must return a boolean
+[source,groovy,indent=0]
 ----
-TODO So far so good
-def countdownRange = { int i -> i < 0 ? return  }
-
-assert countdown.call() == '3....2....1'
-assert countdown() == '3....2....1'
+include::../main/groovy/dk/dm844/groovyintro/ClosureExamples.groovy[tags=closure1]
 ----
 
-Closures can have parameters, typed or not
+If there is no arguments defined, there is a default argument: `it`
 
-[source,groovy]
-----
-def countdown = { return '3....2....1' }
+<<<
 
-assert countdown.call() == '3....2....1'
-assert countdown() == '3....2....1'
+Closures can have no arguments, represented with no arguments before the `->`.
+[source,groovy,indent=0]
 ----
+include::../main/groovy/dk/dm844/groovyintro/ClosureExamples.groovy[tags=closure3]
+----
+
+Closures are activated with the `call()` method, or shorted and more readable, just like a method call.
+
+You can also use types in the arguments, like this
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/ClosureExamples.groovy[tags=closure2]
+----
+
+<<<
+
+As promised earlier, the spacehip operator in action in a closure as argument for the sort method on a collection
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/ClosureExamples.groovy[tags=closure4]
+----
+
+
+<<<
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/ClosureExamples.groovy[tags=closure5]
+----
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/ClosureExamples.groovy[tags=closure6]
+----
+
+
+
+== Loops
+
+for in
+
+3.times
+
+each
+eachWithIndex
+
 
 
 [#jave-not-groovy]
@@ -302,7 +445,7 @@ Use
 
 def oddUnderTen = [1, 3, 5, 7, 9] as int[]
 
-* New keywords: def and in
+* New keywords: `def` and `in`
 
 * No do/while loop in Groovy
 
@@ -316,26 +459,6 @@ Documentation at http://beta.groovy-lang.org/docs/latest/html/groovy-jdk/[]
 
 
 
-[#special-operators]
-== Special operators
-
-=== Null-Safe Dereference
-
-  ?.
-
-=== Elvis
-
-Condence ternary opertors
-
- ?:
-
-=== Spread
-
- *.
-
-=== Spaceship
-
- <=> 
 
 
 == Coersion using *as*
@@ -381,6 +504,10 @@ Groovy Lead Guilaume Laforge have given a presentation on Groovy Style: https://
 
 ////
 
+AST  Transformations -> ToString etc
+
+
+
 ----------- Part two - advanced Groovy
 
 == TypeChecked, CompileStatic, and invokedynamic
@@ -402,8 +529,32 @@ Groovy Lead Guilaume Laforge have given a presentation on Groovy Style: https://
 The .& operator lets you get a reference to a method and treat it like a closure.
 
 
+== Memoized
+
+
 ////
 
 == Exercises
 
-Make some of the Project Euler problems
+These Exercises are taken from https://projecteuler.net[Project Euler], and are excellent basis for practicing Groovy
+
+== Problem 1
+
+If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.
+
+Find the sum of all the multiples of 3 or 5 below 1000.
+
+== Problem 2
+
+Each new term in the Fibonacci sequence is generated by adding the previous two terms. By starting with 1 and 2, the first 10 terms will be:
+
+ 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, ...
+
+By considering the terms in the Fibonacci sequence whose values do not exceed four million, find the sum of the even-valued terms.
+
+== Problem 3
+
+The prime factors of 13195 are 5, 7, 13 and 29.
+
+What is the largest prime factor of the number 600851475143
+
