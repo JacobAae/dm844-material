@@ -143,10 +143,23 @@ class Battlestar {
 
 There are several valid string types in Groovy
 
-// TODO
+* String using single quotes 'Valid string'
+* Strings using double quotes "Also valid"
 
-single quotes, double quotes, tripple quotes,
+You can have Strings over multiple lines using tipple quotes """
 
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/StringExamples.groovy[tags=multiline-string]
+----
+
+With GStrings (the ones with double quotes), you can wrap variables etc inside
+
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/StringExamples.groovy[tags=gstring]
+----
 
 
 [#collections]
@@ -315,7 +328,7 @@ include::../main/groovy/dk/dm844/groovyintro/SpecialOperators.groovy[tags=safe-r
 
 Often you assign a default value, if something is null.
 
-The Elvis operator, `?:` is a condenced ternary operator
+The Elvis operator, `?:` is a condensed ternary operator
 
 [source,groovy,indent=0]
 ----
