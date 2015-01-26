@@ -26,4 +26,12 @@ Groovy Strings
         return helloString
     }
 
+    int[] getSmallPrimes() {
+        // tag::small-primes[]
+        int[] smallPrimes = [ 2, 3, 5, 7, 11, 13, 17, 19 ] as int[]
+        // end::small-primes[]
+
+        return smallPrimes
+    }
+
 }

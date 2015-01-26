@@ -438,30 +438,69 @@ include::../main/groovy/dk/dm844/groovyintro/ClosureExamples.groovy[tags=closure
 
 == Loops
 
-for in
+There are several ways to do loops in Groovy, here are some of the most used. Lets assume we wish to print out the elements in this list
 
-3.times
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/LoopExamples.groovy[tags=for-loop]
+----
 
-each
-eachWithIndex
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/LoopExamples.groovy[tags=times-loop]
+----
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/LoopExamples.groovy[tags=each-loop]
+----
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/LoopExamples.groovy[tags=each-with-index-loop]
+----
 
 
 
-[#jave-not-groovy]
+[#coersion-as]
+== Coersion using *as*
+
+as Set
+
+
+[#keyword-in]
+== Shortcut for contails: *in*
+
+assert 1 in [1, 2, 5]
+assert !(3 in [1, 2, 5])
+
+
+
+[#java-not-groovy]
 == When is Java not Groovy
 
 * Initialization of arrays (Groovy uses brackets for closures)
 
-int[] oddUnderTen = { 1, 3, 5, 7, 9 };
+[source,java,indent=0]
+----
+include::../main/java/dk/dm844/groovyintro/TooGroovy.java[tags=small-primes]
+----
 
 Use
-
-def oddUnderTen = [1, 3, 5, 7, 9] as int[]
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/StringExamples.groovy[tags=small-primes]
+----
 
 * New keywords: `def` and `in`
+[source,java,indent=0]
+----
+include::../main/java/dk/dm844/groovyintro/TooGroovy.java[tags=keywords]
+----
 
 * No do/while loop in Groovy
 
+* Some of the new Java 8 syntax, especially lambda expressions
 
 
 [#groovy-gdk]
@@ -474,14 +513,7 @@ Documentation at http://beta.groovy-lang.org/docs/latest/html/groovy-jdk/[]
 
 
 
-== Coersion using *as*
 
-as Set
-
-== Shortcut for contails: *in*
-
-assert 1 in [1, 2, 5]
-assert !(3 in [1, 2, 5])
 
 
 [#style-guide]
