@@ -73,6 +73,14 @@ class SpecialOperators {
         // end::spaceship2[]
     }
 
+    void demoInOperator() {
+
+        // tag::in-operator[]
+        assert 1 in [1, 2, 5]
+        assert !(3 in [1, 2, 5])
+        // end::in-operator[]
+
+    }
 
 
 }

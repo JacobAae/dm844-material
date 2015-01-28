@@ -284,6 +284,8 @@ You can then use named parameters, which is equivalent to calling the setters af
 include::../main/groovy/dk/dm844/groovyintro/Battlestar.groovy[tags=battlestar]
 ----
 
+<<<
+
 This initialization
 [source,groovy,indent=0]
 ----
@@ -429,6 +431,8 @@ include::../main/groovy/dk/dm844/groovyintro/ClosureExamples.groovy[tags=closure
 include::../main/groovy/dk/dm844/groovyintro/ClosureExamples.groovy[tags=closure5]
 ----
 
+<<<
+
 [source,groovy,indent=0]
 ----
 include::../main/groovy/dk/dm844/groovyintro/ClosureExamples.groovy[tags=closure6]
@@ -439,6 +443,13 @@ include::../main/groovy/dk/dm844/groovyintro/ClosureExamples.groovy[tags=closure
 == Loops
 
 There are several ways to do loops in Groovy, here are some of the most used. Lets assume we wish to print out the elements in this list
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/LoopExamples.groovy[tags=pilots-loop]
+----
+
+
 
 [source,groovy,indent=0]
 ----
@@ -461,18 +472,119 @@ include::../main/groovy/dk/dm844/groovyintro/LoopExamples.groovy[tags=each-with-
 ----
 
 
+[#keyword-in]
+== New keyword: *in*
+
+Shortcut for contains: *in*
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/SpecialOperators.groovy[tags=in-operator]
+----
+
 
 [#coersion-as]
 == Coersion using *as*
 
-as Set
+The class `Set` does not have a shorthand notation like `List` and `Map`, but you kan use the `*as*` keyword
 
 
-[#keyword-in]
-== Shortcut for contails: *in*
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/GroovyCollectionSamples.groovy[tags=set]
+----
 
-assert 1 in [1, 2, 5]
-assert !(3 in [1, 2, 5])
+This under the hood calls the `asType` method, so you can implement your own conversions
+
+<<<
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/Doctor.groovy[tags=doctor]
+----
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/GroovyCollectionSamples.groovy[tags=as-keyword]
+----
+
+
+
+
+
+== Metaprogramming
+
+"Metaprogramming is the writing of computer programs with the ability to treat programs as their data. It means that a program could be designed to read, generate, analyse and/or transform other programs, and even modify itself while running."
+-- Wikipedia
+
+
+== Expando Class
+
+The Expando class gives us the ability to synthesize a class dynamically - it can expand during runtime.
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/MetaprogrammingExamples.groovy[tags=expando]
+----
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/MetaprogrammingExamples.groovy[tags=expando2]
+----
+
+
+== Missing methods and properties
+
+How is this possible?
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/MetaprogrammingExamples.groovy[tags=method-missing]
+----
+
+if the `QuorumMember` does not have the methods `putToJail` or `putAllToJail`?
+
+<<<
+
+Or this?
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/MetaprogrammingExamples.groovy[tags=method-missing]
+----
+
+if it does not have
+
+<<<
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/QuorumMember.groovy[tags=quorum-member]
+----
+
+
+
+
+== The Metaclass
+
+From Groovy's perspective, every class has a *metaClass* associated with it.
+
+This allows us to add methods and properties to any class, fx String
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/MetaprogrammingExamples.groovy[tags=metaClass1]
+----
+
+[source,groovy,indent=0]
+----
+include::../main/groovy/dk/dm844/groovyintro/MetaprogrammingExamples.groovy[tags=metaClass1]
+----
+
+
+
+
+
 
 
 
@@ -509,22 +621,16 @@ include::../main/java/dk/dm844/groovyintro/TooGroovy.java[tags=keywords]
 Documentation at http://beta.groovy-lang.org/docs/latest/html/groovy-jdk/[]
 
 
-
-
-
-
-
-
-
 [#style-guide]
 == Being 'Too Groovy'
 (Styleguide)
 
+[options="step"]
 * Work smarter, but not harder
 ** Take advantage of smart features, but don't overdo it (making the code hard to understand)
-* Overuse of`def` keyword
+* Overuse of `def` keyword
 ** Ok on left side of assignment with clear right side
-*** Clear is ot a method invocation
+*** Clear is not a method invocation
 * for/in loop vs. each
 ** You can break out of the for loop
 * Use closures where it is necessary, and use methods where you can
@@ -534,6 +640,7 @@ Documentation at http://beta.groovy-lang.org/docs/latest/html/groovy-jdk/[]
 For the official style guide: http://beta.groovy-lang.org/style-guide.html[]
 
 Groovy Lead Guilaume Laforge have given a presentation on Groovy Style: https://skillsmatter.com/skillscasts/4957-groovy-with-style[]
+
 
 [#part-2-later]
 == Later we will study

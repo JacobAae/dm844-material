@@ -1,4 +1,4 @@
-package groovy.dk.dm844.groovyintro
+package dk.dm844.groovyintro
 
 
 class GroovyCollectionSamples {
@@ -52,6 +52,34 @@ class GroovyCollectionSamples {
 
         return range
     }
+
+	Set setExample() {
+		//tag::set[]
+		def set = [1,2,3,3,2,1] as Set
+
+		assert set.size() == 3
+		assert set.containsAll([1,2,3])
+		assert set instanceof java.util.Set
+		assert set.min() == 1
+		assert set.max() == 3
+		//end::set[]
+
+		return set
+	}
+
+
+	void asExample() {
+		//tag::as-keyword[]
+		Doctor doctor = new Doctor(name: 'Dr. Cottle', age: 62)
+
+		def doctorMap = doctor as Map
+
+		assert doctorMap instanceof Map
+		assert doctorMap.name == 'Dr. Cottle'
+		assert doctorMap['age'] == 62
+		//end::as-keyword[]
+	}
+
 
 
 }

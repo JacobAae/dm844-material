@@ -1,7 +1,7 @@
-package groovy.dk.dm844.grovyintro
+package dk.dm844.grovyintro
 
 import dk.dm844.groovyintro.JavaCollectionSamples
-import groovy.dk.dm844.groovyintro.GroovyCollectionSamples
+import dk.dm844.groovyintro.GroovyCollectionSamples
 import spock.lang.Specification
 
 
@@ -27,15 +27,41 @@ class CollectionSamplesSpec extends Specification {
         noExceptionThrown()
     }
 
-    void "Test range are correct"() {
-        setup:
-        GroovyCollectionSamples groovyCollectionSamples = new GroovyCollectionSamples()
+	void "Test range are correct"() {
+		setup:
+		GroovyCollectionSamples groovyCollectionSamples = new GroovyCollectionSamples()
 
-        when:
-        groovyCollectionSamples.rangeExample()
+		when:
+		groovyCollectionSamples.rangeExample()
 
-        then:
-        noExceptionThrown()
-    }
+		then:
+		noExceptionThrown()
+	}
+
+	void "Test sets are correct"() {
+		setup:
+		GroovyCollectionSamples groovyCollectionSamples = new GroovyCollectionSamples()
+
+		when:
+		groovyCollectionSamples.setExample()
+
+		then:
+		noExceptionThrown()
+	}
+
+
+	void "Test as Map"() {
+		setup:
+		GroovyCollectionSamples groovyCollectionSamples = new GroovyCollectionSamples()
+
+		when:
+		groovyCollectionSamples.asExample()
+
+		then:
+		noExceptionThrown()
+	}
+
+
+
 
 }

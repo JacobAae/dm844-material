@@ -1,0 +1,87 @@
+= Course Intro
+
+== Why
+
+Skills you are expected to know once you get a job
+
+* Academic way of thinking / analysis
+* Craftmanship
+
+== This Course
+
+We will focus on *craftmanship*
+
+In the process learn how to make a professional setup for a project including
+
+* Automation through continous integration
+* Web technologies
+* MVC architecture
+
+
+== What will it take to go from *Idea* to *Product*?
+Assuming it is a web-application
+
+[options="step"]
+* Application with styling, usability etc.
+* Quality control (testing etc.)
+* Database setup
+* Data backup
+* Logging
+* Monitoring
+* Server setup for deployment
+* (Easy) deployment process
+
+
+== Technologies
+
+image::technologies.png[]
+
+And
+
+[options="step"]
+* Codenarc
+* Cobertura
+* DB setup/backup
+* Monitoring
+* Security
+
+
+== How will we do it? (1)
+
+TIP: Classes - combination of lectures and tutorials
+
+[options="step"]
+* Some slides
+* Demos
+* Live coding
+* Exercises
+* Sharing code and tips
+* Pragmatic Programming tip (one each lecture)
+
+WARNING: Bring your laptop
+
+== How will we do it? (2)
+
+TIP: Large group project
+
+[options="step"]
+* Cooperation and learning from each other
+* More real-life scenario
+* Project can be bigger
+* Some tasks require more than one person, i.e. review etc.
+* Project done in parts, with added requirements for each part
+
+
+
+== Examination
+
+[options="step"]
+* Project in groups of 3
+** Project parts delivered at relevant deadlines
+* Report based on the project (in groups)
+** Part of this as manual for how to do it again
+** Part of this with the extra features you have put extra efford into
+* Oral examination
+** You present your product, features you have focussed on etc
+** You will have questions on the material from the course, your project etc.
+
