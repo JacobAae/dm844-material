@@ -1,4 +1,4 @@
-package groovy.dk.dm844.grovyintro
+package dk.dm844.groovyintro
 
 import groovy.dk.dm844.groovyintro.ClosureExamples
 import spock.lang.Specification

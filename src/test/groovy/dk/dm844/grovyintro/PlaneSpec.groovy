@@ -1,4 +1,4 @@
-package groovy.dk.dm844.grovyintro
+package dk.dm844.groovyintro
 
 import dk.dm844.groovyintro.JavaPlane
 import groovy.dk.dm844.groovyintro.GroovyPlane

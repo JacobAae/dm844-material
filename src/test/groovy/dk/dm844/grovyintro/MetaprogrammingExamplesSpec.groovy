@@ -1,6 +1,5 @@
-package dk.dm844.grovyintro
+package dk.dm844.groovyintro
 
-import dk.dm844.groovyintro.MetaprogrammingExamples
 import spock.lang.Specification
 
 
