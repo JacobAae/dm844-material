@@ -4,6 +4,7 @@
 
 Skills you are expected to know once you get a job
 
+[options="step"]
 * Academic way of thinking / analysis
 * Craftmanship
 
@@ -36,6 +37,7 @@ Assuming it is a web-application
 
 image::technologies.png[]
 
+[options="step"]
 And
 
 [options="step"]
@@ -57,6 +59,8 @@ TIP: Classes - combination of lectures and tutorials
 * Exercises
 * Sharing code and tips
 * Pragmatic Programming tip (one each lecture)
+
+<<<
 
 WARNING: Bring your laptop
 
@@ -84,4 +88,7 @@ TIP: Large group project
 * Oral examination
 ** You present your product, features you have focussed on etc
 ** You will have questions on the material from the course, your project etc.
+
+[canvas-image="images/q-and-a.png"]
+== Q & A
 

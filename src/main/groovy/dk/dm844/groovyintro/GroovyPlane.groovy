@@ -8,7 +8,7 @@ class GroovyPlane {
 
     String type
     String currentPilot
-    List<String> formerPilots = [];
+    List<String> formerPilots = []
 
     void addToFormerPilots(String pilot) {
         formerPilots << pilot

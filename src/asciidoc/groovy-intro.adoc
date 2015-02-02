@@ -3,6 +3,8 @@
 [#groovy]
 == Groovy?
 
+* Started in 2003
+* Current project lead Guillaume Laforge (for 11 years)
 * OO language for the JVM
 * Java-like syntax
 * Optional types
@@ -550,10 +552,10 @@ Or this?
 
 [source,groovy,indent=0]
 ----
-include::../main/groovy/dk/dm844/groovyintro/MetaprogrammingExamples.groovy[tags=method-missing]
+include::../main/groovy/dk/dm844/groovyintro/MetaprogrammingExamples.groovy[tags=missing-property]
 ----
 
-if it does not have
+if it does not have the properties `notSetProperty` or `monthsInOffice`
 
 <<<
 
@@ -578,7 +580,7 @@ include::../main/groovy/dk/dm844/groovyintro/MetaprogrammingExamples.groovy[tags
 
 [source,groovy,indent=0]
 ----
-include::../main/groovy/dk/dm844/groovyintro/MetaprogrammingExamples.groovy[tags=metaClass1]
+include::../main/groovy/dk/dm844/groovyintro/MetaprogrammingExamples.groovy[tags=metaClass2]
 ----
 
 
