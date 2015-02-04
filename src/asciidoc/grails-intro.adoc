@@ -1,0 +1,55 @@
+= Grails Introduction
+
+
+== MVC Framework
+
+[options="step"]
+* Model-View-Controller
+* Architecture that separates presentation and interaction
+* *Model* Database objects, having some business rules as constraints
+* *View* The presentation of data (HTML, JSON, XML, diagrams etc.)
+* *Controller* Handles the possibilities for getting data shown
+* Central ideas
+** Reusability of code
+** Separation of responsibilities
+
+== Grails History
+
+* *2006* Grails goes (beta), but is started the year before
+* *2008* Grails in 1.0 and Springsource buys G2One.
+* *2009* VMWare buys Springsource
+* *2011* Grails 2.0 - improved testing options, performance etc
+* *2012* Pivotal created from VMWare, inherits Grails and Groovy
+* *Now*
+** Grails version 2.4.4 is Latest stable
+** Grails 3.0 Milestone 1
+** Searching for new funding for core teams
+
+== Editor Support
+
+=== IntelliJ
+Has excellent support, and Jetbrains have issued a School Licence for SDU
+
+=== Eclipse
+Ok support in GGTS - Groovy Grails ToolSuite
+
+== Netbeans
+I have not tried, but some support should be available
+
+== Getting Started
+
+Install Grails
+
+*Linux/Mac:* Use GVM
+  gvm install grails 2.4.4
+
+*Windows*
+ Videoguide at https://www.youtube.com/watch?v=Nu3GgjuUOtg[Youtube] by Mike Kelly (Use Java 7 or 8 and Grails 2.4.4)
+
+
+== First Grails App
+
+We will create an application that can help the crew of Battlestar Galactica to registrer all the different crises they encounter, comment on them, and assign some that solved the crisis.
+
+In the console
+  grails create-app bsg
