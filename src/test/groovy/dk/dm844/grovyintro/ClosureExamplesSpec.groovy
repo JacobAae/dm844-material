@@ -1,6 +1,5 @@
 package dk.dm844.groovyintro
 
-import groovy.dk.dm844.groovyintro.ClosureExamples
 import spock.lang.Specification
 
 
@@ -70,7 +69,7 @@ class ClosureExamplesSpec extends Specification {
         ClosureExamples closureExamples = new ClosureExamples()
 
         when:
-        closureExamples.closureIntro5()
+        closureExamples.closureIntro6()
 
         then:
         noExceptionThrown()

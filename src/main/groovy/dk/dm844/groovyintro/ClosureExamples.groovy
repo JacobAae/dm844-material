@@ -1,4 +1,5 @@
-package groovy.dk.dm844.groovyintro
+package dk.dm844.groovyintro
+
 
 /**
  * Created by jacob on 1/17/15.
@@ -66,6 +67,9 @@ class ClosureExamples {
     }
 
     void closureIntro6() {
+
+        def pilots = getPilots()
+
         // tag::closure6[]
         List highFracs = []
 
@@ -74,8 +78,7 @@ class ClosureExamples {
                 highFracs << it
             }
         }
-        assert highFracs == [new Pilot(name: 'Starbuck', stillAlive: true, fracs: 289),
-                new Pilot(name: 'Apollo', stillAlive: true, fracs: 224)]
+        assert highFracs == [pilots[0],pilots[4]]
         // end::closure6[]
     }
 
