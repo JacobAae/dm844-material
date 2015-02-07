@@ -1,5 +1,15 @@
 = Grails Domain Classes
 
+== Domain Classes
+
+* Getting stuff into the database
+* Querying to get it back
+
+NOTE: As a start, we will just use the H2 database, in memory. Later we will configure Grails to use a different database. There are support for a large number of databases: Postgres, MySQL, Oracle DB, Mongo DB etc.
+
+We still don't have to use SQL, GORM (Grails Object Relational Mapper) and the underlying layer (Typically http://hibernate.org/[Hibernate]) handles this for us. Even better, you don't have to define XML mappings anywhere.
+
+
 == Create the first domain class
 
 In the *interactive console*
@@ -11,11 +21,37 @@ TIP: The *interactive console* has auto-completion
 Output:
 
 ----
-grails> create-domain-class dk.844.bsg.Ship
-| Created file grails-app/domain/dk/844/bsg/Ship.groovy
-| Created file test/unit/dk/844/bsg/ShipSpec.groovy
+grails> create-domain-class dk.dm844.bsg.Ship
+| Created file grails-app/domain/dk/dm844/bsg/Ship.groovy
+| Created file test/unit/dk/dm844/bsg/ShipSpec.groovy
 ----
 
 Notic that a test class is automatically created.
 
 == ...
+
+In the *interactive console*
+
+ create-domain-class dk.844.bsg.Ship
+
+
+
+
+== Cheating ahead - Scaffolding constructor
+
+
+
+
+== Literature
+
+*Blogs*
+
+* http://timsporcic.github.io/GORM-Recipes/#[GORM Tutorial - Recipes for using GORM with Grails] by Tim Sporcic
+* http://spring.io/blog/2010/06/23/gorm-gotchas-part-1/[GORM Gotchas (Part 1)] by Peter Ledbrook
+* http://spring.io/blog/2010/07/02/gorm-gotchas-part-2/[GORM Gotchas (Part 2)] by Peter Ledbrook
+* http://spring.io/blog/2010/07/28/gorm-gotchas-part-3/[GORM Gotchas (Part 3)] by Peter Ledbrook
+
+*Videos*
+
+* https://www.youtube.com/watch?v=Y8PV1tlw0Vk#t=270[Working with Databases and Groovy] by Paul King from SpringOne 2GX 2014 (Advanced usage, and not required for Grails)
+

@@ -186,7 +186,7 @@ Use `stop-app` to stop it from running (right now it is quite boring!). `exit` l
 === Ships
 
 * Each ship has a name, and no two ships can have the same name. The name of a ship cannot be longer than 60 characters
-* Each ship has a type, and the types are Military, Freight, Accomodation, Production, Misc.
+* Each ship has a type, and the types are Military, Administration, Freight, Accomodation, Production, Misc.
 * Each ship must register the crewsize, and no sjips can have a crew smaller than 8
 * Each ship must have a production date
 * It should be possible to add a description to each ship, and this can be quite long (up to 10.000 characters)
@@ -202,7 +202,12 @@ Use `stop-app` to stop it from running (right now it is quite boring!). `exit` l
 * A crisis has a header on no longer than 75 characters (for display in lists etc), and also a longer description.
 * A crisis can be assigned a main culprit and a one or more persons that solved the crisis
 * We must also be able to register if the crisis has been solved
+* If it is ot the entire fleet, we registrer which ships are affected by the crisis
 
+
+== Model
+
+image::bsg-domain-model.png[]
 
 == Some methods
 
