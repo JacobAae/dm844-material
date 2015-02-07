@@ -1,0 +1,141 @@
+= Spock Testing
+
+== Intro
+
+* Testing Framework for Java and Groovy
+* Based on Groovy
+* Fully compatible with JUnit
+* Created by Peter Niederwiesser (now with Gradleware)
+* Should have been version 1.0 long ago
+* Should also have had a logo long ago.
+* Awesome still
+* Name comes from Specification and Mock
+* Can handle different testing methodologies
+** State Based Testing
+** Data Driven Testing
+** Interaction Based Testing
+
+
+== Nice features
+
+* Reduce the lines of test code
+* Make tests more readable
+* Turn tests into specifications
+
+
+
+== Classical Unit Testing
+
+ Arrange
+ Act
+ Assert
+
+
+== Elements
+
+* Blocks
+** setup
+** cleanup
+** expect
+** given
+** when
+** then
+** where
+** and:
+
+<<<
+
+* Fixture Methods
+** setup()
+** cleanup()
+** setupSpec()
+** cleanupSpec()
+* Instance and @Shared fields
+* `old()` and `thrown()`
+
+
+
+== State Based Testing
+
+TIP: Classical Unit Testing
+
+ Arrange
+ Act
+ Assert
+
+[options="step"]
+In Spock
+
+ Given-When-Then
+
+
+[source,groovy,indent=0]
+----
+void "The name of the test in a string"() {
+
+    given:
+    // Preconditions, testdata etc
+
+    when:
+    // Action
+
+    then:
+    // Expected reaction - that evaluates to boolean
+}
+----
+
+
+== Data Driven Testing
+
+[options="step"]
+* Test the same behavior...
+* with varying data!
+
+[options="step"]
+TIP: You can use the `where` clause, to generate a test for each row of data
+
+* where: block
+** Data tables
+* @Unroll annotation
+
+
+== Interaction Based Testing
+
+* Design and test how your objects communicate
+* Mocking frameworks to the rescue
+* Spock comes with its own mocking framework
+
+
+
+
+
+== Litterature
+
+* *Homepage* http://spockframework.org[]
+* *Documentation* http://docs.spockframework.org/en/latest/[]
+* *Source Code* https://github.com/spockframework/spock[]
+* *Spock Web Console* http://meet.spockframework.org[]
+* *Spock Example Project* http://downloads.spockframework.org[]
+
+
+
+<<<
+
+Or
+
+[source,groovy,indent=0]
+----
+void "The name of the test in a string"() {
+
+    setup:
+    // Test data creation
+
+    expect:
+    // Expectations that evaluates to boolean
+
+    cleanup:
+    // If something needs to be cleaned up
+
+}
+----
+

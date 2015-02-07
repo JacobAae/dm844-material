@@ -33,7 +33,7 @@ Has excellent support, and Jetbrains have issued a School Licence for SDU
 === Eclipse
 Ok support in GGTS - Groovy Grails ToolSuite
 
-== Netbeans
+=== Netbeans
 I have not tried, but some support should be available
 
 == Getting Started
@@ -41,15 +41,180 @@ I have not tried, but some support should be available
 Install Grails
 
 *Linux/Mac:* Use GVM
-  gvm install grails 2.4.4
+
+ gvm install grails 2.4.4
 
 *Windows*
- Videoguide at https://www.youtube.com/watch?v=Nu3GgjuUOtg[Youtube] by Mike Kelly (Use Java 7 or 8 and Grails 2.4.4)
+
+Videoguide at https://www.youtube.com/watch?v=Nu3GgjuUOtg[Youtube] by Mike Kelly (Use Java 7 or 8 and Grails 2.4.4)
 
 
 == First Grails App
 
-We will create an application that can help the crew of Battlestar Galactica to registrer all the different crises they encounter, comment on them, and assign some that solved the crisis.
+INFO: We will create an application that can help the president and admiral in Battlestar Galactica to keep track of the ships in the fleet, and register persons and crisis' that have happened (and who has been involved in which).
 
 In the console
+
   grails create-app bsg
+
+
+== Structure of a Grails app
+
+----
+bsg/
+├── application.properties
+├── grails-app
+│   ├── assets
+│   │   ├── images
+│   │   │   ├── .....
+│   │   ├── javascripts
+│   │   │   └── application.js
+│   │   └── stylesheets
+│   │       ├── application.css
+│   │       ├── ...
+│   ├── conf
+│   │   ├── BootStrap.groovy
+│   │   ├── BuildConfig.groovy
+│   │   ├── Config.groovy
+│   │   ├── DataSource.groovy
+│   │   ├── hibernate
+│   │   ├── spring
+│   │   │   └── resources.groovy
+│   │   └── UrlMappings.groovy
+│   ├── controllers
+│   ├── domain
+│   ├── i18n
+│   │   ├── messages_da.properties
+│   │   ├── messages.properties
+│   │   └── .....
+│   ├── services
+│   ├── taglib
+│   ├── utils
+│   └── views
+│       ├── error.gsp
+│       ├── index.gsp
+│       └── layouts
+│           └── main.gsp
+├── grailsw
+├── grailsw.bat
+├── lib
+├── scripts
+├── src
+│   ├── groovy
+│   └── java
+├── test
+│   ├── integration
+│   └── unit
+├── web-app
+│   ├── css
+│   ├── images
+│   ├── js
+│   ├── META-INF
+│   └── WEB-INF
+│       ├── applicationContext.xml
+│       ├── sitemesh.xml
+│       └── tld
+│           ├── grails.tld
+│           ├── spring-form.tld
+│           └── spring.tld
+└── wrapper
+    ├── grails-wrapper.properties
+    ├── grails-wrapper-runtime-2.4.4.jar
+    └── springloaded-1.2.1.RELEASE.jar
+
+----
+
+<<<
+
+
+----
+bsg/
+├── application.properties
+├── grails-app
+│   ├── assets
+│   ├── conf
+│   ├── controllers
+│   ├── domain
+│   ├── i18n
+│   ├── services
+│   ├── taglib
+│   ├── utils
+│   └── views
+├── grailsw
+├── lib
+├── scripts
+├── src
+│   ├── groovy
+│   └── java
+├── test
+│   ├── integration
+│   └── unit
+└── web-app
+    ├── css
+    ├── images
+    ├── js
+    ├── META-INF
+    └── WEB-INF
+----
+
+
+== Focus on
+
+
+* Convention over configuration
+* Quick getting started - through scaffolding, auto-reloading etc.
+* Testing (with Spock)
+** Unit and integration testing are first class citizens
+** Functional testing with a plugin
+
+
+== Starting the app
+
+You can start Grails in *interactive mode* just by issuing the `grails` command
+
+There you can use `run-app` to spin up the application
+
+When you do so, the application can be visited at
+
+ http://localhost:8080/bsg
+
+Use `stop-app` to stop it from running (right now it is quite boring!). `exit` leaves interactive mode.
+
+
+== Requirements for our simple app
+
+=== Ships
+
+* Each ship has a name, and no two ships can have the same name. The name of a ship cannot be longer than 60 characters
+* Each ship has a type, and the types are Military, Freight, Accomodation, Production, Misc.
+* Each ship must register the crewsize, and no sjips can have a crew smaller than 8
+* Each ship must have a production date
+* It should be possible to add a description to each ship, and this can be quite long (up to 10.000 characters)
+
+=== Persons
+
+* Each person has a name and (optionally) a title (doctor, major, admiral etc.)
+* We must register each persons date of birth
+* Each person must bellong to some ship
+
+=== Crisis
+
+* A crisis has a header on no longer than 75 characters (for display in lists etc), and also a longer description.
+* A crisis can be assigned a main culprit and a one or more persons that solved the crisis
+* We must also be able to register if the crisis has been solved
+
+
+== Some methods
+
+We know that the application needs some data
+
+* Person should have a `isMilitary` method, returning true if the person belongs to a ship with type Military
+* A person object should be able to deliver information on crisis where the person is either the culprit or if the person helped solve the crisis
+...
+
+
+== Starting
+
+Lets make sure the datamodel is implemented first, and no invalid data can make it to the database.
+
+WARNING: Constraints as well as methods should be tested!
