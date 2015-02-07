@@ -1,4 +1,4 @@
-package groovy.dk.dm844.groovyintro
+package dk.dm844.groovyintro
 
 // tag::pilot[]
 class Pilot {
