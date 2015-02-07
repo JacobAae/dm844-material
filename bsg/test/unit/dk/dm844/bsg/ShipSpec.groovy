@@ -1,4 +1,4 @@
-package dk.844.bsg
+package dk.dm844.bsg
 
 import grails.test.mixin.TestFor
 import spock.lang.Specification
