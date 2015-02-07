@@ -1,0 +1,21 @@
+= Grails Domain Classes
+
+== Create the first domain class
+
+In the *interactive console*
+
+ create-domain-class dk.844.bsg.Ship
+
+TIP: The *interactive console* has auto-completion
+
+Output:
+
+----
+grails> create-domain-class dk.844.bsg.Ship
+| Created file grails-app/domain/dk/844/bsg/Ship.groovy
+| Created file test/unit/dk/844/bsg/ShipSpec.groovy
+----
+
+Notic that a test class is automatically created.
+
+== ...
