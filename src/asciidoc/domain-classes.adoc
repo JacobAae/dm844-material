@@ -173,6 +173,14 @@ See all constraints in the *Quick Reference* section in the user guide http://gr
 
 Notice custom validators are easy to make
 
+
+== Timestamps
+
+* dateCreated
+* lastUpdated
+
+TIP: When declared, they are automatically updated
+
 == Querying
 
 * `DomainClassName.findBy...`
@@ -300,11 +308,58 @@ include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags
 
 == Relationships
 
-== 1 to 1
-
-
 
 == 1 to many
+
+We will make sure the Ship can have many crewMembers but a person only is crewmember on one specific ship
+
+[source,groovy,indent=0]
+In Person
+----
+static belongsTo = [homeShip: Ship]
+----
+
+[source,groovy,indent=0]
+In Ship
+----
+static hasMany = [crewmembers: Person]
+----
+
+<<<
+
+This adds a method to Ship: `addToCrewmembers` and defines cascading deletes for person.
+
+The `belongsTo` side defines where the `addTo` method is placed.
+
+[source,groovy,indent=0]
+.Testing addToCrewmembers and cascading deletes in PersonIntegrationSpec
+----
+include::../../bsg/test/integration/dk/dm844/bsg/PersonIntegrationSpec.groovy[tags=add-to]
+----
+
+<<<
+
+It is also possible to use the maps constructor type method
+
+[source,groovy,indent=0]
+.Testing addToCrewmembers and cascading deletes in PersonIntegrationSpec
+----
+include::../../bsg/test/integration/dk/dm844/bsg/PersonIntegrationSpec.groovy[tags=add-to2]
+----
+
+
+
+
+
+== 1 to 1
+
+[source,groovy,indent=0]
+1 to 1
+----
+static hasOne = [ variableName : ClassOfTheOne ]
+----
+
+
 
 == many to many
 

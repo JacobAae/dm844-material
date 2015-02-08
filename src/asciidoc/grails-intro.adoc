@@ -217,7 +217,7 @@ image::the-fleet.png[]
 
 * Each person has a name and (optionally) a title (doctor, major, admiral etc.)
 * We must register each persons date of birth
-* Each person must bellong to some ship
+* Each person must belong to some ship
 
 == Crisis
 

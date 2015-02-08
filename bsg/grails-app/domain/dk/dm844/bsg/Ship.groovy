@@ -11,6 +11,8 @@ class Ship {
 	Date productionDate
 	String description
 
+	static hasMany = [crewmembers: Person]
+
     static constraints = {
 	    name unique: true, blank: false
 	    crewsize min: 8
