@@ -28,6 +28,7 @@ grails> create-domain-class dk.dm844.bsg.Ship
 
 Notic that a test class is automatically created.
 
+TIP: Documentation: http://grails.github.io/grails-doc/2.4.2/ref/Domain%20Classes/Usage.html[]
 
 == Lets add the Shiptype enum in src/groovy
 
@@ -132,6 +133,7 @@ The string for *JDBC URL* can be found in the fil _grails-app/conf/DataSource.gr
 
 
 
+
 == Testing Domain Objects
 
 Lets take a detour to the Spock Framework
@@ -152,6 +154,34 @@ def setup() {
 And lets write some tests for the constraints on the ship class
 
 
+== Constraints
+
+Constraints are added in the `static constraints` closure
+
+All properties in Domain classes are by default nullable: false
+
+[source,groovy,indent=0]
+----
+    static constraints = {
+	    name unique: true, blank: false
+	    crewsize min: 8
+	    description nullable: true, blank: true
+    }
+----
+
+See all constraints in the *Quick Reference* section in the user guide http://grails.github.io/grails-doc/2.4.2/ref/Constraints/Usage.html[]
+
+Notice custom validators are easy to make
+
+== Querying
+
+* `DomainClassName.findBy...`
+* `DomainClassName.findAllBy...`
+* Where queries
+* Criteria queries
+* HQL
+
+
 == Integration Testing Domain Objects
 
 TIP: Integration testing uses a real database, not just a mocked one, and is the safe choice for testing interaction with the database
@@ -163,6 +193,120 @@ In the *interactive console*
 <<<
 
 Lets write a few Spock tests checking we can save, retrieve and search for ships in the database
+
+*Test Data*
+
+[source,groovy,indent=0]
+----
+include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags=getFullyPopulatedShip]
+----
+
+[source,groovy,indent=0]
+----
+include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags=db-ships]
+----
+
+
+== Storing and retrieving
+
+
+[source,groovy,indent=0]
+----
+include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags=save-get]
+----
+
+
+== List of all ships
+
+[source,groovy,indent=0]
+----
+include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags=list]
+----
+
+== Dynamic finders
+
+[source,groovy,indent=0]
+.findBy
+----
+include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags=findBy]
+----
+
+<<<
+
+[source,groovy,indent=0]
+.findAllBy
+----
+include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags=findAllBy]
+----
+
+
+<<<
+
+[source,groovy,indent=0]
+.findAllBy
+----
+include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags=findAllBy2]
+----
+
+
+
+== Advanced querying
+
+We will still initialize the database with the following ships
+
+[source,groovy,indent=0]
+----
+include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags=db-ships]
+----
+
+== Where queries
+
+[source,groovy,indent=0]
+.Using where queries
+----
+include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags=where-query]
+----
+
+<<<
+
+[source,groovy,indent=0]
+.Using where queries
+----
+include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags=where-query2]
+----
+
+
+
+== Criteria Queries
+
+[source,groovy,indent=0]
+.Using criteria queries
+----
+include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags=criteria-query]
+----
+
+
+
+== HQL Queries
+
+
+[source,groovy,indent=0]
+.Using hql-query
+----
+include::../../bsg/test/integration/dk/dm844/bsg/ShipIntegrationSpec.groovy[tags=hql-query]
+----
+
+
+
+== Relationships
+
+== 1 to 1
+
+
+
+== 1 to many
+
+== many to many
 
 
 
