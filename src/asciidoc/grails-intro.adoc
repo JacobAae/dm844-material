@@ -1,17 +1,22 @@
 = Grails Introduction
 
 
-== MVC Framework
+== Grails
 
 [options="step"]
-* Model-View-Controller
-* Architecture that separates presentation and interaction
+* Full stack framework
+* Model-View-Controller Architecture / MVC Framework
+** Architecture that separates presentation and interaction
 * *Model* Database objects, having some business rules as constraints
 * *View* The presentation of data (HTML, JSON, XML, diagrams etc.)
 * *Controller* Handles the possibilities for getting data shown
+* DSL written in Groovy
 * Central ideas
 ** Reusability of code
 ** Separation of responsibilities
+* Home page: http://grails.org[]
+* User guide: http://grails.github.io/grails-doc/2.4.4/[]
+
 
 == Grails History
 
@@ -24,6 +29,16 @@
 ** Grails version 2.4.4 is Latest stable
 ** Grails 3.0 Milestone 1
 ** Searching for new funding for core teams
+
+== Focus on
+
+* Convention over configuration
+* Quick getting started - through scaffolding, auto-reloading etc.
+* Testing (with Spock)
+** Unit and integration testing are first class citizens
+** Functional testing with a plugin
+
+
 
 == Editor Support
 
@@ -51,7 +66,7 @@ Videoguide at https://www.youtube.com/watch?v=Nu3GgjuUOtg[Youtube] by Mike Kelly
 
 == First Grails App
 
-INFO: We will create an application that can help the president and admiral in Battlestar Galactica to keep track of the ships in the fleet, and register persons and crisis' that have happened (and who has been involved in which).
+CAUTION: We will create an application that can help the president and admiral in Battlestar Galactica to keep track of the ships in the fleet, and register persons and crisis' that have happened (and who has been involved in which).
 
 In the console
 
@@ -158,15 +173,6 @@ bsg/
 ----
 
 
-== Focus on
-
-
-* Convention over configuration
-* Quick getting started - through scaffolding, auto-reloading etc.
-* Testing (with Spock)
-** Unit and integration testing are first class citizens
-** Functional testing with a plugin
-
 
 == Starting the app
 
@@ -178,12 +184,28 @@ When you do so, the application can be visited at
 
  http://localhost:8080/bsg
 
-Use `stop-app` to stop it from running (right now it is quite boring!). `exit` leaves interactive mode.
+Use `stop-app` to stop it from running (right now it is quite boring!).
+
+`exit` leaves interactive mode.
+
+== Modes
+
+Grails by default have tree modes
+
+* development
+* test
+* production
+
+You can start the app in test mode using
+
+ grails run-app test
 
 
 == Requirements for our simple app
 
-=== Ships
+image::the-fleet.png[]
+
+== Ships
 
 * Each ship has a name, and no two ships can have the same name. The name of a ship cannot be longer than 60 characters
 * Each ship has a type, and the types are Military, Administration, Freight, Accomodation, Production, Misc.
@@ -191,13 +213,13 @@ Use `stop-app` to stop it from running (right now it is quite boring!). `exit` l
 * Each ship must have a production date
 * It should be possible to add a description to each ship, and this can be quite long (up to 10.000 characters)
 
-=== Persons
+== Persons
 
 * Each person has a name and (optionally) a title (doctor, major, admiral etc.)
 * We must register each persons date of birth
 * Each person must bellong to some ship
 
-=== Crisis
+== Crisis
 
 * A crisis has a header on no longer than 75 characters (for display in lists etc), and also a longer description.
 * A crisis can be assigned a main culprit and a one or more persons that solved the crisis

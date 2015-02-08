@@ -12,8 +12,6 @@ class BattlestarSpec extends Specification {
         then:
         battlestar.name == 'Galactica'
         battlestar.getName() == 'Galactica'
-
-
     }
 
 }

@@ -1,6 +1,11 @@
 = Spock Testing
 
-== Intro
+== Philosophy
+
+"Never trust a test you havn't seen fail"
+-- Everyone that nows testing!
+
+== Intro to SPock
 
 * Testing Framework for Java and Groovy
 * Based on Groovy
@@ -53,6 +58,12 @@
 * Instance and @Shared fields
 * `old()` and `thrown()`
 
+== Minimal Spock Spec
+
+[source,groovy,indent=0]
+----
+include::../test/groovy/dk/dm844/groovyintro/SpockDemo.groovy[]
+----
 
 
 == State Based Testing
@@ -63,7 +74,6 @@ TIP: Classical Unit Testing
  Act
  Assert
 
-[options="step"]
 In Spock
 
  Given-When-Then
@@ -87,16 +97,22 @@ void "The name of the test in a string"() {
 
 == Data Driven Testing
 
-[options="step"]
 * Test the same behavior...
 * with varying data!
 
-[options="step"]
 TIP: You can use the `where` clause, to generate a test for each row of data
 
 * where: block
 ** Data tables
 * @Unroll annotation
+
+== Using the where clause
+
+
+[source,groovy,indent=0]
+----
+include::../test/groovy/dk/dm844/groovyintro/MoreSpockDemo.groovy[tags=where-clause]
+----
 
 
 == Interaction Based Testing

@@ -28,16 +28,141 @@ grails> create-domain-class dk.dm844.bsg.Ship
 
 Notic that a test class is automatically created.
 
-== ...
 
-In the *interactive console*
+== Lets add the Shiptype enum in src/groovy
 
- create-domain-class dk.844.bsg.Ship
+[source,groovy,indent=0]
+----
+package dk.dm844.bsg
 
+enum Shiptype {
+
+	MILITARY,
+	ADMINISTRATION,
+	FREIGHT,
+	ACCOMODATION,
+	PRODUCTION,
+	MISC
+
+}
+----
+
+== Adding properties
+
+Add these properties to the Ship class
+
+ String name
+ Shiptype shiptype
+ Integer crewsize
+ Date productionDate
+ String description
 
 
 
 == Cheating ahead - Scaffolding constructor
+
+In the *interactive console*
+
+ create-controller dk.dm844.bsg.Ship
+
+Open ShipController and add this line in the class
+
+ static scaffold = true
+
+instead of the `index` method
+
+ run-app
+
+And click the ShipController link
+
+<<<
+
+Notice the constraints are not implemented, i.e.
+
+* The description is apparently required
+* I can make a ship with a crew of only 5
+* Two ships can have the same name
+
+IMPORTANT: We should add tests that show these problems, and then solve them
+
+
+== Dynamically added methods
+
+On domain object, Grails adds lots of methods
+
+* validate
+* save
+* get
+* list
+* delete
+* findBy...
+* findAllBy...
+* hasErrors
+
+and more.
+
+== Tool: The grails console
+
+From the terminal
+
+ grails console
+
+Spins up a Groovy console, but with access to Grails Domain objects, and their generated methods
+
+[source,groovy,indent=0]
+----
+import dk.dm844.bsg.*
+
+Ship ship = new Ship()
+
+println ship.validate()
+println ship.errors
+----
+
+
+
+== Dbconsole
+
+When you run in development mode, you can access the database with the dbconsole, go to http://localhost:8080/app-name/dbconsole
+
+image::dbconsole.png[]
+
+The string for *JDBC URL* can be found in the fil _grails-app/conf/DataSource.groovy_
+
+
+
+
+== Testing Domain Objects
+
+Lets take a detour to the Spock Framework
+
+
+== Unit Testing Constraints
+
+Add this to your `ShipSpec` class
+
+[source,groovy,indent=0]
+----
+def setup() {
+    // Adds the validate method to the domain (or command object) class
+    mockForConstraintsTests(Ship)
+}
+----
+
+And lets write some tests for the constraints on the ship class
+
+
+== Integration Testing Domain Objects
+
+TIP: Integration testing uses a real database, not just a mocked one, and is the safe choice for testing interaction with the database
+
+In the *interactive console*
+
+ create-integration-test dk.dm844.Ship
+
+<<<
+
+Lets write a few Spock tests checking we can save, retrieve and search for ships in the database
 
 
 
@@ -55,3 +180,13 @@ In the *interactive console*
 
 * https://www.youtube.com/watch?v=Y8PV1tlw0Vk#t=270[Working with Databases and Groovy] by Paul King from SpringOne 2GX 2014 (Advanced usage, and not required for Grails)
 
+
+== Problems
+
+*Implement the following, and test the constraints*
+
+* Every ship must have a radio code with the following properties
+** The length must be 5 characters
+** The first 2 characters are letters from the ship name
+** The third character must be a ':'
+** The last 2 characters are digits, and the first must be odd, the last even
