@@ -6,6 +6,7 @@ class Person {
 	String title
 
 	static belongsTo = [homeShip: Ship]
+	static hasMany = [ solvedCrisis: Crisis ]
 
 	static constraints = {
 		name blank: false

@@ -11,7 +11,7 @@ class Ship {
 	Date productionDate
 	String description
 
-	static hasMany = [crewmembers: Person]
+	static hasMany = [crewmembers: Person, affectedBy: Crisis]
 
     static constraints = {
 	    name unique: true, blank: false

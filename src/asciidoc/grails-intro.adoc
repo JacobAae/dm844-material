@@ -222,9 +222,9 @@ image::the-fleet.png[]
 == Crisis
 
 * A crisis has a header on no longer than 75 characters (for display in lists etc), and also a longer description.
-* A crisis can be assigned a main culprit and a one or more persons that solved the crisis
+* A crisis has one or more persons that solved the crisis
 * We must also be able to register if the crisis has been solved
-* If it is ot the entire fleet, we registrer which ships are affected by the crisis
+* If it is not the entire fleet, we register which ships are affected by the crisis
 
 
 == Model
