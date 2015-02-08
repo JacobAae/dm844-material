@@ -8,6 +8,21 @@ import spock.lang.Specification
  */
 class MetaprogrammingExamplesSpec extends Specification {
 
+	void "Test expando question"() {
+		when:
+		Expando expando = new Expando()
+
+		expando.rallyingCry = { -> 'So say we all!' }
+
+		then:
+		expando.rallyingCry() == 'So say we all!'
+		expando.rallyingCry() == 'So say we all!'
+//		expando.rallyingcry() == 'So say we all!'
+
+
+	}
+
+
 	void "Test expando example"() {
 		given:
 		MetaprogrammingExamples mpe = new MetaprogrammingExamples()
