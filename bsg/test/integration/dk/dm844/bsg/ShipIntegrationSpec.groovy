@@ -158,7 +158,24 @@ class ShipIntegrationSpec extends IntegrationSpec {
 	}
 	// end::hql-query[]
 
-	// tag::getFullyPopulatedShip[]
+    // tag::before-validate[]
+    void "Test before validate populates with productionDate"() {
+        setup:
+        Ship ship = fullyPopulatedShip
+
+        when:
+        ship.productionDate = null
+
+        boolean validate = ship.validate()
+
+        then:
+        validate
+        ship.productionDate
+
+    }
+    // end::before-validate[]
+
+    // tag::getFullyPopulatedShip[]
 	Ship getFullyPopulatedShip() {
 		new Ship(
 				name: "Battlestar Galactica",

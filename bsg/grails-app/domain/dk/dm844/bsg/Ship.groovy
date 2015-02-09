@@ -18,4 +18,12 @@ class Ship {
 	    crewsize min: 8
 	    description nullable: true, blank: true
     }
+
+    // tag::before-validate-method[]
+    def beforeValidate() {
+        if( productionDate == null) {
+            productionDate = new Date()
+        }
+    }
+    // end::before-validate-method[]
 }

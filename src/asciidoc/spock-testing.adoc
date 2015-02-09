@@ -5,7 +5,7 @@
 "Never trust a test you havn't seen fail"
 -- Everyone that nows testing!
 
-== Intro to SPock
+== Intro to Spock
 
 * Testing Framework for Java and Groovy
 * Based on Groovy
@@ -58,6 +58,8 @@
 * Instance and @Shared fields
 * `old()` and `thrown()`
 
+
+
 == Minimal Spock Spec
 
 [source,groovy,indent=0]
@@ -65,6 +67,22 @@
 include::../test/groovy/dk/dm844/groovyintro/SpockDemo.groovy[]
 ----
 
+
+== Stand Alone Spec
+
+[source,groovy,indent=0]
+----
+@Grab('org.spockframework:spock-core:0.7-groovy-2.0')
+import spock.lang.*
+
+class DemoSpec extends Specification {
+
+    void "Simple spock multiplication test"() {
+        expect:
+        2 + 3 == 4
+    }
+}
+----
 
 == State Based Testing
 
@@ -76,8 +94,11 @@ TIP: Classical Unit Testing
 
 In Spock
 
- Given-When-Then
+ Given
+ When
+ Then
 
+<<<
 
 [source,groovy,indent=0]
 ----
@@ -91,6 +112,25 @@ void "The name of the test in a string"() {
 
     then:
     // Expected reaction - that evaluates to boolean
+}
+----
+
+<<<
+
+
+[source,groovy,indent=0]
+----
+void "The name of the test in a string"() {
+
+    setup:
+    // Test data creation
+
+    expect:
+    // Expectations that evaluates to boolean
+
+    cleanup:
+    // If something needs to be cleaned up
+
 }
 ----
 
@@ -115,6 +155,15 @@ include::../test/groovy/dk/dm844/groovyintro/MoreSpockDemo.groovy[tags=where-cla
 ----
 
 
+== Useful Annotations
+
+* @Ignore
+* @IgnoreRest
+* @FailsWith
+* @Timeout
+* @Stepwise
+
+
 == Interaction Based Testing
 
 * Design and test how your objects communicate
@@ -122,7 +171,7 @@ include::../test/groovy/dk/dm844/groovyintro/MoreSpockDemo.groovy[tags=where-cla
 * Spock comes with its own mocking framework
 
 
-
+WARNING: More on this when we reach controllers and services! We usually don't need mocking, spying and stubbing when testing Domain classes ;)
 
 
 == Litterature
@@ -135,23 +184,4 @@ include::../test/groovy/dk/dm844/groovyintro/MoreSpockDemo.groovy[tags=where-cla
 
 
 
-<<<
-
-Or
-
-[source,groovy,indent=0]
-----
-void "The name of the test in a string"() {
-
-    setup:
-    // Test data creation
-
-    expect:
-    // Expectations that evaluates to boolean
-
-    cleanup:
-    // If something needs to be cleaned up
-
-}
-----
 
