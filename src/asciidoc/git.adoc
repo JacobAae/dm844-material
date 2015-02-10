@@ -1,0 +1,228 @@
+= Git - Version Control
+
+
+== Intro
+
+image::git-chart.png[]
+
+== Installation
+
+* *Ubuntu/Linux* `sudo apt-get install git-core`
+* *Mac* `sudo port install git-core`
+* *Windows* Download msysGit installer from http://msysgit.github.io/[] or as a part of cygwin
+
+
+== Configuration
+
+ git config --global user.name "Your name"
+ git config --global user.email "username@student.sdu.dk"
+
+Configure your favorite editor
+
+ git config --global core.editor /path/to/editor
+
+
+== Creating a repository
+
+ mkdir example
+ cd example
+
+ git init
+ ll
+
+Working tree: Your own files and folders - empty initially
+
+== Towards your first commit
+
+create readme.txt (use editor)
+
+Staging area: index
+
+== What has changed
+
+compare using
+
+ git status
+
+Dence form
+
+ git status -s
+
+== Editing, adding and committing
+
+ git add readme.txt
+
+Edit again
+
+ git add readme.txt
+
+Committing
+
+ git commit -m "Initial commit of readme file"
+
+== See the history
+
+See the history
+
+ git log
+
+ git log --pretty=raw
+
+INFO: Notice the signature of the content (a hash of the snapshot)
+
+See a specific commit:
+
+ git show <git-hash>
+
+
+== Graphical tools
+
+* *Mac:* Source tree
+* *Linux:* Gitg
+* *Windows:* Git GUI
+
+== Messed up a file
+
+ git checkout readme.txt
+
+Restores to original (last committed version)
+
+== Already committet :(
+
+You wish to revert the last commit you did:
+
+ git revert <hash of the last commit>
+
+You can also revert an older commit, but this may cause conflicts, if later commits have changed the file
+
+
+== Difference between commits
+
+ git diff <commit-id 1> <commit-id 2>
+
+
+== Tagging
+
+Lets tag the current version with version 0.1.0
+
+ git tag 0.1.0
+
+You can use the tags with git diff, to see changes between tags
+
+ git diff 0.1.0 0.1.1
+
+
+== Branching
+
+So far everything has been linear!
+
+If we wish to develop a new (large) feature for our project, we could do this in a separate branch, enabling us to always fix a critical bug, if it arises.
+
+TIP: We are already working in a branch, it is called *master*
+
+ git branch
+
+Will show all branches, now only the master branch exist, and it is active. At all times, a branch points to a specific commit. You can see this using
+
+ git branch -v
+
+== Creating a new branch
+
+ git branch my-new-feature
+ git branch -v
+
+To switch between branches, use the checkout command
+
+ git checkout my-new-feature
+ git branch -v
+
+== Developing a feature
+
+Add a few commits to the new feature branch, and see how the pointers for the master branch is not affected
+
+A branch is only a pointer to some commit!
+
+Go back to the master branch, and notice that the content is not affected by the commits on the other branch, but is back to the original state.
+
+CAUTION: What happens if you commit changes on the master branch?
+
+== Merging
+
+You can merge the changes from one branch to another using the merge branch. Lets merge from the my-new-feature down to master
+
+ git merge my-new-feature
+
+You may risk a conflict, if the same file has been modified on both branches. This you must resolve by hand, add and commit the merge.
+
+ # Fix the conflict in an editor
+ git add readme.txt
+ git commit -m "Merged feature to master"
+ git log -v
+
+Look at the graphical tool, and it may be clear what happened
+
+
+== Sharing with your collegues
+
+* Github
+* Bitbucket
+* Your own hosted repository
+* ...
+
+These are called remote repositories. Set the remote repositorie like this
+
+ git remote add origin git@github.com:your-user/.....
+
+after you have created a remote repository on Github (your code will be visible to the world)
+
+Now you can *pull* and *push* commits to your remote repository, sharing it with others.
+
+The first time you push, use
+
+ git push -u origin master
+
+Next time, just use
+
+ git push
+
+Notice all local commits are now visible.
+
+== Other contributers
+
+ git clone git@github....
+
+You now have another copy of your code a different place.
+
+Make a commit, and use git log to see the master and the origin now are different. try also git status
+
+ git log -v
+ git status
+
+Push your changes to github, and see that both your local and remote pointers point to the same commit
+
+== Working on the same files
+
+Go back to your first location, and make a change in the same file as you just did, commit it, and try to push. This will fail, and you will have to manually clean the conflict up, just like when you merged before from a branch.
+
+== Rebasing
+
+
+
+
+
+
+
+
+
+
+
+
+== Handy alias
+
+
+ git config --global color.ui auto
+ git config --global alias.lg "log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative"
+
+
+
+
