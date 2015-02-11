@@ -225,4 +225,6 @@ Go back to your first location, and make a change in the same file as you just d
 
 
 
+== Literature
 
+* https://www.digitalocean.com/community/tutorials/how-to-use-git-hooks-to-automate-development-and-deployment-tasks[]

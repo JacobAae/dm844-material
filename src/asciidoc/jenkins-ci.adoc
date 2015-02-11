@@ -1,0 +1,99 @@
+= Server config 101 and Jenkins for CI
+
+== What is CI
+
+"Continuous integration (CI) is a software engineering practice in which isolated changes are immediately tested and reported on when they are added to a larger code base. The goal of CI is to provide rapid feedback so that if a defect is introduced into the code base, it can be identified and corrected as soon as possible."
+-- Margaret Rouse, WhatIs.com
+
+== Jenkins
+
+* One of many tools
+* Open source
+* Java based
+* Fork of Hudson project (after a dispute with Oracle)
+* Many plugins for extended functionality
+
+== What can we use it for
+
+IMPORTANT: Execute a predefined list of steps based on a certain trigger.
+
+*Examples*
+
+* Run performance test suite every
+
+
+
+
+== VPS Server with Digital Ocean
+
+Login, push *Create droplet*
+
+* Name your droplet something recognizable
+* As a start, a 10$ server with 1GB RAM is ok, later, you can rezise this to a larger
+* Select a region near you (Amsterdam)
+* Select OS (I'm using Ubuntu 14.04, x64)
+* Optionally add a SSH key (it will enable you to login without password)
+** See tutorial here: https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2[]
+
+==
+
+
+
+
+== Set up a non-root user
+
+ adduser app
+ usermod -a -G sudo app
+ ssh app@servers.ip.address
+
+== Install git
+
+ sudo apt-get install git
+
+== Install Jenkins
+
+*Might not need this (DO has already added jankins package)*
+
+ sudo wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+ sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
+ sudo apt-get update
+
+sudo apt-get install jenkins
+
+Once installed, point your browser to:
+
+ ip.of.your.server:8080
+
+
+== Securing Jenkins
+
+
+
+
+== Adding relevant plugins
+
+
+
+
+== Creating a jenkins job
+
+* Pull from git at regular intervals
+* Run the tests if there are changes
+* Alert if tests fails
+
+== Steps in the job
+
+
+
+
+
+
+
+
+
+== Literature
+
+* https://help.github.com/articles/generating-ssh-keys/[]
+* https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2[Creating ssh keys]
+* http://www.vogella.com/tutorials/Jenkins/article.html[Short jenkins tutorial]
+
