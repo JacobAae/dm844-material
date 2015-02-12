@@ -21,6 +21,7 @@ Configure your favorite editor
 
  git config --global core.editor /path/to/editor
 
+TIP: If you leave out the `--global` it is only for the repository you are currently in.
 
 == Creating a repository
 
@@ -28,9 +29,10 @@ Configure your favorite editor
  cd example
 
  git init
- ll
 
-Working tree: Your own files and folders - empty initially
+You should now be able to detect a .git folder
+
+NOTE: Working tree: Your own files and folders - empty initially
 
 == Towards your first commit
 
@@ -48,17 +50,50 @@ Dence form
 
  git status -s
 
-== Editing, adding and committing
+== Editing, adding
 
  git add readme.txt
+
+INFO: Adding a file to the index are is called _staging_
 
 Edit again
 
  git add readme.txt
 
-Committing
+You can add all files in current repository
+
+ git add -A
+
+Or all updated files
+
+ git add -u
+
+Or stage chunks of a file (patching)
+
+ git add -p
+
+== Committing
+
+Once you have added, you can commit by
 
  git commit -m "Initial commit of readme file"
+
+If you leave the `-m "Your message"` out, you editor wil open, and you can write it there
+
+== Ignoring files
+
+Add a file named
+
+ .gitignore
+
+To the root of the project, and on each line define what is to be left out
+
+*Example .gitignore file*
+----
+*~
+logs/
+*.class
+----
 
 == See the history
 
@@ -87,14 +122,6 @@ See a specific commit:
 
 Restores to original (last committed version)
 
-== Already committet :(
-
-You wish to revert the last commit you did:
-
- git revert <hash of the last commit>
-
-You can also revert an older commit, but this may cause conflicts, if later commits have changed the file
-
 
 == Difference between commits
 
@@ -110,6 +137,40 @@ Lets tag the current version with version 0.1.0
 You can use the tags with git diff, to see changes between tags
 
  git diff 0.1.0 0.1.1
+
+
+== Error in a staged filed
+
+To undo staged changes in readme.txt
+
+ git reset HEAD -- readme.txt
+
+The `--` tells git that the command is done, and the rest are files (or paths)
+
+Or if you wish to get rid of the changes totally
+
+ git checkout -- readme.txt
+
+== Error, and already pushed :(
+
+You wish to revert the last commit you did:
+
+ git revert <hash of the last commit>
+
+You can also revert an older commit, but this may cause conflicts, if later commits have changed the file
+
+== Moving and Deleting
+
+You can move or delete files in git with the `mv` and `rm` commands
+
+ git mv readme.txt readme.adoc
+ git rm readme.txt
+
+If it a directory, add `-r` for recursive
+
+If you deleted something that has been committed previously, you can get it back with
+
+ git reset HEAD -- readme.txt
 
 
 == Branching
@@ -164,6 +225,8 @@ Look at the graphical tool, and it may be clear what happened
 
 == Sharing with your collegues
 
+Committing and sharing is not the same in git.
+
 * Github
 * Bitbucket
 * Your own hosted repository
@@ -187,6 +250,10 @@ Next time, just use
 
 Notice all local commits are now visible.
 
+push is fetching and merging in one.
+
+TODO fetch
+
 == Other contributers
 
  git clone git@github....
@@ -204,17 +271,45 @@ Push your changes to github, and see that both your local and remote pointers po
 
 Go back to your first location, and make a change in the same file as you just did, commit it, and try to push. This will fail, and you will have to manually clean the conflict up, just like when you merged before from a branch.
 
+
+
 == Rebasing
 
 
+== Amend to commit
+
+
+
+== Handling conflicts
+
+
+
+== Erase a commit
+
+ git reset --hard
+ git reset --soft
 
 
 
 
+== Moving between branches
+
+== Stashing
+== Cherry picking
 
 
 
 
+== Who did that?
+
+ git blame example.txt
+
+
+== Standard alias
+
+You should immediately add these alias:
+
+TODO
 
 
 == Handy alias
@@ -222,6 +317,15 @@ Go back to your first location, and make a change in the same file as you just d
 
  git config --global color.ui auto
  git config --global alias.lg "log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative"
+
+
+== Statistics
+
+
+== The reflog
+
+Find a lost commit
+
 
 
 
