@@ -38,7 +38,7 @@ NOTE: Working tree: Your own files and folders - empty initially
 
 create readme.txt (use editor)
 
-Staging area: index
+INFO: Staging area -> index
 
 == What has changed
 
@@ -226,6 +226,9 @@ Look at the graphical tool, and it may be clear what happened
 == Sharing with your collegues
 
 Committing and sharing is not the same in git.
+Committing only updates your local repository, to share with others, you need to `push`
+
+Where to host your git repository
 
 * Github
 * Bitbucket
@@ -236,9 +239,11 @@ These are called remote repositories. Set the remote repositorie like this
 
  git remote add origin git@github.com:your-user/.....
 
+<<<
+
 after you have created a remote repository on Github (your code will be visible to the world)
 
-Now you can *pull* and *push* commits to your remote repository, sharing it with others.
+Now you can *fetch*, *pull* and *push* commits to your remote repository, sharing it with others.
 
 The first time you push, use
 
@@ -252,7 +257,17 @@ Notice all local commits are now visible.
 
 push is fetching and merging in one.
 
-TODO fetch
+== Fetch vs Pull
+
+IMPORTANT: In short, `pull` does a `fetch` followed by a `merge`
+
+The `fetch` never changes any of never changes any of your own local branches under refs/heads,
+and is safe to do without changing your working copy.
+
+A `pull` is what you would do to bring a local branch up-to-date with its remote version,
+while also updating your other remote-tracking branches.
+
+WARNING: Some recommend to always `fetch` and `merge` instead of `pull` (I don't)
 
 == Other contributers
 
@@ -276,7 +291,13 @@ Go back to your first location, and make a change in the same file as you just d
 == Rebasing
 
 
+
+
 == Amend to commit
+
+If you have just made a commit, and have missed including a file etc, you can use
+
+ git add 
 
 
 
@@ -309,14 +330,21 @@ Go back to your first location, and make a change in the same file as you just d
 
 You should immediately add these alias:
 
-TODO
+ git config --global alias.co checkout
+ git config --global alias.br branch
+ git config --global alias.ci commit
+ git config --global alias.st status
+ git config --global alias.cl clone
+
+
 
 
 == Handy alias
 
-
- git config --global color.ui auto
- git config --global alias.lg "log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative"
+ git config --global alias.cp cherry-pick
+ git config --global alias.st status -s
+ git config --global alias.unstage 'reset HEAD --'
+ git config --global alias.last 'log -1 HEAD'
 
 
 == Statistics
@@ -325,6 +353,27 @@ TODO
 == The reflog
 
 Find a lost commit
+
+
+== 5 Usefull Scenarios
+
+.1) You mess up your local branch and simply want to go back to what you had the last time you did a git pull:
+
+git reset --hard origin/master  # You will need to be comfortable doing this!
+
+2) You start making changes locally, you edit half a dozen files and then, oh crap, you're still in the master (or another) branch:
+
+git checkout -b new_branch_name  # just create a new branch
+git add .                      # add the changes files
+git commit -m"your message"    # and commit them
+
+3) You mess up one particular file in your current branch and want to basically 'reset' that file (lose changes) to how it was the the last time you pulled it from the remote repository: git checkout your/directories/filename This actually resets the file (like many git commands it is not well named for what it is doing here).
+
+4) You make some changes locally, you want to make sure you don't lose them while you do a git reset or rebase: I often make a manual copy of the entire project (cp -r ../my_project ~/) when I am not sure if I might mess up in git or lose important changes.
+
+5) You are rebasing but things gets messed up:
+
+git rebase --abort # To abandon interactive rebase and merge issues
 
 
 
