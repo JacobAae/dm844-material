@@ -604,7 +604,8 @@ git rebase --abort # To abandon interactive rebase and merge issues
 
 * http://git-scm.com/[]
 * https://www.atlassian.com/git/tutorials/[]
-* https://www.codeschool.com/courses/git-real[] Recommended by Krzysztof Lesniewski 
+* https://www.codeschool.com/courses/git-real[] Recommended by Krzysztof Lesniewski
+* https://help.github.com/articles/generating-ssh-keys/[]
 
 
 ////
