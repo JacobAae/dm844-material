@@ -35,8 +35,18 @@ Login, push *Create droplet*
 * Optionally add a SSH key (it will enable you to login without password)
 ** See tutorial here: https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2[]
 
-==
+<<<
 
+image::creating-droplet.png[]
+
+<<<
+
+image::created-droplet.png[]
+
+
+== Logging in
+
+image::first-login.png[]
 
 
 
@@ -46,48 +56,160 @@ Login, push *Create droplet*
  usermod -a -G sudo app
  ssh app@servers.ip.address
 
+image::create-user.png[]
+
+<<<
+
+image::login-as-non-root.png[]
+
+
 == Install git
 
  sudo apt-get install git
 
+== Installing Java
+
+ sudo add-apt-repository ppa:webupd8team/java
+ sudo apt-get update
+ sudo apt-get install oracle-java8-installer
+
+
+
+
+== Locating the JDK
+
+image::locating-java.png[]
+
+
+
 == Install Jenkins
 
-*Might not need this (DO has already added jankins package)*
 
  sudo wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
  sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
  sudo apt-get update
 
-sudo apt-get install jenkins
+ sudo apt-get install jenkins
+ sudo service jenkins status
+
+If jenkins is not running
+
+ sudo service jenkins start
 
 Once installed, point your browser to:
 
  ip.of.your.server:8080
 
+<<<
+
+image::jenkins-initial.png[]
+
+
+
+== Intial configuration
+
+Go to _Manage Jenkins_ -> _Configure system_
+
+In JDK Add your java installation
+
+image::jdk-in-jenkins.png[]
+
 
 == Securing Jenkins
 
+Go to _Manage Jenkins_ -> _Configure Global Security_
+
+Select _Enable security_
+
+As Realm, use _Jenkins own user database_ and allow users to sign up.
+
+Select Matrix based security, and create a user fx admin, with all rigths.
+
+
+<<<
+
+image::jenkins-security-1.png[]
+
+
+== Create your user
+
+Create the user with the name you specified before. Now disable the _Allow users to sign up_ (once you all have made your accounts)
+
+image::jenkins-signup.png[]
+
+<<<
+
+image::jenkins-logged-in.png[]
 
 
 
 == Adding relevant plugins
 
+Go to _Manage Jenkins_ -> _Manage Plugins_
 
+Update the plugins that need udating, especially the mailer plugin, and go to the *Available* tab.
+Install the *git* plugin and the *Grails Plugin*, and restart Jenkins.
+
+Optionally: Install the *ChuckNorris Plugin*
+
+<<<
+
+image::jenkins-git-plugin.png[]
+
+
+== Configuring Email
+
+Go to _Manage Jenkins_ -> _Configure system_
+
+*If you create a Gmail account for this, it requires a bit of massaging*
+
+Gmail must be allowed https://www.google.com/settings/security/lesssecureapps["Access for less secure apps"]
+and you need to visit  https://g.co/allowaccess[] after the test mail sending fails.
+
+<<<
+
+image::jenkins-mail-setup.png[]
 
 
 == Creating a jenkins job
 
+We wish to have our first Jenkins job doing:
+
 * Pull from git at regular intervals
-* Run the tests if there are changes
+* Run the grails tests if there are changes
 * Alert if tests fails
 
 == Steps in the job
 
+Click *New Item*, insert a fitting name *All_tests_for_MyApp* and select *Freestyle project*
+
+TODO Vis config af de enkelte skridt
+
+image::jenkins-first-job.png[]
+
+<<<
+
+image::jenkins-job-setup-1.png[]
+
+<<<
+
+image::jenkins-job-setup-2.png[]
+
+<<<
+
+image::jenkins-job-setup-3.png[]
 
 
+== Status
+
+image::jenkins-all-well.png[]
 
 
+== Configure memory
 
+Edit in */etc/default/jenkins*
+
+ JAVA_ARGS="-Djava.awt.headless=true -Xmx512m"
 
 
 
