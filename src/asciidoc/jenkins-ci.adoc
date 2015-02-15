@@ -19,9 +19,10 @@ IMPORTANT: Execute a predefined list of steps based on a certain trigger.
 
 *Examples*
 
-* Run performance test suite every
-
-
+* Run performance test suite every time code is pushed to central repository
+* Periodically backup database
+* Publish test results
+* Deploying applications
 
 
 == VPS Server with Digital Ocean
@@ -178,16 +179,13 @@ We wish to have our first Jenkins job doing:
 * Pull from git at regular intervals
 * Run the grails tests if there are changes
 * Alert if tests fails
+* Copy test reports so they are easily accessible
 
 == Steps in the job
 
 Click *New Item*, insert a fitting name *All_tests_for_MyApp* and select *Freestyle project*
 
-TODO Vis config af de enkelte skridt
 
-image::jenkins-first-job.png[]
-
-<<<
 
 image::jenkins-job-setup-1.png[]
 
@@ -199,11 +197,24 @@ image::jenkins-job-setup-2.png[]
 
 image::jenkins-job-setup-3.png[]
 
+<<<
+
+image::jenkins-job-setup-4.png[]
+
+<<<
+
+image::jenkins-job-setup-5.png[]
+
+<<<
+
+image::jenkins-job-setup-6.png[]
+
 
 == Status
 
-image::jenkins-all-well.png[]
+image::jenkins-success.png[]
 
+But we need to configure a few things first!
 
 == Configure memory
 
@@ -213,9 +224,87 @@ Edit in */etc/default/jenkins*
 
 
 
+== Apache Webserver in Front
+
+Installing
+
+ sudo apt-get install apache2
+
+Main configuration found in _/etc/apache2/apache2.conf_
+
+This generates the following (irrelevant) error
+----
+ * Starting web server apache2
+ AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.1.1.
+ Set the 'ServerName' directive globally to suppress this message
+----
+
+This can be fixed by putting
+
+ ServerName localhost
+
+In a file in  `/etc/apache2/conf-available/servername.conf`
+
+Enable it with
+
+ a2enconf servername
+ service apache2 restart
+
+
+== Configuring Jenkins for Apache front
+
+Configure apache to reach jenkins at `server.ip.address/jenkins`
+
+Make sure this is in `/etc/default/jenkins`
+
+ PREFIX=/jenkins
+
+ JENKINS_ARGS="--webroot=/var/cache/jenkins/war --httpPort=$HTTP_PORT --ajp13Port=$AJP_PORT --prefix=$PREFIX"
+
+Reload with
+
+ service jenkins force-reload
+
+To reach jenkins you now need to access it at `server.ip.address:8080/jenkins`
+
+
+== Virtual Host for Jenkins
+
+Save this in /etc/apache2/sites-available/jenkins.conf
+----
+<VirtualHost *:80>
+  ServerAdmin jamik@imada.sdu.dk
+  DocumentRoot "/var/www"
+  ErrorLog /var/log/jenkins/jenkins.log
+  ProxyRequests off
+  ProxyPass /jenkins http://127.0.0.1:8080/jenkins nocanon
+  ProxyPassReverse /jenkins  http://127.0.0.1:8080/jenkins
+  ProxyPreserveHost on
+</VirtualHost>
+----
+
+ a2enmod proxy
+ a2enmod proxy_http
+ a2enmod proxy_ajp
+ a2ensite jenkins.conf
+ service apache2 restart
+
+
+== Making test reports available
+
+ mkdir -p /var/www/html/test-reports
+ chown jenkins /var/www/html/test-reports/
+
+And let Jenkins copy them to this repository
+
+<<<
+
+image::jenkins-job-setup-6.png[]
+
+
+
 == Literature
 
 * https://help.github.com/articles/generating-ssh-keys/[]
 * https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2[Creating ssh keys]
 * http://www.vogella.com/tutorials/Jenkins/article.html[Short jenkins tutorial]
-
