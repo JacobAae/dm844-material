@@ -5,6 +5,20 @@
 
 image::git-chart.png[]
 
+== Some definitions
+
+*HEAD*
+
+This is an alias for the tip of the current branch, which is the most recent commit you have made to that branch.
+
+*Index*
+
+The index, also known as the staging area, is the set of files that will become the next commit. It is also the commit that will become HEAD’s parent.
+
+*Working Copy*
+
+This is the term for the current set of files you’re working on in your file system.
+
 == Installation
 
 * *Ubuntu/Linux* `sudo apt-get install git-core`
@@ -38,7 +52,7 @@ NOTE: Working tree: Your own files and folders - empty initially
 
 create readme.txt (use editor)
 
-INFO: Staging area -> index
+IMPORTANT: Staging area -> index
 
 == What has changed
 
@@ -54,7 +68,7 @@ Dence form
 
  git add readme.txt
 
-INFO: Adding a file to the index are is called _staging_
+IMPORTANT: Adding a file to the index are is called _staging_
 
 Edit again
 
@@ -103,7 +117,7 @@ See the history
 
  git log --pretty=raw
 
-INFO: Notice the signature of the content (a hash of the snapshot)
+IMPORTANT: Notice the signature of the content (a SHA hash of the snapshot)
 
 See a specific commit:
 
@@ -196,6 +210,11 @@ To switch between branches, use the checkout command
 
  git checkout my-new-feature
  git branch -v
+
+To create a new branch and immediately switch to it `-b`
+
+  git checkout -b ny-new-branch
+
 
 == Developing a feature
 
@@ -290,6 +309,33 @@ Go back to your first location, and make a change in the same file as you just d
 
 == Rebasing
 
+Instead of doing `fetch` and `merge` or `pull`, generating a merge commit, it is often cleaner to do a rebase
+
+ git pull --rebase
+
+This makes git try to replay your commits on top of the ones fetched from the repository.
+
+<<<
+
+In a graphical form this looks like
+
+Given the following history:
+
+       C---D---E local
+      /
+ A---B---F---G remote
+
+The effect of a merge will be:
+
+       C---D---E local
+      /         \
+ A---B---F---G---H remote
+
+The effect of a rebase will be:
+
+               C'--D'--E' local
+              /
+ A---B---F---G remote
 
 
 
@@ -297,31 +343,117 @@ Go back to your first location, and make a change in the same file as you just d
 
 If you have just made a commit, and have missed including a file etc, you can use
 
- git add 
+ git add readme.txt
+ git commit --amend
 
+If you have already pushed, you should make a new commit, as you don't know if anyone is already using the previous commit :(
 
 
 == Handling conflicts
+
+Which files needs to be resolved?
+
+ git ls-files -u
+
+
+----
+Auto-merging readme.txt
+CONFLICT (content): Merge conflict in readme.txt
+Automatic merge failed; fix conflicts and then commit the result.
+----
+
+In the file:
+----
+Hi,
+
+Git can be
+<<<<<<< HEAD
+very
+very
+=======
+very very
+>>>>>>> dca88fdacd44373f08e60592d880b67ed957cdfe
+tricky
+----
+
+Manually handle the difference, save, add and commit.
 
 
 
 == Erase a commit
 
- git reset --hard
+If you wish to remove a commit, you basically wish to move the pointer of *HEAD*.
+
+ git reset HEAD~1
+
+Will move the *HEAD* to one commit before the current *HEAD*
+
+If you just wish to move the head pointer, and nothing more, you should use
+
  git reset --soft
 
+Files in the index and working copy are not changed
+
+The default is `mixed` mode, where it will reset the index to match the commit you are resetting to (but not the working tree)
+
+ git reset --mixed
+
+If you really (and be carefull here) wish to reset to the state of a commit, _deleting any non-committed changes_ following that, use `hard` mode
+
+ git reset --hard
+
+
+More on the reset command: http://git-scm.com/2011/07/11/reset.html[]
+
+WARNING: You may be able to recover some using the `reflog`, but this is non-trivial.
 
 
 
 == Moving between branches
 
+There are several ways you can move code between branches.
+
+*Stashing*
+
+If you accidentally started changing master, and it should have been a
+feature branch, stashing is an easy way.
+
+*Cherry-picking*
+
+If you have already committed, you can cherry-pick the commits to another branch, and resetting the branch you changed by accident.
+
 == Stashing
+
+To temporarily store code, you can use
+
+ git stash
+
+And (possibly moving to another branch), retrieving it by
+
+ git stash pop
+
+You can see the stashes on the stack using
+
+ git stash list
+
+Stashing can also be used, if you wish to `pull` new code from the repository,
+while you are working on uncommitted code.
+
+
 == Cherry picking
 
+If you wish to copy a specific commit from one branch to another, you can cherry-pick it.
 
+Locate the sha-hash of the commit you wish to apply, and use
+
+ git cherry-pick sha-hash-of-commit
+
+If you wish to apply a range of commits, you can do it with some branchng and rebasing (not covered in this intro)
 
 
 == Who did that?
+
+To see who the author of specific lines in a file is:
 
  git blame example.txt
 
@@ -338,46 +470,143 @@ You should immediately add these alias:
 
 
 
-
 == Handy alias
 
- git config --global alias.cp cherry-pick
  git config --global alias.st status -s
+ git config --global alias.pr 'pull --rebase'
+ git config --global alias.cp cherry-pick
  git config --global alias.unstage 'reset HEAD --'
  git config --global alias.last 'log -1 HEAD'
 
+////
+ git config --global alias.wipe !git add -A && git commit -qm 'WIPE SAVEPOINT' && git 'reset HEAD~1 --hard'
+////
 
 == Statistics
 
+Statistics for the last 5 commits
 
-== The reflog
+ git diff --stat HEAD~5
 
-Find a lost commit
+Shorter summary
+
+ git diff --shortstat HEAD~5
+
+Statistics for the commit log
+
+ git log --stat
+
+Statistics for the commit log short summary
+
+ git log --shortstat
+
+
+
+== The reflog and 'detached HEAD' state
+
+DANGER: Lets 'loose a few commits' that have not been pushed
+
+But first, check out
+
+ git reflog
+
+Delete the last two commits
+
+ git reset --hard HEAD~2
+ git log --oneline
+
+Auch - that was one too many commits deleted :(
+
+<<<
+
+ git reflog
+
+Output:
+
+----
+027438c HEAD@{0}: reset: moving to HEAD~2
+bdb4b78 HEAD@{1}: commit: Nr 3
+03c9245 HEAD@{2}: commit: Nr 2
+027438c HEAD@{3}: commit (initial): Nr 1
+----
+
+Lets get them back
+
+ git checkout bdb4b78
+
+This will leave you in a 'detached HEAD' state. Branch the result using
+
+ git checkout -b saving-branch
+ git checkout master
+ git merge saving-branch
+
+Now check you have your commit back :)
+
+
+
+
+
+
 
 
 == 5 Usefull Scenarios
 
-.1) You mess up your local branch and simply want to go back to what you had the last time you did a git pull:
 
-git reset --hard origin/master  # You will need to be comfortable doing this!
+TIP: You mess up your local branch and simply want to go back to what you had the last time you did a git pull:
 
-2) You start making changes locally, you edit half a dozen files and then, oh crap, you're still in the master (or another) branch:
+----
+ git reset --hard origin/master  # You will need to be comfortable doing this!
+----
 
+<<<
+
+
+
+TIP: You start making changes locally, you edit half a dozen files and then, oh crap, you're still in the master (or another) branch:
+
+----
 git checkout -b new_branch_name  # just create a new branch
 git add .                      # add the changes files
 git commit -m"your message"    # and commit them
+----
 
-3) You mess up one particular file in your current branch and want to basically 'reset' that file (lose changes) to how it was the the last time you pulled it from the remote repository: git checkout your/directories/filename This actually resets the file (like many git commands it is not well named for what it is doing here).
+<<<
 
-4) You make some changes locally, you want to make sure you don't lose them while you do a git reset or rebase: I often make a manual copy of the entire project (cp -r ../my_project ~/) when I am not sure if I might mess up in git or lose important changes.
+TIP: You mess up one particular file in your current branch and want to basically 'reset' that file (lose changes) to how it was the
+     the last time you pulled it from the remote repository:
 
-5) You are rebasing but things gets messed up:
+----
+ git checkout your/directories/filename
 
+This actually resets the file (like many git commands it is not well named for what it is doing here).
+----
+
+<<<
+
+TIP: You make some changes locally, you want to make sure you don't lose them while you do a git reset or rebase:
+
+----
+I often make a manual copy of the entire project (cp -r ../my_project ~/)
+when I am not sure if I might mess up in git or lose important changes.
+----
+
+<<<
+
+TIP: You are rebasing but things gets messed up:
+
+----
 git rebase --abort # To abandon interactive rebase and merge issues
-
+----
 
 
 
 == Literature
 
+* http://git-scm.com/[]
+* https://www.atlassian.com/git/tutorials/[]
+* https://www.codeschool.com/courses/git-real[] Recommended by Krzysztof Lesniewski 
+
+
+////
 * https://www.digitalocean.com/community/tutorials/how-to-use-git-hooks-to-automate-development-and-deployment-tasks[]
+////

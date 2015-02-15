@@ -415,7 +415,7 @@ include::../../bsg/test/integration/dk/dm844/bsg/CrisisIntegrationSpec.groovy[ta
 
 <<<
 
-[source,g   roovy,indent=0]
+[source,groovy,indent=0]
 .Testing Crisis operations
 ----
 include::../../bsg/test/integration/dk/dm844/bsg/CrisisIntegrationSpec.groovy[tags=crisis-handling]
