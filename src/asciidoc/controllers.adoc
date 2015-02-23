@@ -1,0 +1,32 @@
+= Grails Controllers
+
+
+== Controllers
+
+Show auto-reloading!
+
+== Url Structure
+
+== Examine Scaffolded Controller
+
+== Communicate with a wiev
+
+== Databinding
+
+Ways to do it
+
+
+== Command Objects
+
+
+== Dependency injection
+
+* log
+* services
+
+WARNING: Need detour to services
+
+== Best practices
+
+* Must be thin
+* Logic placed in services
