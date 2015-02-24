@@ -3,11 +3,78 @@
 
 == Controllers
 
-Show auto-reloading!
+Controllers are responsible for routing _requests_ to
+
+* the correct logic
+* data
+* presentation
+
+and generating the correct _response_
+
+A public method in a controller is called an _action_ and can be reached from a browser, when the application is running.
+Closures are also supported, but _not_ recommended.
+
+WARNING: But it should not do the actual access of data, calculations or presentation. For that there is domain classes, services and views. *Controllers should be _thin_*
+
+TIP: In grails, we have auto-reloading - and with controllers, this is the fist place we really can see this!
+
+
+== Creating controllers
+
+You can create controllers by
+
+. Manually placing a class ending with *Controller* in the controller folder
+. `create-controller` in interactive mode
+. `generate-controller` in interactive mode
+
 
 == Url Structure
 
+The url structure for a standard Grails application is
+
+----
+  localhost:8080/application-name/controller-name/action-name/id
+----
+
+== First Action
+
+In the ShipController insert this
+
+[source,groovy,indent=0]
+----
+def hello() {
+	render "Hello"
+}
+----
+
+And go to http://localhost:8080/bsg/ship/hello[]
+
+Documentation of the render method: http://grails.github.io/grails-doc/2.4.4/ref/Controllers/render.html[]
+
+
+== Default Actions
+
+If you leave out the action and id of the url, you will be served the default action, determined by:
+
+. If there is only one action, it's the default
+. If you have an action named index, it's the default
+. Alternatively you can set it explicitly with the defaultAction property:
+
+ static defaultAction = "hello"
+
+
+
 == Examine Scaffolded Controller
+
+In interactive mode
+
+ generate-controller dk.dm844.bsg.Person
+
+This creates both a `PersonController` class and a `PersonControllerSpec` class
+
+
+
+
 
 == Communicate with a wiev
 
@@ -25,6 +92,59 @@ Ways to do it
 * services
 
 WARNING: Need detour to services
+
+
+== Scopes
+
+Scopes are hash-like objects where you can store variables.
+
+* ´´
+
+== Url Mappings
+
+[source,groovy,indent=0]
+.conf/UrlMappings.groovy
+----
+class UrlMappings {
+
+	static mappings = {
+        "/$controller/$action?/$id?(.$format)?"{
+            constraints {
+                // apply constraints here
+            }
+        }
+
+        "/"(view:"/index")
+        "404"(view:'/gone')
+        "500"(view:'/error')
+	}
+}
+----
+
+<<<
+
+[source,html,indent=0]
+.views/gone.gsp
+----
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lost...</title>
+	</head>
+	<body>
+      <h1>
+		He's Gone, Jim - he's dead!
+	  </h1>
+	  <h2>We really could not find what you were looking for</h2>
+	</body>
+</html>
+----
+
+In interactive mode
+
+ url-mappings-report
+
+
 
 == Best practices
 
