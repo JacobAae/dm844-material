@@ -1,8 +1,6 @@
 package dk.dm844.bsg
 
-import groovy.transform.ToString
 
-@ToString
 class Crisis {
 
 	String header
@@ -16,4 +14,8 @@ class Crisis {
 		header blank: false
 		description nullable: true
 	}
+
+    String toString() {
+        header
+    }
 }

@@ -1,8 +1,5 @@
 package dk.dm844.bsg
 
-import groovy.transform.ToString
-
-@ToString(includeNames = true)
 class Ship {
 
 	String name
@@ -26,4 +23,9 @@ class Ship {
         }
     }
     // end::before-validate-method[]
+
+    String toString() {
+        name
+    }
+
 }

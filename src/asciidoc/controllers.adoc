@@ -1,4 +1,15 @@
-= Grails Controllers
+= Grails Controllers and Services
+
+== Scenario
+
+Today, we will try to make searching for ships based on their name or number of persons onboard (in a range) available as a web-service, and a service to show some statistics like:
+
+* number of ships and persons
+* Largest and smallest ship
+* Number of each type of ship
+* ...
+.
+_Later_ we will create GUI for it.
 
 
 == Controllers
@@ -72,33 +83,310 @@ In interactive mode
 
 This creates both a `PersonController` class and a `PersonControllerSpec` class
 
+TIP: Take a look at the code, and see how we make the tests pass (and notice the nice test that are pre-written for us)
 
 
 
-
-== Communicate with a wiev
 
 == Databinding
 
-Ways to do it
+There are multiple ways to bind data to variables in controllers.
+
+Lets see those in action
+
+First, we create a controller to handle searching for ships. In interactive mode
+
+ create-controller dk.dm844.bsg.ShipSearch
+
+Every time we will query this:
+
+ http://localhost:8080/bsg/shipSearch/searchX?shipname=xxx&minCrew=100&maxCrew=200
+
+Where `X` is replaced with the method number
+
+== Databinding from `params`
+
+Manually extracting
+
+[source,groovy,indent=0]
+----
+def search1() {
+    String shipname = params.shipname
+    Integer minCrew = params.int('minCrew')
+    Integer maxCrew = params.int('maxCrew')
+
+    render("Shipname: $shipname - crew: $minCrew - $maxCrew")
+}
+----
+
+Result:
+
+ Shipname: xxx - crew: 100 - 200
 
 
-== Command Objects
+
+== Databinding from parameters
+
+[source,groovy,indent=0]
+----
+def search2(String shipname, Integer minCrew, Integer maxCrew) {
+    render("Shipname: $shipname - crew: $minCrew - $maxCrew")
+}
+----
+
+Result:
+
+ Shipname: xxx - crew: 100 - 200
 
 
-== Dependency injection
 
-* log
-* services
+== Databinding using Command object
 
-WARNING: Need detour to services
+First we create a `Command` object, defined in the controller file or as a class file
+
+[source,groovy,indent=0]
+----
+class SearchCommand {
+    String shipname
+    Integer minCrew
+    Integer maxCrew
+}
+----
+
+[source,groovy,indent=0]
+----
+def search3(SearchCommand command) {
+    render("Shipname: $command.shipname - crew: $command.minCrew - $command.maxCrew")
+}
+----
+
+Result:
+
+ Shipname: xxx - crew: 100 - 200
+
+
+== BindData method
+
+[source,groovy,indent=0]
+----
+def search4() {
+    SearchCommand command = new SearchCommand()
+    bindData(command , params )
+    render("Shipname: $command.shipname - crew: $command.minCrew - $command.maxCrew")
+}
+----
+
+Result:
+
+ Shipname: xxx - crew: 100 - 200
+
+TIP: You can define which parameters should be included or excluded from databinding, and you can use any object, not only command objects
+
+
+== Databinding using Command object (2)
+
+Using command objects enables us to make validation like on Domain objects
+
+[source,groovy,indent=0]
+----
+@ToString(includeNames=true)
+class SearchInputCommand {
+    String shipname
+    Integer minCrew
+    Integer maxCrew
+
+    static constraints = {
+        shipname blank: false
+        minCrew min: 0, validator: { val, obj -> val < obj.maxCrew }
+        maxCrew min: 1, validator: { val, obj -> val > obj.minCrew }
+    }
+}
+----
+
+<<<
+
+[source,groovy,indent=0]
+----
+def search(SearchInputCommand command) {
+    List<Ship> ships
+    if(command.validate()) {
+        ships = Ship.list() // TODO implement real search
+    } else {
+        ships = []
+    }
+    render( "command: $command, ships. $ships" )
+    if( command.hasErrors() ) {
+        command.errors.allErrors.each {
+            render("<br>$it<br>")
+        }
+    }
+}
+----
+
+
+TIP: Check output - with and without errors
+
+
+== Which Databinding to use?
+
+* Number of parameters
+* Are you binding to an existing object?
+* Are there parameters that should NOT be binded?
+
+TIP: If you place your command objects in a separate file, so they can be easily reused in different controllers, they must be annotated with `@Validatable`
 
 
 == Scopes
 
 Scopes are hash-like objects where you can store variables.
 
-* ´´
+* `session` - The session allows associating state with a given user and typically uses cookies to associate a session with a client. The session object is an instance of HttpSession
+* `request` - The request object allows the storage of objects for the current request only. The request object is an instance of HttpServletRequest
+* `params` - Mutable map of incoming request query string or POST parameters
+* `flash` - a temporary store to make attributes available for this request and the next request only. Afterwards the attributes are cleared. This is useful for setting a message directly before redirecting
+
+
+
+
+== Implementing logic
+
+We could make the logic in the controller itself, but this is not DRY and generally considered bad style.
+
+For this, we use services.
+
+Lets create a ShipSearchService. In interactive mode
+
+ create-service dk.dm844.bsg.ShipSearchService
+
+== Initial Service
+
+
+[source,groovy,indent=0]
+----
+package dk.dm844.bsg
+
+import grails.transaction.Transactional
+
+@Transactional
+class ShipSearchService {
+
+    def serviceMethod() {
+
+    }
+}
+----
+
+<<<
+
+Lets change the `serviceMethod` to search for ships and arrange them alphabetically by name
+
+[source,groovy,indent=0]
+----
+List<Ship> searchForShips(SearchInputCommand input) {
+    if( !input.validate() ) {
+        return []
+    }
+    return Ship.findAllByNameOrCrewsizeBetween(input.shipname, input.minCrew, input.maxCrew, [sort: 'name', order: 'asc'])
+}
+----
+
+WARNING: Make sure the method is tested. Which type of test should we use?
+
+== Why Services
+
+Services are by default annotated with `@Transactional`, wrapping the content in a transaction, that is rolled back, if something goes wrong (Exception thrown etc)
+
+Services can be reused across multiple controllers, making them DRY.
+
+You can use other services in a service, but you cannot make a circular reference (they cannot be initialized)
+
+Services are _singletons_ by default, and you should be carefull not to store state in a service. The service is *not* synchronized!
+
+
+
+== Dependency injection
+
+How do we use our service? +
+*Dependency injection*
+
+Add the servce as a variable with the type and name (with lower case beginning) like this
+
+ ShipSearchService shipSearchService
+
+And we can simplify our controller method to this:
+
+[source,groovy,indent=0]
+----
+def search(SearchInputCommand command) {
+    List<Ship> ships = shipSearchService.searchForShips(command)
+    render( "command: $command, ships. $ships" )
+}
+----
+
+== Logging
+
+On special case of dependency injection that happens in all domain classes, controllers, services and taglibs is the `log` variable.
+
+You can log statements with one of the levels here:
+
+[source,groovy,indent=0]
+----
+log.trace("I'm a TRACE log")
+log.debug("I'm a DEBUG log")
+log.info("I'm a INFO log")
+log.warn("I'm a WARN log")
+log.error("I'm a ERROR log")
+----
+
+TIP: By default only ERRORS are logged. You can change this in `Config.groovy`, adding `debug 'grails.app'` in the bottom of the `log4j.main` closure to get everything from _debug_ and up.
+
+We will study log configuration in depth at a later time.
+
+
+IMPORTANT: Make sure you use `log` statements instead of println, as they are configurable if they should be printed or not.
+
+== Controller Interceptors
+
+You have two different interceptors available in your controller
+
+* `beforeInterceptor`
+* `afterInterceptor`
+
+
+One common interceptor is
+
+[source,groovy,indent=0]
+----
+def beforeInterceptor = {
+    log.trace("${controllerName}.${actionName} (${request.method})")
+}
+----
+
+Also using the two variables `controllerName` and  `actionName`. It is also common to print `params`, bu there are caveats doing this.
+
+
+== Communicate with a view
+
+Model and view. An action that communicates with the corresponding view should return a map, which is the model used for a view.
+
+By default the view for an action in a controller is placed in the application in
+
+ grails-app/views/controller-name/action-name.gsp
+
+But you can tell the render method to use a different view like this
+
+ render(view: "showShips", model: [ships: myListOfShips])
+
+
+== Redirect and forward
+
+You can redirect to another action using:
+
+ redirect(action: 'search')
+
+and forward using
+
+ forward( controller: "ship", action: "show")
 
 == Url Mappings
 
@@ -150,3 +438,13 @@ In interactive mode
 
 * Must be thin
 * Logic placed in services
+
+== Exercise
+
+IMPORTANT: Implement and test the statistic task, and your preferred way to search for ships
+
+== Literature
+
+* http://grails.github.io/grails-doc/2.4.4/guide/theWebLayer.html[]
+
+

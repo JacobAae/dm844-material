@@ -12,4 +12,9 @@ class Person {
 		name blank: false
 		title nullable: true
 	}
+
+    String toString() {
+        name
+    }
+
 }
