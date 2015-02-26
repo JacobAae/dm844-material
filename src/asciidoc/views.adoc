@@ -1,0 +1,124 @@
+= Grails Views and TagLibs
+
+== Scenario
+
+Today, we will mkae the GUI for searching for ships based on their name or number of persons onboard (in a range) available as a web-service, and a service to show some statistics
+
+
+== Views - Groovy Server Pages
+
+== HTML 101
+
+A basic HTML(5) page looks like this
+
+[source,html,indent=0]
+----
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Document title</title>
+  </head>
+
+  <body>
+    Document content......
+  </body>
+</html>
+----
+
+== GSP Basics
+
+Groovy Servers Pages (GSP for short) is Grails' view technology.
+
+Reside in the `grails-app/views` directory and are typically rendered automatically (by convention) or with the `render` method
+
+A view has a model, supplied from the controller With variables
+
+
+[source,groovy,indent=0]
+.shipSearchController.groovy
+----
+def statistics() {
+    [numberOfShips: 42, averagePopulation: 1337] // <1>
+}
+----
+<1> The map returned in the controller is the model
+
+== Using variables from the Model
+
+[source,html,indent=0]
+.views/shipSearch/statistics.gsp
+----
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Statistics</title>
+  </head>
+
+  <body>
+    <dl>
+        <dt>Number of ships</dt>
+        <dd>${numberOfShips}</dd>
+        <dt>Average population</dt>
+        <dd>${averagePopulation}</dd>
+    </dl>
+  </body>
+</html>
+----
+
+
+
+// Variables and Scopes
+
+== GSP Tags
+
+Types of tags
+
+8.2.2.1Variables and Scopes
+8.2.2.2Logic and Iteration
+8.2.2.3Search and Filtering
+8.2.2.4Links and Resources
+8.2.2.5Forms and Fields
+8.2.2.6Tags as Method Calls
+
+
+== Views and Templates
+
+
+== Layouts with Sitemesh
+
+
+== Using Asset Pipeline
+
+
+
+== Sitemesh Content Blocks
+
+
+== TagLibraries - TagLibs
+
+* Variables and Scopes
+* Simple Tags
+* Logical Tags
+* Iterative Tags
+
+* Tag Namespaces
+
+
+* Tag return value
+
+
+== Best practices
+
+*
+
+== Exercise
+
+IMPORTANT: Implement GUI for the tasks
+
+== Literature
+
+* http://grails.github.io/grails-doc/2.4.4/guide/theWebLayer.html[]
+
+

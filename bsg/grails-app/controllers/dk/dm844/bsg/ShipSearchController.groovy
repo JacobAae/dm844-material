@@ -50,6 +50,11 @@ class ShipSearchController {
         render("Logging demo")
     }
 
+
+    def statistics() {
+        [numberOfShips: 42, averagePopulation: 1337] // <1>
+    }
+
 }
 
 class SearchCommand {
