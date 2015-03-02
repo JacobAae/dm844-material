@@ -123,7 +123,7 @@ Result:
 
  Shipname: xxx - crew: 100 - 200
 
-
+TIP: You can also use `new Ship(params)` if your parameter names match those of your object
 
 == Databinding from parameters
 
@@ -436,8 +436,12 @@ In interactive mode
 
 == Best practices
 
-* Must be thin
-* Logic placed in services
+* Controllers must be thin
+** Logic placed in services
+* Use the smartest databinding method - depending on your problem
+** Command objects can encapsulate business logic
+
+
 
 == Exercise
 
