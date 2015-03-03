@@ -72,6 +72,10 @@ class ShipSearchController {
 		render( view: 'showShip', model: [ship: new Ship(name: 'Battlestar Galactica', crewsize: 2450)])
 	}
 
+    def chuckNorris() {
+
+    }
+
 }
 
 class SearchCommand {

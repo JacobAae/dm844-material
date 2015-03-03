@@ -302,6 +302,9 @@ If you share across controllers, you must give the full path
 ----
 
 
+== TagLibs
+
+image::caprica6-2.jpg[]
 
 == Tag Libraries
 
@@ -311,7 +314,7 @@ Or in interactive mode
 
  create-tag-lib dk.dm844.bsg.ShipTagLib
 
-INFO: Lets make a TagLib to help us render information depending on the shiptype and the crew
+TIP: Lets make a TagLib to help us render information depending on the shiptype and the crew
 
 <<<
 
@@ -416,9 +419,79 @@ In the taglib
 <bsg:rallyingCry/>
 ----
 
+
 == Testing TagLibs
 
-TODO
+image::helo-chief.jpg[]
+
+== Testing TagLibs
+
+
+Simple taglibs are usually easy to test
+
+[source,groovy,indent=0]
+----
+void "Test rallying cry!"() {
+    expect:
+    tagLib.rallyingCry() == '<h1>So Say We All!!!</h1>'
+}
+----
+
+== Testing TagLibs
+
+Conditional should be tested both for positive and negative outcomes
+
+[source,groovy,indent=0]
+----
+void "Test isMilitary"() {
+    expect:
+    tagLib.isMilitary(ship: ship , bodyClosure )  == result
+
+    where:
+    ship                                    | bodyClosure       || result
+    new Ship(shiptype: Shiptype.FREIGHT)    | { -> 'XXXXX'}     || ''
+    new Ship(shiptype: Shiptype.MILITARY)   | { -> 'XXXXX'}     || 'XXXXX'
+}
+----
+
+
+== What about this
+
+The service method returns a random quote! If this is part of a taglib, how would we test it?
+
+[source,groovy,indent=0]
+----
+QuoteService quoteService
+
+def randomQuote = {
+    String quote = quoteService.randomQuote
+    out << "<h2> $quote </h2>"
+}
+----
+
+The service returning random quotes is hard to control.
+
+
+== Mocking services
+
+[source,groovy,indent=0]
+----
+void "Test randomQuote"() {
+    setup:
+    tagLib.quoteService = Mock(QuoteService)
+
+    when:
+    String output = tagLib.randomQuote()
+
+    then:
+    1 * tagLib.quoteService.randomQuote >> { "William Adama: So say We All!" }
+    output == "<h2> William Adama: So say We All! </h2>"
+}
+----
+
+And stubbing the method call
+
+TIP: How else could this have been done?
 
 
 == Layouts with Sitemesh
@@ -471,6 +544,12 @@ Adding
 To your url lets you see the generated source code
 
 
+
+== Exercises
+
+* Finish controllers and views for searching for ships and displaying the result
+* Make views showing the statistics for ships (largest, smallest, number of ships, average crewmembers, etc.)
+** Consider how you will transfer the result from the service to the view.
 
 
 == Litterature
