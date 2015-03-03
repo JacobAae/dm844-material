@@ -2,7 +2,7 @@
 
 == Scenario
 
-Today, we will mkae the GUI for searching for ships based on their name or number of persons onboard (in a range) available as a web-service, and a service to show some statistics
+Today, we will make the GUI for searching for ships based on their name or number of persons onboard (in a range) available as a web-service, and a service to show some statistics
 
 
 == Views - Groovy Server Pages
@@ -65,10 +65,125 @@ def statistics() {
     </dl>
   </body>
 </html>
+=======
+
+== GSP Basics
+
+* GSP = Groovy Servers Pages
+* Lives in `grails-app/views`
+* Typically a mix of mark-up (HTML) and GSP tags which aid in view rendering
+
+
+== Values from the model
+
+When your controller returns a map with parameters
+
+[source,groovy,indent=0]
+----
+def showShip() {
+	[ship: new Ship(name: 'Battlestar Galactica', crewsize: 2450)]
+}
+----
+
+or you explicitly shows a view with the model
+
+[source,groovy,indent=0]
+----
+def show() {
+	render( view: 'showShip', model: [ship: new Ship(name: 'Battlestar Galactica', crewsize: 2450)])
+}
+----
+
+<<<
+
+You can access the variables in your vies like this
+
+[source,html,indent=0]
+.views/shipSearch/showShip.gsp
+----
+<%@ page contentType="text/html;charset=UTF-8" %>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	Ship name: ${ship.name}
+	Crewsize: ${ship.crewsize}
+</body>
+</html>
+----
+
+== Comments in GSP
+
+Comments can be made like this
+
+[source,html,indent=0]
+----
+<%-- This is my comment --%>
+----
+
+And they are not rendered into your html output. HTML style comments like this are:
+
+[source,html,indent=0]
+----
+<!-- This is included in the output -->
 ----
 
 
 
+
+
+== GSP Tags
+
+GSP tags from Grails starts with `g:`, and look like this
+
+[source,html,indent=0]
+----
+<g:example />
+----
+
+or
+
+[source,html,indent=0]
+----
+<g:example>
+   Hello world
+</g:example>
+----
+
+== Types of tags
+
+There are types for different tasks
+
+*  Logic and Iteration
+* Search and Filtering
+* Links and Resources
+* Variables and Scopes
+* Forms and Fields
+
+
+== Logic and Iteration
+
+
+[source,html,indent=0]
+----
+<g:if test="${ship.crewmembers}">
+	<h3>Crewmembers</h3>
+	<ul>
+		<g:each in="${ship.crewmembers}" var="crewmember">
+			<li>${crewmember.name}</li>
+		</g:each>
+	</ul>
+</g:if>
+<g:else>
+	<p>No crewmembers registrered</p>
+</g:else>
+>>>>>>> dee6c71d1fee987e353251bb40dd8b83e3f5367e
+----
+
+
+
+<<<<<<< HEAD
 // Variables and Scopes
 
 == GSP Tags
@@ -81,44 +196,284 @@ Types of tags
 8.2.2.4Links and Resources
 8.2.2.5Forms and Fields
 8.2.2.6Tags as Method Calls
+=======
+== Search and Filtering
+
+[source,html,indent=0]
+----
+<g:findAll in="${ship.crewmembers}" expr="it.solvedCrisis.size()">
+	<p>Crisis solver: ${it.name}</p>
+</g:findAll>
+----
+
+TIP: Use this with caution. Logic should not be placed in the view :(
+
+
+== Links and Resources
+
+Links
+
+[source,html,indent=0]
+----
+<g:link controller="ship" action="show" id="1">Ship 1</g:link>
+
+<g:link url="[controller: 'ship', action: 'show', id: 2 ]">Ship 2</g:link>
+----
+
+Image
+
+[source,html,indent=0]
+----
+<asset:image src="Code-comments.jpg"/>
+----
+
+With the image placed in `grails-app/assets/images`
+
+TIP: The asset pipeline plugin is the recommended way for including images, javascript and css
+
+
+== Forms and Fields
+
+
+[source,html,indent=0]
+----
+<g:form controller="shipSearch" action="search">
+	<label for="shipname">Shipname</label>
+	<g:textField name="shipname" value="${searchInputCommand.shipname}" placeholder="Input shipname"/>
+
+	<label for="minCrew">Minimum crewsize</label>
+	<g:field type="number" name="minCrew" value="${searchInputCommand.minCrew}" placeholder="Min. crewsize"/>
+
+	<label for="maxCrew">Maximum crewsize</label>
+	<g:field type="number" name="maxCrew" value="${searchInputCommand.maxCrew}" placeholder="Max crewsize"/>
+
+	<g:submitButton name="Submit">Search</g:submitButton>
+</g:form>
+----
+
+== Field types
+
+* _textField_ - For input fields of type 'text'
+* _passwordField_ - For input fields of type 'password'
+* _checkBox_ - For input fields of type 'checkbox'
+* _radio_ - For input fields of type 'radio'
+* _hiddenField_ - For input fields of type 'hidden'
+* _select_ - For dealing with HTML select boxes
+
+
+
+== Variables and formatting
+
+You can set variables in GSP
+
+[source,html,indent=0]
+----
+<g:set var="now" value="${new Date()}"  />
+<g:formatDate date="${now}" format="yyyy-MM-dd"/>
+----
+
+And there are a few tags to help you display values
+
+
+== Tags as Method Calls
+
+TIP: All tags can be used as method calls in a controller or a TagLib by `g.tagName()`
+
 
 
 == Views and Templates
 
+Templates are partial views, and are prefixed with an underscore
 
-== Layouts with Sitemesh
+ app/views/ship/_form.gsp
+
+Which is reused in create and update like this:
+
+[source,html,indent=0]
+----
+<g:render template="form"/>
+----
+
+If you share across controllers, you must give the full path
+
+[source,html,indent=0]
+----
+<g:render template="/person/form"/>
+----
 
 
-== Using Asset Pipeline
+
+== Tag Libraries
+
+To create a tag library create a Groovy class that ends with the convention `TagLib` and place it within the `grails-app/taglib` directory
+
+Or in interactive mode
+
+ create-tag-lib dk.dm844.bsg.ShipTagLib
+
+INFO: Lets make a TagLib to help us render information depending on the shiptype and the crew
+
+<<<
+
+[source,groovy,indent=0]
+----
+package dk.dm844.bsg
+
+class ShipTagLib {
+    static defaultEncodeAs = [taglib:'html']
+    //static encodeAsForTags = [tagName: [taglib:'html'], otherTagName: [taglib:'none']]
+}
+----
+
+<<<
 
 
 
-== Sitemesh Content Blocks
+[source,groovy,indent=0]
+----
+def info = {
+	out << "<p>actionName: ${actionName}</p>"
+	out << "<p>controllerName: ${controllerName}</p>"
+	out << "<p>flash: ${flash}</p>"
+	out << "<p>params: ${params}</p>"
+	out << "<p>session: ${session}</p>"
+}
+----
 
+== Types of TagLibs
 
-== TagLibraries - TagLibs
-
-* Variables and Scopes
-* Simple Tags
+*  Simple Tags
 * Logical Tags
 * Iterative Tags
 
-* Tag Namespaces
+
+== Simple Tags
+
+Just output something, with no body
+
+[source,groovy,indent=0]
+----
+package dk.dm844.bsg
+
+class ShipTagLib {
+    static defaultEncodeAs = [taglib:'html']
+    static encodeAsForTags = [rallyingCry: [taglib:'none']]
+
+	def rallyingCry = {
+		out << "<h1>So Say We All!!!</h1>"
+	}
+}
+----
+
+[source,groovy,indent=0]
+----
+<g:rallyingCry/>
+----
+
+== Logical Tags
+
+[source,groovy,indent=0]
+----
+def isMilitary = { attrs, body ->
+	Ship ship = attrs.ship
+	if( ship?.shiptype == Shiptype.MILITARY ) {
+		out << body()
+	}
+}
+----
+
+== Iterative Tags
+
+[source,groovy,indent=0]
+----
+def repeat = { attrs, body ->
+    attrs.times?.toInteger()?.times { num ->
+        out << body(num)
+    }
+}
+----
 
 
-* Tag return value
+[source,groovy,indent=0]
+----
+<g:repeat times="3">
+	<p>Repeat this 3 times! Current repeat = ${it}</p>
+</g:repeat>
+----
 
 
-== Best practices
 
-*
 
-== Exercise
+== Tag Namespaces
 
-IMPORTANT: Implement GUI for the tasks
+In the taglib
 
-== Literature
+ static namespace = "bsg"
+
+
+[source,groovy,indent=0]
+----
+<bsg:rallyingCry/>
+----
+
+== Testing TagLibs
+
+TODO
+
+
+== Layouts with Sitemesh
+
+Layouts are located in the `grails-app/views/layouts` directory
+
+And uses 3 tags
+
+* `layoutTitle` - outputs the target page's title
+* `layoutHead` - outputs the target page's head tag contents
+* `layoutBody` - outputs the target page's body tag contents
+
+
+== Basic layout
+
+[source,html,indent=0]
+----
+<%@ page contentType="text/html;charset=UTF-8" %>
+<html>
+<head>
+	<title>So say we all: <g:layoutTitle/></title>
+	<g:layoutHead/>
+</head>
+<body>
+	<h1>So say we all!</h1>
+	<g:layoutBody/>
+	<p>-----------------------------------</p>
+</body>
+</html>
+----
+
+== Applying a layout
+
+In the controller, define:
+
+ static layout = 'customer'
+
+By convention: Naming your layout the same as your controller.
+
+Or in the head of the gsp:
+
+ <meta name="layout" content="ship" />
+
+
+== GSP Debugging
+
+Adding
+ ?showSource=true
+
+To your url lets you see the generated source code
+
+
+
+
+== Litterature
 
 * http://grails.github.io/grails-doc/2.4.4/guide/theWebLayer.html[]
-
 

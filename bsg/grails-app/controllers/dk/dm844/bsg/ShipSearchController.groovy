@@ -7,6 +7,8 @@ class ShipSearchController {
 
     ShipSearchService shipSearchService
 
+	static defaultAction = "searchForShip"
+
     def index() {
         render("This is the default action")
     }
@@ -35,10 +37,17 @@ class ShipSearchController {
     }
 
 
+	def searchForShip() {
+		[searchInputCommand: new SearchCommand()]
+	}
 
     def search(SearchInputCommand command) {
         List<Ship> ships = shipSearchService.searchForShips(command)
-        render( "command: $command, ships. $ships" )
+	    if(command.hasErrors()) {
+		    render( view: 'searchForShip', model: [searchInputCommand: command])
+		    return
+	    }
+        [ships: ships]
     }
 
     def showLogging() {
@@ -54,6 +63,14 @@ class ShipSearchController {
     def statistics() {
         [numberOfShips: 42, averagePopulation: 1337] // <1>
     }
+
+	def showShip() {
+		[ship: new Ship(name: 'Battlestar Galactica', crewsize: 2450)]
+	}
+
+	def show() {
+		render( view: 'showShip', model: [ship: new Ship(name: 'Battlestar Galactica', crewsize: 2450)])
+	}
 
 }
 
