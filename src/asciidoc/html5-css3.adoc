@@ -59,6 +59,120 @@ Some replaced by better options
 * dir -> ul .
 
 
+== Invalid attributes
+
+
+* align
+* link , vlink , alink , and text attributes on the body tag
+* bgcolor
+* height and width
+* scrolling on the iframe element
+* valign
+* hspace and vspace
+* cellpadding , cellspacing , and border on table
+
+
+== Common bad practice
+
+Using too many `div` elements
+
+[source,html,indent=0]
+----
+<div id="content">
+	<div id="navigation_wrapper">
+		<div id="navigationbar">
+			Some navigation bar markup
+		</div>
+	</div>
+</div>
+----
+
+
+== Use instead
+
+* `<header>` A header region of a page or section.
+* `<footer>` A footer region of a page or section.
+* `<nav>` A navigation region of a page or section.
+* `<section>` A logical region of a page or a grouping of content.
+* `<article>` An article or complete piece of content.
+* `<aside>` Secondary or related content.
+
+
+== Basic structure and doctype
+
+[source,html,indent=0]
+.index.html
+----
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta charset="utf-8">
+		<title>Battlestar Galactica Database</title>
+	</head>
+	<body>
+	</body>
+</html>
+----
+
+Gone is the old doctype
+
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+== Headers and footers
+
+*Headers*
+
+* Headers may contain different content, not just a `h1` tag.
+* Each section may have its own header.
+
+*Footer*
+
+* Common for navigation structure
+* Multiple footers allowed in specification
+
+TIP: Add a unique id, so you can locate the element
+
+[source,html,indent=0]
+----
+<header id="page_header">
+	<h1>Battlestar Galactica - Ships</h1>
+</header>
+----
+
+== Navigation
+
+Explicitly marking up navigation with the `nav` element is best practice, to help screen-readers etc.
+
+[source,html,indent=0]
+----
+<nav id="main_page_navigation">
+	<ul>
+		<li><a href="#">Ships</a></li>
+		<li><a href="#">Persons</a></li>
+	</ul>
+</nav>
+----
+
+
+== Sections and Articles
+
+* Sections are the logical regions of a page, typically replacing a div.
+* Group together elements, but use `<article>` for the actual content, elements in a list of ships with information, blog posts etc.
+
+*LaTeX equivalent*
+
+* `<section>` -> section
+* `<article>` -> sub-section
+
+
+
+== Asides and Sidebars
+
+
+
+
+
 ////
 
 
@@ -101,6 +215,8 @@ IMPORTANT: Implement and test the statistic task, and your preferred way to sear
 
 == Literature
 
+* http://www.w3.org/TR/html5/[]
+* http://www.w3.org/Style/CSS/current-work[]
 * http://caniuse.com/[]
 
 
