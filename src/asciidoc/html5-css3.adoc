@@ -1,0 +1,107 @@
+= HTML5 and CSS3 (and Less)
+
+== Intro
+
+
+Topics for now
+
+* Will focus on new elements in HTML5
+* CSS
+** Ways to do css
+** Bet practices
+* Less (and why this is better than css)
+
+
+== HTML5
+
+* More-Descriptive Markup
+* Less verbose in some areas
+* Better Forms
+* Advanced Selectors
+* Visual Effects
+* Better support for creating applications
+* Web Sockets
+* Client-Side Storage
+
+<<<
+
+[source,html,indent=0]
+.Before
+----
+<script language="javascript" type="text/javascript">
+----
+
+[source,html,indent=0]
+.after
+----
+<script>
+----
+
+
+== Deprecated markup
+
+* basefont
+* big
+* center
+* font
+* s
+* strike
+* tt
+* u
+* frame
+* frameset
+* noframes
+
+Some replaced by better options
+
+* acronym -> abbr .
+* applet -> object .
+* dir -> ul .
+
+
+////
+
+
+
+[source,html,indent=0]
+.views/gone.gsp
+----
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lost...</title>
+	</head>
+	<body>
+      <h1>
+		He's Gone, Jim - he's dead!
+	  </h1>
+	  <h2>We really could not find what you were looking for</h2>
+	</body>
+</html>
+----
+
+In interactive mode
+
+ url-mappings-report
+
+
+
+== Best practices
+
+* Controllers must be thin
+** Logic placed in services
+* Use the smartest databinding method - depending on your problem
+** Command objects can encapsulate business logic
+
+
+
+== Exercise
+
+IMPORTANT: Implement and test the statistic task, and your preferred way to search for ships
+
+== Literature
+
+* http://caniuse.com/[]
+
+
+////

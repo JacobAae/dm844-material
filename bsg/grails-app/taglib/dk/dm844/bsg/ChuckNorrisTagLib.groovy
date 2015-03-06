@@ -12,7 +12,6 @@ class ChuckNorrisTagLib {
         JsonSlurper slurper = new JsonSlurper()
         Map jokeMap = slurper.parseText(json)
 
-
         out << jokeMap.value.joke
     }
 
