@@ -242,20 +242,65 @@ h1 {
 }
 ----
 
+Selecting markup element, class or id.
+
+== Selectors (2)
+
 A nice introduction to css selectors: https://css-tricks.com/how-css-selectors-work[]
 
 
+== Styling a table
 
+Styling a table - might be example below
+-Stribing a row (separating content from presentation
+-Aligning data
+
+== Styling forms
+
+Forms udvidet:
+
+autofocus
+
+placeholder
+
+autocomplete="off" for password fields
+
+
+title attribute
+
+== Less intro
+
+   Asset pipeline - less plugin
+
+TODO Make an example, where css duplicates a value -> variables needed.
 
 
 
 ////
 
-TODO Make an example, where css duplicates a value -> variables needed.
 
-Less intro
 
-Asset pipeline - less plugin
+
+
+
+Print-styles
+
+Mobile interfaces
+
+Multicolumn
+
+
+Rounding edges s.153
+
+shadows 157
+
+rotation 161
+
+fonts 164
+
+
+
+
 
 
 Også:
@@ -268,17 +313,16 @@ Codenarc
 Bootstrap intro.
 
 
-Forms udvidet:
-
-autofocus
-
-placeholder
-
-autocomplete="off" for password fields
 
 
 
 
+input[required]:invalid, input[pattern]:invalid{
+border-color: #A5340B;
+}
+input[required]:valid, input[pattern]:valid{
+border-color: #0B9900;
+}
 
 
 

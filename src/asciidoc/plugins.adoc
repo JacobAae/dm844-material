@@ -1,0 +1,168 @@
+= Plugins
+
+== Test coverage
+
+[source,groovy,indent=0]
+.In plugins closure in BuildConfig.groovy
+----
+test(":code-coverage:2.0.3-3") {
+    export = false
+}
+----
+
+And in the bottom, if you wish to exclude a pattern
+
+[source,groovy,indent=0]
+.BuildConfig.groovy
+----
+coverage {
+   exclusions = ["*CodeNarcRules*"]
+}
+----
+
+== Creating a test-coverage report
+
+Run
+
+ grails test-app -coverage
+
+Output
+
+ INFO: Cobertura: Saved information on 136 classes.
+ Done with post processing reports in 8ms
+ | Cobertura Code Coverage Complete (view reports in: /home/jacob/repositories/dm844/website/target/test-reports/cobertura)
+
+== Report
+
+image::coverage-report.png[]
+
+
+== Jenkins Setup (1)
+
+Install the *Cobertura Plugin* in Jenkins, and configure Jenkins to output a xml coverage report
+
+image::coverage-jenkins-2.png[]
+
+
+== Jenkins Setup (2)
+
+Add a Post-build action: _Publish Cobertura Coverage Report_
+
+image::coverage-jenkins-3.png[]
+
+== Jenkins Setup (3)
+
+After a few builds, the job should have a graph like this:
+
+image::coverage-jenkins-1.png[]
+
+If you wish to publish your report, you will have to configure Jenkins to copy the report similar to the standard test-report
+
+
+== Notes
+
+TIP: Test coverage only show what you do NOT test. It does not show if you are testing the right values, border-values etc.
+
+
+
+== Codenarc
+
+[source,groovy,indent=0]
+.In plugins closure in BuildConfig.groovy
+----
+compile ":codenarc:0.23"
+----
+
+And in the bottom
+
+[source,groovy,indent=0]
+.BuildConfig.groovy
+----
+codenarc {
+
+    ruleSetFiles = "file:grails-app/conf/CodeNarcRules.groovy"
+
+    reports = {
+        MyXmlReport('xml') {
+            outputFile = 'target/codenarc/CodeNarc-Report.xml'
+            title = 'DM844 Website Report'
+        }
+        MyHtmlReport('html') {
+            outputFile = 'target/codenarc/CodeNarc-Report.html'
+            title = 'DM844 Website Report'
+        }
+    }
+}
+----
+
+Add the content from this file http://codenarc.sourceforge.net/StarterRuleSet-AllRulesByCategory.groovy.txt[]
+to _grails-app/conf/CodeNarcRules.groovy_
+
+== Configuring Codenarc
+
+You can add priority, exclude files a rule should not be applied to, configure parameters, etc
+
+[source,groovy,indent=0]
+----
+EmptyMethod( priority:1 )
+...
+LineLength(length: 100)
+...
+MethodName ( doNotApplyToClassNames: '*Spec' )
+...
+//UnnecessaryGString
+----
+
+
+== Creating a test-coverage report
+
+Run
+
+ grails test-app codenarc
+
+Output
+
+ Adding report MyXmlReport
+ Adding report MyHtmlReport
+ Running CodeNarc (file:grails-app/conf/CodeNarcRules.groovy) ...
+ | Compiling 39 source files...
+ CodeNarc finished; report(s) generated: [target/codenarc/CodeNarc-Report.xml, target/codenarc/CodeNarc-Report.html]
+
+
+== Report
+
+image::codenarc-report.png[]
+
+
+== Jenkins Setup
+
+Install the *Violations plugin* in Jenkins
+
+image::codenarc-jenkins-2.png[]
+
+
+== Jenkins Setup (2)
+
+Add a Post-build action: _Report Violations_
+
+image::codenarc-jenkins-3.png[]
+
+== Jenkins Setup (3)
+
+After a few builds, the job should have a graph like this:
+
+image::codenarc-jenkins-1.png[]
+
+If you wish to publish your report, you will have to configure Jenkins to copy the report similar to the standard test-report
+
+
+
+
+== Literature
+
+* https://grails.org/plugin/code-coverage[]
+* https://grails.org/plugin/codenarc[]
+* http://codenarc.sourceforge.net/[]
+* http://codenarc.sourceforge.net/StarterRuleSet-AllRulesByCategory.groovy.txt[]
+
+
