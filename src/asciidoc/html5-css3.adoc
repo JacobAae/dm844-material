@@ -1,4 +1,4 @@
-= HTML5 and CSS3 (and Less)
+= HTML5 and CSS3
 
 == Intro
 
@@ -8,8 +8,7 @@ Topics for now
 * Will focus on new elements in HTML5
 * CSS
 ** Ways to do css
-** Bet practices
-* Less (and why this is better than css)
+** Best practices
 
 
 == HTML5
@@ -185,9 +184,6 @@ Do not use for
 
 
 
-
-
-
 == Styling - CSS
 
 Inline style (Bad style)
@@ -244,71 +240,533 @@ h1 {
 
 Selecting markup element, class or id.
 
-== Selectors (2)
+== Attribute Selector
 
-A nice introduction to css selectors: https://css-tricks.com/how-css-selectors-work[]
+[source,css,indent=0]
+----
+[data-count="5"] {
+	// Style
+}
+----
+
+Will match
+
+[source,html,indent=0]
+----
+<div data-count="5">Bla</div>
+----
+
+== Positional Selectors
+
+[source,css,indent=0]
+----
+ul li:nth-child(3) {
+	/* Selects the third list item */
+}
+
+ul li:nth-child(even) {
+	/* Selects the even list items */
+}
+
+ul li:nth-child(3n+1) {
+	/* Selects every third list item */
+}
+----
+
+
+== Combining Selectors
+
+[source,css,indent=0]
+----
+.bsg.ships {
+	color: #DD0707;
+}
+----
+
+Will match elements that have both the _bsg_ and the _ships_ class
+
+
+== Pseudo Selectors
+
+[source,css,indent=0]
+----
+div:empty {
+
+}
+----
+
+Will match
+
+[source,html,indent=0]
+----
+<div></div>
+----
+
+But noy
+[source,html,indent=0]
+----
+<div> </div>
+----
+
+== Direct children
+
+[source,css,indent=0]
+----
+.bsg > p {
+}
+----
+
+Select p elements that are direct children of an element of the bsg class
+
+
+== Directly following
+
+[source,css,indent=0]
+----
+div + p {
+}
+----
+
+Select p elements that are directly following a div element
+
+
+== Directly following sieblings
+
+[source,css,indent=0]
+----
+p ~ p {
+}
+----
+
+Select p elements that are siblings and directly following another p element.
+
 
 
 == Styling a table
 
-Styling a table - might be example below
--Stribing a row (separating content from presentation
--Aligning data
+[source,html,indent=0]
+----
+<table>
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Type</th>
+			<th>Crewsize</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Battlestar Galactica</td>
+			<td>Military</td>
+			<td>2741</td>
+		</tr>
+		<tr>
+			<td>Cloud 9</td>
+			<td>Recreational</td>
+			<td>5214</td>
+		</tr>
+		<tr>
+			<td>Colonial One</td>
+			<td>Administration</td>
+			<td>142</td>
+		</tr>
+	</tbody>
+	<tfoot>
+		<tr>
+			<td>Total</td>
+			<td></td>
+			<td>8124</td>
+		</tr>
+	</tfoot>
+</table>
+----
+
+== Css for the table
+
+[source,css,indent=0]
+.Overall styling
+----
+table {
+	border-collapse: collapse;
+	width: 800px;
+}
+----
+
+
+[source,css,indent=0]
+.Inverted header and footer
+----
+tfoot tr td, th {
+	background-color: #00f;
+	color: #fff;
+}
+----
+
+
+[source,css,indent=0]
+.Striping
+----
+tbody tr:nth-of-type(odd) {
+	background-color: #cff0ff;
+}
+----
+
+
+[source,css,indent=0]
+.Last column right justified
+----
+th:nth-child(3), td:nth-child(3) {
+	text-align: right;
+}
+----
+
 
 == Styling forms
 
-Forms udvidet:
+[source,html,indent=0]
+----
+<form method="post" action="/projects/1">
+	<fieldset id="personal_information">
+		<legend>Project Information</legend>
+		<ol>
+			<li>
+				<label for="name">Name</label>
+				<input type="text" name="name" id="name"></li>
+			<li>
+				<label for="priority">Priority</label>
+				<input type="range" min="0" max="10"
+				       name="priority" value="0" id="priority"></li>
+			<li>
+				<label for="estimated_hours">Estimated Hours</label>
+				<input type="number" name="estimated_hours"
+				       min="0" max="1000" id="estimated_hours"></li>
+			<li>
+				<label for="start_date">Start date</label>
+				<input type="date" name="start_date" id="start_date"
+				       value="2013-12-01"></li>
+			<li>
+				<label for="email">Email contact</label>
+				<input type="email" name="email" id="email"></li>
+			<li>
+				<label for="url">Staging URL</label>
+				<input type="url" name="url" id="url"></li>
+			<li>
+				<label for="project_color">Project color</label>
+				<input type="color" name="project_color" id="project_color"></li>
+			<li>
+				<input type="submit" value="Submit"></li>
+		</ol>
+	</fieldset>
+</form>
+----
 
-autofocus
+== Styling forms
 
-placeholder
+[source,html,indent=0]
+.Autofocus
+----
+<input type="email" name="email" id="email" autofocus>
+----
 
-autocomplete="off" for password fields
+You should only have one element with autofocus on each page
+
+[source,html,indent=0]
+.Autofocus
+----
+<input type="email" name="email" id="email" placeholder="Email address">
+----
 
 
-title attribute
+[source,html,indent=0]
+.autocomplete="off" for password fields
+----
+<input type="password" name="password" id="password" autocomplete="off">
+----
+
+[source,html,indent=0]
+.Title attribute for 'tooltip'
+----
+<input type="password" name="password" id="password" title="Must be at least 8 characters">
+----
+
+
+== Show Missing/invalid Input
+
+[source,css,indent=0]
+----
+input[required]:invalid, input[pattern]:invalid{
+	border-color: #red;
+}
+input[required]:valid, input[pattern]:valid{
+	border-color: #0B9900;
+}
+----
+
+
+
+
+== Rounding edges etc.
+
+[source,html,indent=0]
+----
+<form method="post" action="/somewhere" class="nameinput-form">
+	<fieldset id="nameinput">
+		<legend>Name input</legend>
+		<ol>
+			<li>
+				<label for="name">Name</label>
+				<input type="text" name="name" id="name">
+			</li>
+		</ol>
+	</fieldset>
+</form>
+----
+
+image:name-input-unstyled.png[]
+
+<<<
+
+[source,css,indent=0]
+----
+.nameinput-form fieldset{
+	background-color: #ccd0dd;
+	border: none;
+}
+
+.nameinput-form legend{
+	background-color:  #ccd0dd;
+	padding: 5px 50px 5px 15px;
+}
+
+.nameinput-form ol{
+	list-style: none;
+}
+
+.nameinput-form li{
+	margin: 9px 0 9px 0;
+}
+.nameinput-form input{
+	background-color: #fff;
+	color: #000;
+	border: 2px solid #ccd0dd;
+	display:block;
+	width: 300px;
+}
+
+.nameinput-form input, .nameinput-form fieldset, .nameinput-form legend{
+	border-radius: 8px;
+}
+----
+
+<<<
+
+image:name-input-styled.png[]
+
+
+== Logo with Shadows
+
+
+[source,html,indent=0]
+----
+<section id="logo">
+	<h2>BSG</h2>
+	<h3>Ships and Crews</h3>
+</section>
+----
+
+Looks like this with basic styling
+
+image:bsg-logo-basic.png[]
+
+<<<
+
+[source,css,indent=0]
+.The basic styling
+----
+#logo {
+	border: 2px solid #000;
+	display: block;
+	text-align: center;
+	width: 200px;
+}
+#logo h2{
+	color: #454545;
+	margin: 0;
+	font-size: 40px;
+}
+#logo h3{
+	background-color: #454545;
+	color: #fff;
+	margin: 0;
+}
+----
+
+<<<
+
+[source,css,indent=0]
+----
+#logo {
+	border: 2px solid #000;
+	box-shadow: 5px 5px 5px 0px #333; <1>
+	display: block;
+	text-align: center;
+	width: 200px;
+}
+----
+
+<1> Box shadow: `box-shadow: h-shadow v-shadow blur spread color ;`
+
+. *h-shadow* The position of the horizontal shadow. Negative values are allowed
+. *v-shadow* The position of the vertical shadow. Negative values are allowed
+. *blur* The blur distance
+. *spread* The size of shadow. Negative values are allowed
+. *color*
+
+
+<<<
+
+<<<
+
+[source,css,indent=0]
+----
+#logo h2{
+	color: #454545;
+	text-shadow: 2px 2px 2px #bbbbbb; <1>
+	margin: 0;
+	font-size: 40px;
+}
+----
+
+<1> Text shadow: `text-shadow: h-shadow v-shadow blur-radius color ;`
+
+. *h-shadow* The position of the horizontal shadow. Negative values are allowed
+. *v-shadow* The position of the vertical shadow. Negative values are allowed
+. *blur-radius* The blur radius. Default value is 0
+. *color*
+
+
+<<<
+
+image::bsg-logo-shadow.png[]
+
+
+== Rotation
+
+[source,css,indent=0]
+----
+#logo {
+	border: 2px solid #000;
+	box-shadow: 5px 5px 5px 0px #333;
+	display: block;
+	text-align: center;
+	width: 200px;
+
+	margin: 20px;
+
+	-webkit-transform: rotate(-9deg);
+	-moz-transform: rotate(-9deg);
+	-ms-transform: rotate(-9deg);
+	-o-transform: rotate(-9deg);
+	transform: rotate(-9deg);
+}
+----
+
+<<<
+
+image::bsg-logo-rotated.png[]
+
+== Fonts
+
+[source,html,indent=0]
+.In the head section
+----
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lobster">
+----
+
+
+[source,css,indent=0]
+.Stylesheet
+----
+.lobster {
+    font-family: 'Lobster', serif;
+    font-size: 48px;
+}
+----
+
+[source,html,indent=0]
+----
+<section class="lobster">
+	<h1>The Quick Brown Fox Jumped over the lazy dog</h1>
+</section>
+----
+
+
+
+
+== Print-styles
+
+[source,html,indent=0]
+----
+<style media="print">
+	a:after {
+		content: " (" attr(href) ") ";
+	}
+</style>
+----
+
+Styles only for printing is made with `media="print` (preferably as an external stylesheet).
+Here, we print the links after the name of it
+
+
+
+
+== Mobile /Media Queries
+
+Media queries can get
+
+* Resolution
+* Orientation (portrait or landscape mode)
+* Device width and height
+* Width and height of the browser window
+
+And we can make stylesheets based on this
+
+
+
+[source,css,indent=0]
+----
+@media screen and (max-width: 800px) {
+	body {
+		color: magenta;
+	}
+}
+@media screen and (min-width: 800px) and (max-width: 1000px) {
+	body {
+		color: red;
+	}
+}
+----
+
+
+
+== Literature
+
+* http://www.w3.org/TR/html5/[]
+* http://www.w3.org/Style/CSS/current-work[]
+* http://www.w3.org/TR/css3-mediaqueries[]
+* https://css-tricks.com/almanac/[]
+* http://caniuse.com/[]
+* https://developers.google.com/fonts/docs/getting_started[]
+
+
+////
+
 
 == Less intro
 
    Asset pipeline - less plugin
 
 TODO Make an example, where css duplicates a value -> variables needed.
-
-
-
-////
-
-
-
-
-
-
-Print-styles
-
-Mobile interfaces
-
-Multicolumn
-
-
-Rounding edges s.153
-
-shadows 157
-
-rotation 161
-
-fonts 164
-
-
-
-
-
-
-Også:
-
-Test coverage
-
-Codenarc
-
 
 Bootstrap intro.
 
@@ -317,58 +775,19 @@ Bootstrap intro.
 
 
 
-input[required]:invalid, input[pattern]:invalid{
-border-color: #A5340B;
-}
-input[required]:valid, input[pattern]:valid{
-border-color: #0B9900;
-}
-
-
 
 [source,html,indent=0]
 .views/gone.gsp
 ----
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Lost...</title>
-	</head>
-	<body>
-      <h1>
-		He's Gone, Jim - he's dead!
-	  </h1>
-	  <h2>We really could not find what you were looking for</h2>
-	</body>
-</html>
+
 ----
 
-In interactive mode
 
- url-mappings-report
+[source,groovy,indent=0]
+.views/gone.gsp
+----
 
-
-
-== Best practices
-
-* Controllers must be thin
-** Logic placed in services
-* Use the smartest databinding method - depending on your problem
-** Command objects can encapsulate business logic
-
-
-
-== Exercise
-
-IMPORTANT: Implement and test the statistic task, and your preferred way to search for ships
-
-== Literature
-
-* http://www.w3.org/TR/html5/[]
-* http://www.w3.org/Style/CSS/current-work[]
-* http://caniuse.com/[]
-
-* https://css-tricks.com/how-css-selectors-work[]
+----
 
 
 ////
