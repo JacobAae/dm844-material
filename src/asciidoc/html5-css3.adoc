@@ -167,13 +167,118 @@ Explicitly marking up navigation with the `nav` element is best practice, to hel
 
 
 
-== Asides and Sidebars
+== Asides
+
+*`<aside>`* nested in article
+
+Use for fx
+
+* pull quotes
+* diagrams
+* additional thoughts
+' related links
+
+Do not use for
+
+* global sidebar -> use section
+
+
+
+
+
+
+
+== Styling - CSS
+
+Inline style (Bad style)
+
+[source,html,indent=0]
+----
+<h1 style="color: #1A4491">BSG</h1>
+----
+
+In header
+
+[source,html,indent=0]
+----
+<style>
+    h1 {
+        color: #255b17;
+    }
+</style>
+----
+
+In separate file
+
+[source,css,indent=0]
+.style.css
+----
+h1 {
+    color: #255b17;
+}
+----
+
+
+== Selectors
+
+[source,css,indent=0]
+.style.css
+----
+<h1 class="bsg_header" id="page_header">BSG</h1>
+----
+
+[source,css,indent=0]
+.style.css
+----
+h1 {
+    color: #255b17;
+}
+.bsg_header {
+    padding: 10px;
+}
+#page_header {
+    margin: 5px;
+    border: dashed #006dba 2px;
+}
+----
+
+A nice introduction to css selectors: https://css-tricks.com/how-css-selectors-work[]
+
 
 
 
 
 
 ////
+
+TODO Make an example, where css duplicates a value -> variables needed.
+
+Less intro
+
+Asset pipeline - less plugin
+
+
+Også:
+
+Test coverage
+
+Codenarc
+
+
+Bootstrap intro.
+
+
+Forms udvidet:
+
+autofocus
+
+placeholder
+
+autocomplete="off" for password fields
+
+
+
+
 
 
 
@@ -218,6 +323,8 @@ IMPORTANT: Implement and test the statistic task, and your preferred way to sear
 * http://www.w3.org/TR/html5/[]
 * http://www.w3.org/Style/CSS/current-work[]
 * http://caniuse.com/[]
+
+* https://css-tricks.com/how-css-selectors-work[]
 
 
 ////
