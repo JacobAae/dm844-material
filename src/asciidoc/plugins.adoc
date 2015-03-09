@@ -156,6 +156,117 @@ image::codenarc-jenkins-1.png[]
 If you wish to publish your report, you will have to configure Jenkins to copy the report similar to the standard test-report
 
 
+== Build Test Data
+
+Enables the easy creation of test data by automatic inspection of constraints.
+Any properties that are required have their constraints examined and a value is automatically provided for them.
+
+TIP: Adds a "build" method to all Domain Classes.
+
+*Plugin Objectives*
+
+* You should only need to create those fields and objects that are pertinent to the test.
+** Other test setup is noise that obfuscates the meaning of the test.
+* Tests should not be dependent on other tests, only on the code under test.
+** Therefore, the same test data should not be used by multiple tests, this creates a strong coupling and leads to test fragility.
+* Changes to domain objects that do not affect the the code under test should not break the test.
+
+== Installation
+
+[source,groovy,indent=0]
+.In plugins closure in BuildConfig.groovy
+----
+compile ":build-test-data:2.4.0"
+----
+
+
+== Usage
+
+[source,groovy,indent=0]
+.Ship.groovy
+----
+class Ship {
+
+	String name
+	Shiptype shiptype
+	Integer crewsize
+	Date productionDate
+	String description
+
+	static hasMany = [crewmembers: Person, affectedBy: Crisis]
+
+    static constraints = {
+	    name unique: true, blank: false
+	    crewsize min: 8
+	    description nullable: true, blank: true
+    }
+}
+----
+
+<<<
+
+[source,groovy,indent=0]
+.ShipUnitSpec.groovy
+----
+import spock.lang.Specification
+import grails.buildtestdata.mixin.Build
+
+@Build(Ship)
+class ShipUnitSpec extends Specification {
+
+	void "Show build method"() {
+		setup:
+		Ship.build(name: 'Demetrius')
+
+		when:
+		Ship ship = Ship.findByName('Demetrius')
+
+		then:
+		ship
+		ship.shiptype
+		ship.crewsize == 8
+	}
+}
+----
+
+== Data generators
+
+A sample configuration file is created at `grails-app/conf/TestDataConfig.groovy` if you run:
+
+ grails install-build-test-data-config-template
+
+[source,groovy,indent=0]
+.TestDataConfig.groovy
+----
+testDataConfig {
+    sampleData {
+        'dk.dm844.bsg.Ship' {
+            def i = 1
+            name = {-> "Ship ${i++}" }
+        }
+    }
+}
+----
+
+<<<
+
+[source,groovy,indent=0]
+----
+void "Test DataConfig for name"() {
+	setup:
+	10.times {
+		Ship.build()
+	}
+
+	when:
+	def names = Ship.list()*.name
+	println names
+
+	then:
+	names.every { it ==~ /Ship \d+/ }
+	names.unique().size() == 10
+}
+----
 
 
 == Literature
@@ -164,5 +275,5 @@ If you wish to publish your report, you will have to configure Jenkins to copy t
 * https://grails.org/plugin/codenarc[]
 * http://codenarc.sourceforge.net/[]
 * http://codenarc.sourceforge.net/StarterRuleSet-AllRulesByCategory.groovy.txt[]
-
+* http://grails.org/plugin/build-test-data[]
 
