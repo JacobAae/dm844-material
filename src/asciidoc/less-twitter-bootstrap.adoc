@@ -1,0 +1,370 @@
+= Less css and Twitter Bootstrap
+
+== Intro
+
+* Less intro
+* Some of the features of bootstrap
+* How to use this in a grails context
+** Installing the bootstrap plugin and configuring it
+** Bootswatch - change a theme.
+* Creating a Twitter Bootstrap taglib, and wrapping bootstrap specific code away in it
+
+
+== Less intro
+
+* CSS pre-processor
+* Variables
+* Mixins
+* Functions
+
+
+== Less in Grails
+
+TIP: The asset pipeline has a less extension: http://grails.org/plugin/less-asset-pipeline[]
+
+In BuildConfig
+
+ compile ":less-asset-pipeline:2.0.8"
+
+Upgrade also to
+
+ compile ":asset-pipeline:2.1.4"
+
+Place `.less` fies in the `grails-app/assets/stylesheets` folder
+
+If you place `bsg.less` in that folder, you can include it in the head section of your view with
+
+ <asset:stylesheet src="bsg.css"/>
+
+
+== Variables
+
+* Actual constants
+
+Helps keep your css DRY
+
+
+[source,less,indent=0]
+----
+@bsg-dark-blue: #1d15ba;
+
+h1 {
+  color: @bsg-dark-blue;
+}
+
+label {
+  color: @bsg-dark-blue;
+}
+----
+
+
+== Mixins
+
+
+[source,less,indent=0]
+----
+@bsg-dark-blue: #1d15ba;
+
+.rotation {
+  -webkit-transform: rotate(-2deg);
+  -moz-transform: rotate(-2deg);
+  -ms-transform: rotate(-2deg);
+  -o-transform: rotate(-2deg);
+  transform: rotate(-2deg);
+  padding-bottom: 30px;
+}
+
+h1 {
+  color: @bsg-dark-blue;
+  .rotation
+}
+
+#submit {
+  .rotation
+}
+----
+
+
+== Functions
+
+
+[source,less,indent=0]
+----
+h1 {
+  color: lighten(@bsg-dark-blue , 10%);
+  .rotation
+}
+h2 {
+  color: @bsg-dark-blue;
+  .rotation
+}
+h3 {
+  color: darken( @bsg-dark-blue , 5%);
+  .rotation
+}
+----
+
+Documented here: http://lesscss.org/functions/[]
+
+
+== Twitter Bootstrap
+
+* Framework for HTML, Css and Javascript
+* Helpfull when creating responsive sites (tablets, mobile)
+
+
+== Using with Grails
+
+In BuildConfig
+
+ compile ":twitter-bootstrap:3.3.2.1"
+
+In Config.groovy
+
+ grails.assets.plugin."twitter-bootstrap".excludes = ["**/*.less"]
+ grails.assets.plugin."twitter-bootstrap".includes = ["bootstrap.less"]
+
+
+Create grails-app/assets/stylesheets/custom-bootstrap.less, containing:
+
+ @import "bootstrap.less";
+
+You can override variables in this file.
+
+Then you can include it like this
+
+ <asset:stylesheet src="custom-bootstrap.css"/>
+
+
+
+== Why TagLibs?
+
+See difference from 2.3 to 3.x
+
+A column filling half in version 2.3 is made by adding class `span6`
+
+In version 3.x it is changed to `col-md-6`
+
+TagLibs keep our views DRY, and make it easier to do such upgrades
+
+
+== Alerts TagLib
+
+Check out http://getbootstrap.com/components/#alerts[] - usable for displaying errors etc.
+
+A taglib could look like this:
+
+[source,groovy,indent=0]
+----
+class AlertTagLib {
+
+    static namespace = "tb"
+
+    private final String SUCCESS = 'alert-success'
+    private final String INFO = 'alert-info'
+    private final String WARNING = 'alert-warning'
+    private final String DANGER = 'alert-danger'
+
+    def alertDanger = { attrs, body ->
+        String cssClasses = attrs.cssClasses ?: ''
+        out << alertHelper(DANGER, cssClasses, body)
+    }
+
+    private String alertHelper(String type, String cssClasses , Closure body) {
+        if( ![SUCCESS, INFO, WARNING, DANGER].contains(type) ) {
+            throw new IllegalArgumentException("Alert is not a known kind")
+        }
+        return """<div class="alert ${type} ${cssClasses}" role="alert">${body()}</div>"""
+    }
+}
+----
+
+<<<
+
+Which you can use like this:
+
+[source,html,indent=0]
+----
+<tb:alertDanger cssClasses="myclass">Cylon precence detected!</tb:alertDanger>
+----
+
+== Testing taglibs
+
+We could test it like this
+
+[source,groovy,indent=0]
+----
+void "Test alert danger"() {
+    expect:
+    tagLib.alertDanger( [cssClasses: cssClasses], body ) == result
+
+    where:
+    cssClasses    | body              || result
+    ''            | { 'Hi alert' }    || '<div class="alert alert-danger " role="alert">Hi alert</div>'
+    'myclass'     | { 'Hi alert' }    || '<div class="alert alert-danger myclass" role="alert">Hi alert</div>'
+    null          | { 'Hi alert' }    || '<div class="alert alert-danger " role="alert">Hi alert</div>'
+}
+----
+
+WARNING: This works, but is brittle. Changing whitespace breaks the tests.
+
+== Jsoup
+
+* http://jsoup.org/[]
+* Can parse HTML
+* Usable for more robust testing
+
+<<<
+
+[source,groovy,indent=0]
+----
+void "Test alert danger with Jsoup"() {
+    when:
+    String result = tagLib.alertDanger( [cssClasses: 'class1 class2'], { 'Hi alert' } )
+    def document = Jsoup.parse(result)
+
+    then:
+    document.select('div').hasClass('alert')
+    document.select('div').hasClass('alert-danger')
+    document.select('div').hasClass('class1')
+    document.select('div').hasClass('class2')
+    document.select('div').text().trim() == 'Hi alert'
+}
+----
+
+
+== Testing the GSP
+
+
+[source,groovy,indent=0]
+----
+void "Test taglib as used in a gsp"() {
+    when:
+    String result = applyTemplate('<tb:alertDanger cssClasses="myclass">Cylon precence detected!</tb:alertDanger>')
+    def document = Jsoup.parse(result)
+
+    then:
+    document.select('div').hasClass('alert')
+    document.select('div').hasClass('alert-danger')
+    document.select('div').hasClass('myclass')
+    document.select('div').text().trim() == 'Cylon precence detected!'
+}
+----
+
+
+== Grid TagLib
+
+
+[source,groovy,indent=0]
+----
+class GridTagLib {
+    static defaultEncodeAs = [taglib: 'none']
+
+    static namespace = "tb"
+
+    def row = { attrs , body ->
+        String cssClasses = attrs.cssClasses ?: ''
+        out << """<div class="row ${cssClasses}">"""
+        out << body()
+        out << "</div>"
+    }
+
+    def col6of12 = { attrs , body ->
+        String cssClasses = attrs.cssClasses ?: ''
+        out << """<div class="col-md-6 $cssClasses">"""
+        out << body()
+        out << "</div>"
+    }
+}
+----
+
+<<<
+
+
+[source,html,indent=0]
+----
+<tb:row>
+	<tb:col6of12>
+		<p>Left colunm</p>
+	</tb:col6of12>
+	<tb:col6of12>
+		<p>Right column</p>
+	</tb:col6of12>
+</tb:row>
+----
+
+== Exercise
+
+Make an icon taglib, which wraps the markup for icons:
+
+[source,html,indent=0]
+----
+<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+----
+
+Think about how this should be structured.
+
+<<<
+
+One way could be utilizing Groovys enum abilities:
+
+[source,groovy,indent=0]
+----
+enum Icon {
+
+    YEN('yen'),
+    STAR('star'),
+    FILM('film')
+
+    private final String iconText
+    Icon(String iconText) {
+        this.iconText = iconText
+    }
+
+    public String iconText() {
+        return iconText
+    }
+}
+----
+
+And let the taglib have an Icon as input, and use ´Icon.iconText()´ in the taglib. But other ways are equally fine.
+
+IMPORTANT: You should also make tests for your taglib!
+
+
+== Styling with Twitter Bootstrap
+
+TIP: Demo changing the style of the website, using https://bootswatch.com/[]
+
+
+
+== Literature
+
+* http://lesscss.org/[]
+* http://grails.org/plugin/less-asset-pipeline[]
+* http://getbootstrap.com/[]
+* http://grails.org/plugin/twitter-bootstrap[]
+* http://jsoup.org/[]
+* https://bootswatch.com/[]
+
+////
+
+
+
+
+
+
+[source,html,indent=0]
+.views/gone.gsp
+----
+
+----
+
+
+[source,groovy,indent=0]
+----
+
+----
+
+
+////

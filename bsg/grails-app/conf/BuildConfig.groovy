@@ -72,5 +72,31 @@ grails.project.dependency.resolution = {
         //compile ":less-asset-pipeline:1.10.0"
         //compile ":coffee-asset-pipeline:1.8.0"
         //compile ":handlebars-asset-pipeline:1.3.0.3"
+
+        compile ":codenarc:0.23"
+
+        test(":code-coverage:2.0.3-3") {
+            export = false
+        }
+    }
+}
+
+coverage {
+    exclusions = ["*CodeNarcRules*"]
+}
+
+codenarc {
+
+    ruleSetFiles = "file:grails-app/conf/CodeNarcRules.groovy"
+
+    reports = {
+        MyXmlReport('xml') {
+            outputFile = 'target/codenarc/CodeNarc-Report.xml'
+            title = 'DM844 Website Report'
+        }
+        MyHtmlReport('html') {
+            outputFile = 'target/codenarc/CodeNarc-Report.html'
+            title = 'DM844 Website Report'
+        }
     }
 }

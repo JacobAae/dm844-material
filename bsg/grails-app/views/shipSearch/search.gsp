@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Search</title>
+	<asset:stylesheet src="bsg.css"/>
 </head>
 
 <body>

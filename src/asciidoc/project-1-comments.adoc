@@ -1,0 +1,715 @@
+= Comments - Project 1
+
+
+== General Comments
+
+[options="step"]
+* High quality projects!
+* Many have missed the 'provide me a Jenkins login'
+* Many groups have not tagged their finished project 1 work/suplied a hash/branch
+* Several empty classes/tests etc. located
+* One group promised me a Snickers, if I was reading their commit messages!
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+class Product {
+
+    String productID
+    String description
+    Double pricePerHour
+
+    static hasMany = [employees: Employee, services: Job]
+    static belongsTo = [Employee]
+
+    static constraints = {
+        productID(matches: "^[a-zA-Z0-9]+\$", size: 1..15, unique: true, blank: false)
+        description(size: 1..500, blank: false)
+        pricePerHour(scale: 2)
+    }
+}
+----
+
+<<<
+
+TIP: Use BigDecimal when you are dealing with numbers.
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+class Product {
+	ProductType productType
+    String productID, productName, productLocation
+    int hourlyPrice
+
+    static constraints = {
+        productLocation blank : false, nullable : false
+        productID blank : false, nullable : false
+        productName blank : false, nullable : false
+        hourlyPrice min : 50
+        productType blank : false, nullable : false
+    }
+}
+----
+
+
+<<<
+
+TIP: Don't use simple types. Use Integer
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def getPicture() {
+    return "http://lorempixel.com/150/150/food/$name"
+}
+----
+
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+String toString() {
+    return this.firstName+" "+this.lastName
+}
+----
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+class Employee {
+
+    int empId1
+    String password
+    String position
+    String name
+    int salary
+    String address
+    String private_phone
+    String work_phone
+    String email
+    byte[] photo
+
+    static constraints = {
+      empId1 range: 1..1000, unique: true
+      password size: 6..20
+      position size: 3..255
+      name size: 2..255
+      salary range: 0..1000000
+      address size: 10..255
+      private_phone size: 8..12, matches: "[0-9]+"
+      work_phone size: 8..12, matches: "[0-9]+"
+      email email: true
+      photo minSize: 1, maxSize: 2 * 1024 * 1024
+    }
+    //static belongTo = [employeeSurgery : EmployeeSurgery]
+    static hasMany = [ salariesOld : SalariesOld, empCapabilities : EmpCapabilities, employeeSurgery : EmployeeSurgery, surgery : Surgery ]
+
+}
+----
+
+
+
+
+== Snippets (1)
+
+[source,groovy,indent=0]
+----
+class Employee {
+
+    String employeeID
+    String name
+    Address address
+    Salary salary
+    Rank rank
+
+    static hasMany = [canWork: Product, cleaningJobs: Job, salaryPayments: Payment]
+
+    static constraints = {
+        employeeID(matches: "^[a-zA-Z0-9]+\$", size: 1..15, unique: true, blank: false)
+        name(matches: "^[\\p{L}]*[\\p{L}][\\p{L} -]*\$", size: 1..30, blank: false)
+    }
+}
+----
+
+
+== Snippets (2)
+
+[source,groovy,indent=0]
+----
+    void "Testing name constraints"() {
+        setup:
+        mockDomain(Address)
+        mockDomain(Salary)
+        mockForConstraintsTests(Employee)
+
+        when:
+        def addr = new Address(streetName: 'Gade', streetNumber: 1, houseBlockOrEtage: '', cityCode: 1000, region: '', city: 'By')
+        def sal = new Salary(salaryID: 's1', pay: 34000)
+        def emp = new Employee(employeeID: 'e1', name: a, address: addr, salary: sal, rank: Rank.SENIOR)
+        emp.validate()
+
+        then:
+        emp.hasErrors() == !valid
+
+        where:
+        a           || valid
+        'John'      || true
+        'John Doe'  || true
+        'John-Doe'  || true
+        'John 1'    || false //no numbers
+        '-John'     || false
+        1           || false //no numbers
+        'John ??'   || false //invalid symbol
+        ''          || false //blank
+        null        || false //null
+        ' '         || false //blank
+        'John Doeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' || false //too long
+    }
+----
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+class SalaryServiceSpec extends Specification {
+
+    def setup() {
+    }
+
+    def cleanup() {
+    }
+
+    void "test something"() {
+    }
+}
+----
+
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+class Employee {
+	String name
+	EmployeeType type
+	static hasMany = [salaries: Salary]
+	String streetname
+	Integer zipcode
+	String city
+	static hasOne = [store: Store]
+
+	static constraints = {
+		name unique: true, blank: false
+		streetname nullable: false, blank:false
+		zipcode min: 1000, max: 9999
+		city nullable: false, blank: false
+		salaries nullable: true
+	}
+
+	String toString() {
+		return name
+	}
+}
+----
+
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+@Override
+String toString() {
+    return credentials.name
+}
+----
+
+
+
+
+
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+class Project {
+    Integer idClient
+    String name
+    Date startDate
+    Date endDate
+    Date createdAt
+    Date updatedAt
+    Boolean enabled
+
+    //static hasOne = [team:Team]
+    static hasMany = [resources:Resource]
+
+
+    static constraints = {
+        name unique: true, blank: false
+        endDate(validator: { val, obj ->
+            val?.after(obj.startDate)
+        })
+        updatedAt(validator: {val, obj ->
+            val?.after(obj.createdAt)
+        })
+        //team unique: true
+    }
+}
+----
+
+
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+void testDateNull(){
+    Salary salary = completeSalary
+    salary.timestamp = NULL
+    assertFalse salary.validate()
+    assertEquals 'timestamp cannot be NULL', 'nullable', salary.errors['timestamp']
+}
+----
+
+
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+class Employee {
+
+    String name
+    String surname
+    Date birthdate
+    Double salary
+
+    static hasMany = [skills: Skill]
+    static belongsTo = [team:Team]
+
+    static constraints = {
+        name nullable: false, blank: false
+        surname nullable: false, blank: false
+        salary min:0d
+        team nullable: true
+        birthdate max:new Date(use(TimeCategory){18.years.ago.getTime()})
+
+    }
+}
+----
+
+
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+@TestFor(Home)
+class HomeSpec extends Specification {
+
+    def setup() {
+    }
+
+    def cleanup() {
+    }
+
+    /*void "test something"() {
+    }*/
+}
+----
+
+
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+class Member {
+    String name
+    String address
+    String mail
+    int phoneNumber
+    Date birthday
+
+    static hasMany = [children : Member, parents : Member, registrations : Registration]
+
+    static constraints = {
+        name blank: false
+        mail email: true
+        phoneNumber min: 10000000, max: 99999999
+
+    }
+
+    static mapping = {
+        registrations cascade: "all-delete-orphan"
+    }
+}
+----
+
+
+<<<
+
+
+[source,groovy,indent=0]
+----
+void "Test for phone number validity (min)"() {
+    when:
+    Member member = regularMember
+    member.phoneNumber = 9999999
+
+    then:
+    !member.validate()
+    member.errors.errorCount == 1
+    member.errors.getFieldError('phoneNumber').code == 'min.notmet'
+}
+
+void "Test for phone number validity (max)"() {
+    when:
+    Member member = regularMember
+    member.phoneNumber = 100000000
+
+    then:
+    !member.validate()
+    member.errors.errorCount == 1
+    member.errors.getFieldError('phoneNumber').code == 'max.exceeded'
+}
+----
+
+
+
+
+== Snippets (3 slides)
+
+[source,groovy,indent=0]
+----
+class Worker {
+
+    UserRole userRole
+
+    static hasMany = [projects: Project]
+
+    String firstName
+    String lastName
+    String streetName
+    String houseNumber
+    String floor
+    String city
+    int zipCode
+    String country
+
+    static constraints = {
+        userRole nullable: false
+        firstName blank: false
+        lastName blank: false
+        streetName blank: false
+        houseNumber blank: false
+        floor blank: false
+        city blank: false
+        zipCode blank: false
+        country blank: false
+    }
+}
+----
+
+
+<<<
+
+[source,groovy,indent=0]
+----
+class Administrator {
+
+    UserRole userRole
+
+    String firstName
+    String lastName
+    String streetName
+    String houseNumber
+    String floor
+    String city
+    int zipCode
+    String country
+
+    static constraints = {
+        userRole nullable: false
+        firstName blank: false
+        lastName blank: false
+        streetName blank: false
+        houseNumber blank: false
+        floor blank: false
+        city blank: false
+        zipCode blank: false
+        country blank: false
+
+    }
+}
+----
+
+<<<
+
+[source,groovy,indent=0]
+----
+class ProjectOwner {
+
+    UserRole userRole
+
+    static hasMany = [projects: Project]
+
+    String firstName
+    String lastName
+    String streetName
+    String houseNumber
+    String floor
+    String city
+    int zipCode
+    String country
+
+    static constraints = {
+        userRole nullable: false
+        firstName blank: false
+        lastName blank: false
+        streetName blank: false
+        houseNumber blank: false
+        floor blank: false
+        city blank: false
+        zipCode blank: false
+        country blank: false
+    }
+}
+----
+
+
+== Git log
+
+ git log
+
+----
+ commit f05f66ddc5759ca598ecdc4e183b6a8a74102080
+ Author: XXX YYY <xxx@yyy.local>
+ Date:   Fri Mar 6 17:11:07 2015 +0100
+
+    initial commit
+----
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+class CheckSalaryController {
+    def checkSalary( int employeeID, String dateString ){
+        Date date = parseToStringDate(dateString)
+        render("Dato : $date")
+    }
+}
+----
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+class Address {
+    String street
+    String number
+    String postal
+    String city
+    String country
+    String toString(){      //method that makes the reference to the address instead of class id
+        "${street} ${number} ${city} ${country}"
+    }
+    static hasMany = [person : Person]
+
+    static constraints = {
+        street size: 1..20, unique: false, nullable: false
+        number size: 1..10, unique: false, nullable: false
+        postal size: 1..10, unique: false, nullable: false
+        city size:1..20, unique: false, nullable: false
+        country size:1..20, unique: false, nullable: false
+        person unique: false, nullable: true
+    }
+}
+----
+
+<<<
+
+
+[source,groovy,indent=0]
+----
+    void "test for invalid null values"() {
+        given:
+        Address add = new Address(street: null, number: null, postal: null, city: null, country: null, person: null)
+        Address add1 = new Address(street: "Thurensengade", number: null, postal: null, city: null, country: null, person: null)
+        Address add2 = new Address(street: null, number: "9a", postal: null, city: null, country: null, person: null)
+        Address add3 = new Address(street: null, number: null, postal: "5000", city: null, country: null, person: null)
+        Address add4 = new Address(street: null, number: null, postal: null, city: "Odense", country: null, person: null)
+        Address add5 = new Address(street: null, number: null, postal: null, city: null, country: "Denmark", person: null)
+
+        expect:
+        !add.validate()
+        !add1.validate()
+        !add2.validate()
+        !add3.validate()
+        !add4.validate()
+        !add5.validate()
+    }
+----
+
+
+
+== Report section
+
+6 Server setup and continuous integration
+We have rented a server at www.digitalocean.com and created a droplet. The
+root user was created together with a non-root user for every person in the
+group. Git, java and jenkins was installed and configured properly. In jenkins
+an administrator user was created before each person in the group created a
+user. The option to create a new user was hereafter closed. For the time being
+all users have all rights for faster development. In jenkins grails and git plugins
+was installed and the email was setup and tested. A jenkins job was created
+where a git repository was specified but have to be updated manually by a ssh
+connection. Grails was also set up which will clean before compiling and move
+the report. Last e-mail was set up to sent an e-mail every time the build fail or
+is unstable to the users who broke it. At last an Apache Webserver was installed
+and set up and reports was made available in a folder.
+
+// Group 9
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+String toString(){
+    if (date != null)
+    return date.format('dd/MM/yyyy') + ": " + salary.toString() + ";-"
+}
+----
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+.Method in a Spec
+----
+Team getRegularTeam(){
+    new Team(
+            name: 'Team One'
+    )
+}
+----
+
+
+
+
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+@TestFor(Order)
+class OrderSpec extends Specification {
+
+    def setup() {
+    }
+
+    def cleanup() {
+    }
+
+    void "test something"() {
+    }
+}
+----
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+@TestFor(Salary)
+class SalarySpec extends Specification {
+
+    def setup() {
+        mockForConstraintsTests(Salary)
+    }
+
+    def cleanup() {
+    }
+
+    void testMinSalary(){
+        Salary salary = completeSalary
+        salary.salary = 1
+        assertFalse salary.validate()
+        assertEquals 'Salary is less than 112.','min', salary.errors['salary']
+    }
+
+    void testMinID(){
+        Salary salary = completeSalary
+        salary.employeeID = -1
+        assertFalse salary.validate()
+        assertEquals 'employeeID is less than 0.','min',salary.errors['employeeID']
+    }
+----
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+class Home {
+
+    static constraints = {
+    }
+}
+----
+
+
+== Award Time
+
+"Best project part 1 measured by fulfilling the tasks in the assignments, quality of implementation, report and nice craftmanship"
+-- Criteria
+
+[options="step"]
+* In 4th place: *Group 14*
+* Tied for 2nd place: *Group 3* and *Group 10*
+* First place: *Group 1*
+
+[options="step"]
+Groups specific comments will be committet later this week.

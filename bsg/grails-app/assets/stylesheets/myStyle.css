@@ -1,0 +1,14 @@
+/*
+*= require_self
+*/
+
+h1 {
+    color: #255b17;
+}
+.bsg_header {
+    padding: 10px;
+}
+#page_header {
+    margin: 5px;
+    border: dashed #006dba 2px;
+}

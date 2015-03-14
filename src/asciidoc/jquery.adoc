@@ -1,0 +1,49 @@
+= JQuery
+
+== Intro
+
+* Short introduction
+* Creating your own Jquery plugin
+
+
+
+
+
+
+== Literature
+
+* []
+
+
+////
+
+
+== Less intro
+
+   Asset pipeline - less plugin
+
+TODO Make an example, where css duplicates a value -> variables needed.
+
+Bootstrap intro.
+
+
+
+
+
+
+
+[source,html,indent=0]
+.views/gone.gsp
+----
+
+----
+
+
+[source,groovy,indent=0]
+.views/gone.gsp
+----
+
+----
+
+
+////

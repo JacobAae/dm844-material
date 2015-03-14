@@ -748,6 +748,29 @@ And we can make stylesheets based on this
 ----
 
 
+== Asset pipeline
+
+Place your css files in `grails-app/assets/css`
+
+[source,css,indent=0]
+----
+/*
+*= require_self
+*/
+
+h1 {
+    color: #255b17;
+}
+----
+
+See documentation for asset pipeline for manifest
+
+Use in your gsp like this
+
+[source,html,indent=0]
+----
+<asset:stylesheet href="myStyle.css"/>
+----
 
 == Literature
 
@@ -755,9 +778,9 @@ And we can make stylesheets based on this
 * http://www.w3.org/Style/CSS/current-work[]
 * http://www.w3.org/TR/css3-mediaqueries[]
 * https://css-tricks.com/almanac/[]
+* http://bertramdev.github.io/asset-pipeline/guide/[]
 * http://caniuse.com/[]
 * https://developers.google.com/fonts/docs/getting_started[]
-
 
 ////
 

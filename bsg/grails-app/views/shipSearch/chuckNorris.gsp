@@ -3,20 +3,93 @@
 <head>
 	<title>Chuck Norris Joke</title>
 	<style>
-	h1 {
-		color: #255b17;
+
+	table {
+		margin-left: 50px;
+		border-collapse: collapse;
+		width: 800px;
 	}
-	.bsg_header {
-		padding: 10px;
+
+	tfoot tr td, th {
+		background-color: #00f;
+		color: #fff;
 	}
-	#page_header {
-		margin: 5px;
-		border: dashed #006dba 2px;
+	tbody tr:nth-of-type(odd) {
+		background-color: #99ccff;
+	}
+	th:nth-child(3), td:nth-child(3) {
+		text-align: right;
 	}
 	</style>
+
+
 </head>
 
 <body>
+
+
+
+
+<table>
+	<thead>
+	<tr>
+		<th>Name</th>
+		<th>Type</th>
+		<th>Crewsize</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td>Battlestar Galactica</td>
+		<td>Military</td>
+		<td>2741</td>
+	</tr>
+	<tr>
+		<td>Cloud 9</td>
+		<td>Recreational</td>
+		<td>5214</td>
+	</tr>
+	<tr>
+		<td>Colonial One</td>
+		<td>Administration</td>
+		<td>142</td>
+	</tr>
+	</tbody>
+	<tfoot>
+	<tr>
+		<td>Total</td>
+		<td></td>
+		<td>8124</td>
+	</tr>
+	</tfoot>
+</table>
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+
+
+<header class="bsg">
+	<g:each in="[1,2,3,4]" var="i">
+		<p>Im a p element ${i}</p>
+	</g:each>
+
+	<span class="sp">
+		<p>Im a p element too</p>
+	</span>
+
+</header>
+<p>Im folowing a header element</p>
+
+
 
 	<h1 class="bsg_header" id="page_header">BSG</h1>
 
