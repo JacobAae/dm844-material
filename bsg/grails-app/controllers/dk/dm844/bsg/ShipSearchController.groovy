@@ -72,9 +72,17 @@ class ShipSearchController {
 		render( view: 'showShip', model: [ship: new Ship(name: 'Battlestar Galactica', crewsize: 2450)])
 	}
 
-    def chuckNorris() {
+    def addQuote(String quote) {
 
+	    render "OK"
     }
+
+	def chuckNorris() {
+
+
+
+		[]
+	}
 
 }
 

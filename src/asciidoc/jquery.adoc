@@ -5,30 +5,476 @@
 * Short introduction
 * Creating your own Jquery plugin
 
+HTML5 leftovers
+
+* Geolocation
+* Canvas
+* Websockets
+
+
+== JQuery with Grails
+
+Place this in a file `bsg.js` in `grails-app/assets/javascript`
+
+ //= require jquery
+ //= require_self
+
+And include it in your view like this
+
+ <asset:javascript src="bsg.js"/>
+
+
+== Jquery
+
+All access go through the `jQuery()` function, with the short form `$()`
 
 
 
+== Selecting DOM elements
+
+Select all `<p>` elements
+
+ $("p")
+
+Select all with class _foo_
+
+ $(".foo")
+
+Select element with id _baz_
+
+ $("#baz")
+
+
+== Modifying Content
+
+*Hide/show*
+
+[source,javascript,indent=0]
+----
+$("p").hide();
+$("p").show();
+$("p").toggle();
+
+$("p").slideUp();
+$("p").slideDown();
+----
+
+<<<
+
+*Content*
+
+[source,javascript,indent=0]
+----
+$("p").html(); //<1>
+$("p").html("Now I'm the content"); //<2>
+----
+
+<1> Retrives content
+<2> Sets content
+
+[source,javascript,indent=0]
+----
+$("input").val(); //<1>
+$("input").val("Now I'm the content"); //<2>
+----
+
+<1> Retrives content from form element
+<2> Sets content in form element
+
+[source,javascript,indent=0]
+----
+$("input").attr("placeholder"); //<1>
+$("input").val("placeholder", "Add input here"); //<2>
+----
+
+<1> Retrives value of attribute
+<2> Sets value of attribute
+
+<<<
+
+*Looks*
+
+[source,javascript,indent=0]
+----
+$("p").css("color","#f0f"); //<1>
+$("p").addClass("bluecolor"); //<2>
+$("p").removeClass("bluecolor"); //<3>
+----
+
+<1> Set a css style property (bad style)
+<2> Adds a class
+<3> Removes a class
+
+
+== Chaining
+
+Most Jquery functions can be chained, as they return the Jquery selector function.
+
+[source,javascript,indent=0]
+----
+$("p").slideUp().delay(1000).addClass("redcolor").slideDown() ; //<1>
+----
+<1> Multiple Jquery functions chained together
+
+
+== Manipulating the DOM
+
+[source,javascript,indent=0]
+----
+$(".foo").prepend("<p>New paragraph inserted before selector</p>"); //<1>
+$(".foo").append("<p>New paragraph inserted after selector</p>"); //<2>
+$("p.foo").wrap("<span class='redcolor'></span>"); //<3>
+----
+
+<1> Insert before
+<2> Insert after
+<3> Surround with
+
+<<<
+
+*Creating new DOM*
+
+[source,javascript,indent=0]
+----
+var element = $("<p>New paragraph created in Jquery</p>"); //<1>
+element.insertAfter("h1"); //<2>
+----
+<1> Create new HTML DOM
+<2> Insert it appropriate place(s)
+
+[source,javascript,indent=0]
+----
+$(".foo").empty(); //<1>
+----
+<1> Removes all children
+
+[source,javascript,indent=0]
+----
+$(".foo").remove(); //<1>
+----
+<1> Removes element itself
+
+
+== Document Ready
+
+You will most likely wish to execute your javascript as soon as the webpage is ready for it (but not before)
+
+[source,javascript,indent=0]
+----
+$(document).ready( function() {
+  // Your javascript code here
+}); //<1>
+
+$(function() {
+  // Your javascript code here
+}); //<2>
+----
+<1> Long version
+<2> Short version
+
+
+
+
+== Events
+
+[source,javascript,indent=0]
+----
+$("#jquery-link").click(function( event ) {
+	event.preventDefault();
+	console.debug("Link clicked");
+}); //<1>
+
+$("#grydeske-link").on( 'click', function( event ) {
+	event.preventDefault();
+	console.debug("Link clicked");
+}); //<2>
+----
+<1> Shorthand version
+<2> Longer version
+
+
+
+== Plugins
+
+[source,javascript,indent=0]
+.grails-app/assets/javascripts/plugins/jquery.rallyingcry.js
+----
+if (typeof jQuery == 'undefined') throw("jQuery Required");
+
+(function ( $ ) {
+	$.fn.rallyingcry = function() {
+		var element = $("<div class='rallying-cry'>So Say We All!</div>");
+		element.insertAfter(this);
+		return this;
+	};
+}( jQuery ));
+----
+
+<<<
+
+Update `bsg.js` to
+
+ //= require jquery
+ //= require plugins/jquery.rallyingcry.js
+ //= require_self
+
+<<<
+
+Usage:
+
+[source,javascript,indent=0]
+----
+$("#button-1").click(function( event ) {
+	console.debug("Button clicked");
+	$("#button-1").rallyingcry().addClass('redcolor');
+});
+----
+
+Notice it works with chaining etc.
+
+== Geolocation
+
+[source,javascript,indent=0]
+----
+$(function() {
+	navigator.geolocation.getCurrentPosition( function(position) {
+		var latitude = position.coords.latitude;
+		var longitude = position.coords.longitude;
+		var element = $("<br/><img src='https://maps.googleapis.com/maps/api/staticmap?center="+latitude+","+longitude+"&zoom=12&size=500x500&markers=color:blue|label:X|"+latitude+","+longitude+"'>");
+		$("h1").append( element)
+	});
+});
+----
+
+https://developers.google.com/maps/documentation/staticmaps/index#Markers[]
+
+
+== Canvas
+
+[source,html,indent=0]
+----
+<canvas id="logo-canvas" width="600" height="600">Logo</canvas>
+----
+
+<<<
+
+*Canvas setup*
+
+[source,javascript,indent=0]
+----
+var canvas = document.getElementById('logo-canvas');
+if( canvas.getContext ) {
+	var context = canvas.getContext('2d');
+	// Do the drawing stuff
+} else {
+	// Do backup stuff or let browser show canvas element content
+}
+----
+
+
+<<<
+
+*Blue background*
+[source,javascript,indent=0]
+----
+context.fillStyle = "rgb(0,0,225)"
+// x,y, x-size, y-size
+context.fillRect(10,10,580,580);
+context.save();
+----
+
+
+<<<
+
+*The G*
+
+[source,javascript,indent=0]
+----
+context.fillStyle = "rgb(0,0,225)";
+context.strokeStyle = "#FF0000";
+context.lineWidth = 5;
+
+context.beginPath();
+context.moveTo(300,300);
+context.lineTo(560,300);
+context.lineTo(560,560);
+context.lineTo(40,560);
+context.lineTo(40,40);
+context.lineTo(560,40);
+context.lineTo(560,60);
+
+context.stroke();
+context.closePath();
+----
+
+
+<<<
+
+
+*The B*
+[source,javascript,indent=0]
+----
+context.fillStyle = "#FF0000";
+context.strokeStyle = "#FF0000";
+context.lineWidth = 12;
+
+context.beginPath();
+context.moveTo(100,100);
+context.lineTo(130,130);
+context.lineTo(100,160);
+context.lineTo(100,100);
+context.closePath();
+context.fill();
+
+context.beginPath();
+context.moveTo(100,160);
+context.lineTo(130,190);
+context.lineTo(100,220);
+context.lineTo(100,160);
+context.closePath();
+context.fill();
+----
+
+
+<<<
+
+
+*The S*
+
+[source,javascript,indent=0]
+----
+// Top of S
+context.beginPath();
+context.moveTo(250, 160);
+context.bezierCurveTo(150, 160, 150, 100, 320, 100);
+
+// Bottom of S
+context.moveTo(250, 160);
+context.bezierCurveTo(350, 160, 350, 220, 180, 220);
+
+// complete custom shape
+context.lineWidth = 10;
+context.strokeStyle = 'rgb(0,225,0)';
+context.stroke();
+----
+
+http://blogs.sitepointstatic.com/examples/tech/canvas-curves/bezier-curve.html[]
+
+http://www.effectgames.com/demos/canvascycle/[]
+
+== Websockets
+
+[source,groovy,indent=0]
+.BuildCondig.groovy
+----
+jcenter()
+...
+compile ":spring-websocket:1.2.0"
+----
+
+<<<
+
+
+[source,groovy,indent=0]
+.Controller actions
+----
+def socketDemo() {}
+
+// For activating sockets
+def createShip() {
+	Ship shipInstance = new Ship(params)
+	[ship: shipInstance]
+}
+
+def saveShip() {
+	Ship shipInstance = new Ship(params)
+	if( shipInstance?.save()) {
+		socketService.messageShip(shipInstance)
+		flash.message = "Ship saved"
+	} else {
+		flash.message = "Something is not right"
+	}
+	render(view: 'createShip', model: [ship: shipInstance])
+}
+----
+
+<<<
+
+[source,groovy,indent=0]
+.SocketService
+----
+import org.springframework.messaging.simp.SimpMessagingTemplate
+
+class SocketService {
+
+	SimpMessagingTemplate brokerMessagingTemplate
+
+	void messageShip(Ship ship) {
+		String message = "New ship saved! ${ship.name} of type ${ship.shiptype}"
+		brokerMessagingTemplate.convertAndSend "/topic/ship", message
+	}
+}
+----
+
+<<<
+
+[source,html,indent=0]
+.socketDemo.gsp
+----
+<html>
+<head>
+	<title>Socket Demo</title>
+	<asset:javascript src="jquery" />
+	<asset:javascript src="spring-websocket" />
+
+	<script type="text/javascript">
+		$(function() {
+			var socket = new SockJS("${createLink(uri: '/stomp')}");
+			var client = Stomp.over(socket);
+			client.connect({}, function() {
+				client.subscribe("/topic/ship", function(message) {
+					var newShip = $("<div class='ship'></div>")
+					newShip.html(message.body)
+					$("#shipDiv").append(newShip);
+				});
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<h1>Socket demo</h1>
+	<div id="shipDiv"></div>
+</body>
+</html>
+----
+
+
+== Exercises
+
+* Create a Jquery plugin that when applied to a hidden element, fx a div or p
+** Sets the textcolor to gray
+** Fades the message in
+** Waits 5 seconds
+** Fades the message out again
+
+TIP: This plugin is usable, when you apply an action, and receive a message back. This could be with web-sockets!
+
+* Create a simple logo for your application with canvas
+
+Feel free to share your solution at https://dm844.dk/sourceCode/index[]
 
 
 == Literature
 
-* []
+* http://learn.jquery.com/[]
+* https://jquery.org/[]
+* https://grails.org/plugin/spring-websocket[]
 
 
 ////
 
-
-== Less intro
-
-   Asset pipeline - less plugin
-
-TODO Make an example, where css duplicates a value -> variables needed.
-
-Bootstrap intro.
-
-
-
-
+== Drag N' Drop
 
 
 

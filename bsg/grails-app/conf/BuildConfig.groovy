@@ -38,6 +38,7 @@ grails.project.dependency.resolution = {
         grailsPlugins()
         grailsHome()
         mavenLocal()
+	    jcenter()
         grailsCentral()
         mavenCentral()
         // uncomment these (or add new ones) to enable remote dependency resolution from public Maven repositories
@@ -78,6 +79,10 @@ grails.project.dependency.resolution = {
         test(":code-coverage:2.0.3-3") {
             export = false
         }
+	    compile ":build-test-data:2.4.0"
+
+	    compile ":spring-websocket:1.2.0"
+	    compile ":fields:1.4"
     }
 }
 

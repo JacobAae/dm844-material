@@ -1,9 +1,14 @@
 package dk.dm844.bsg
 
 import grails.transaction.Transactional
+import org.springframework.messaging.simp.SimpMessagingTemplate
+
 
 @Transactional
 class QuoteService {
+
+	SimpMessagingTemplate brokerMessagingTemplate
+
 
     static List quotes = [
             '''Commander William Adama: There's a reason you separate military and the police. One fights the enemies of the state, the other serves and protects the people. When the military becomes both, then the enemies of the state tend to become the people. ''',
@@ -41,4 +46,10 @@ Captain Lee 'Apollo' Adama: Boy, when you take a souvenir, you don't screw aroun
     String getRandomQuote() {
         quotes.get(Random.newInstance().nextInt(quotes.size()))
     }
+
+	String addQuote(String quote) {
+		quotes << quote
+		brokerMessagingTemplate.convertAndSend "/topic/hello", quote
+	}
+
 }
