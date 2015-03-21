@@ -147,6 +147,14 @@ def showErrorCodes = { attrs ->
 }
 ----
 
+== Adding your own error to an object
+
+[source,groovy,indent=0]
+----
+shipInstance.errors.reject('dk.dm844.bsg.ship.random.error.code', [42, 'some value'] as Object[], 'Default reason whith arguments {0} and {1}' )
+----
+
+
 
 
 == Literature

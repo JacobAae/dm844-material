@@ -12,7 +12,8 @@ class JquerydemoController {
 
 	def socketDemo() {}
 
-	// For activating sockets
+
+    // For activating sockets
 	def createShip() {
 		Ship shipInstance = new Ship(params)
 		[ship: shipInstance]
