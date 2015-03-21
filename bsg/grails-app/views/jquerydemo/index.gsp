@@ -7,7 +7,7 @@
 		.redcolor {
 			color: red;
 		}
-</style>
+	</style>
 </head>
 
 <body>
@@ -32,7 +32,7 @@
 		$(function() {
 			$("#button-1").click(function( event ) {
 				console.debug("Button clicked");
-				$("#button-1").rallyingcry().addClass('redcolor');
+				$(this).rallyingcry().addClass('redcolor');
 			}); //<1>
 
 

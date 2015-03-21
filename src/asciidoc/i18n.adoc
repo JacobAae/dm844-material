@@ -1,0 +1,175 @@
+= Internatinalization
+
+== Why i18n
+
+Having your application available in multiple languages makes it attractive for not only danish customers
+
+== Locale
+
+A Locale is made up of a language code and a country code.
+
+For example "en_US" is the code for US English, whilst "en_GB" is the code for British English.
+
+TIP: The locale is decided by the  _Accept-Language_ header of your request, set by the language your browser defies.
+You can manually change your locale by adding parameters a parameter to the request: `?lang=de`
+
+
+== Message Bundles
+
+
+* Placed in `grails-app/i18n`
+* The default file is _messages.properties_
+* For Danish it is defined like _messages_da.properties_
+* For British-english, it is  _messages_en_GB.properties_
+* You can have multiple language files for each language, following the syntax _<descriptive-name><locale>.properties_
+
+== Content of Bundle
+
+Bundles are Java properties files, and are key-value pairs, like this
+
+
+[source,groovy,indent=0]
+.messages.properties
+----
+ship.label=Ship
+ship.name.label=
+ship.shiptype=Type
+ship.crewsize=Size of crew
+ship.productionDate=Date of origin
+ship.description=Description
+----
+
+[source,groovy,indent=0]
+.messages-da.properties
+----
+ship.label=Skib
+ship.name.label=Navn
+ship.shiptype=Type
+ship.crewsize=Besætningsstørrelse
+ship.productionDate=Fremstillet
+ship.description=Beskrivelse
+----
+
+TIP: the `.label` is just a recommendation, origination from scaffolding. It is completely optional
+
+
+== Using the Bundles
+
+*In gsp's*
+
+[source,html,indent=0]
+----
+<dl>
+    <dt><g:message code="ship.name.label"/></dt>
+    <dd><g:fieldValue field="name" bean="${shipInstance}"/></dd>
+</dl>
+----
+
+*In TagLib/Services*
+
+[source,html,indent=0]
+----
+String quoteTitle = g.message(code: 'random.quote.label')
+----
+
+
+== Enum
+
+Enums must be handled specially
+
+[source,groovy,indent=0]
+----
+enum Shiptype  implements org.springframework.context.MessageSourceResolvable {
+
+	MILITARY,
+	ADMINISTRATION,
+	FREIGHT,
+	ACCOMODATION,
+	PRODUCTION,
+	MISC
+
+    Object[] getArguments() {
+        [] as Object[]
+    }
+
+    String[] getCodes() {
+        ["${getClass().name}.${name()}"] as String[]
+    }
+
+    String getDefaultMessage() {
+        name()
+    }
+}
+----
+
+<<<
+
+
+[source,groovy,indent=0]
+----
+package dk.dm844.bsg
+
+import grails.plugin.i18nEnums.annotations.I18nEnum
+
+@I18nEnum
+enum Persontype {
+
+	MILITARY,
+	CIVILIAN
+}
+----
+
+[source,groovy,indent=0]
+----
+dk.dm844.bsg.Persontype.MILITARY=Military
+dk.dm844.bsg.Persontype.CIVILIAN=Civilian
+----
+
+
+== Error codes
+
+[source,groovy,indent=0]
+.TagLib method for assistance (not for production)
+----
+def showErrorCodes = { attrs ->
+    Ship bean = attrs.bean
+    if( bean.hasErrors()) {
+        out << "<ol>"
+        bean.errors.allErrors.each{
+            out << "<li><ul>"
+            it.codes.each { code ->
+                out << "<li> $code </li>"
+            }
+            out << "</ul></li>"
+        }
+        out << "</ol>"
+    }
+}
+----
+
+
+
+== Literature
+
+* http://grails.github.io/grails-doc/2.4.4/guide/i18n.html[]
+* http://adhockery.blogspot.dk/2009/03/internationalizing-domain-classes-and.html[]
+* http://grails.org/plugin/i18n-enums[]
+
+////
+
+
+[source,html,indent=0]
+.views/gone.gsp
+----
+
+----
+
+
+[source,groovy,indent=0]
+.views/gone.gsp
+----
+
+----
+
+
+////

@@ -8,9 +8,7 @@ class JquerydemoController {
 
 	def geolocation() {	}
 
-	def canvas() {
-
-	}
+	def canvas() {}
 
 	def socketDemo() {}
 

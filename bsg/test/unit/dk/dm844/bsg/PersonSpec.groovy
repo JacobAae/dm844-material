@@ -14,22 +14,39 @@ class PersonSpec extends Specification {
         mockForConstraintsTests(Person)
     }
 
-    @Unroll("Test title constraint #comment")
+    void "Test valid names"() {
+        when:
+        Ship ship = new Ship()
+        Person person = new Person(name: name, title: "Mr.", persontype: Persontype.CIVILIAN, homeShip: ship)
+        person.validate()
+
+        then:
+        person.validate()
+
+        where:
+        name << ["William Adama", 'Cally Henderson Tyrol' , "Kara 'Starbuck' Trace" ]
+    }
+
+    @Unroll("Test name constraint #comment")
 	void "Test title constraint violations"() {
         when:
-        Person person = new Person(name: 'Valid', title: title)
+        Ship ship = new Ship()
+        Person person = new Person(name: name, title: "Mr.", persontype: Persontype.CIVILIAN, homeShip: ship)
         person.validate()
 
         println person.errors.allErrors
+        person.errors.allErrors.each {
+            println "Code: ${it.code}"
+        }
+
 
         then:
         !person.validate()
 
         where:
-        title           | comment
-        "1b"            | "Size is too small"
-        "AAss"          | "Ups valid"
-        "A1b2werdse"    | "Too long"
-
+        name                | comment
+        "Helo"              | "No lastname"
+        "Willian adama"     | "Not capitalized lastname"
+        "wiliam Adama"      | "Not capitalized firstname"
 	}
 }

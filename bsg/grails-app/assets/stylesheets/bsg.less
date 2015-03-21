@@ -1,3 +1,23 @@
-body {
-  background-color: #006dba;
+@bsg-dark-blue: #006dba;
+
+
+.rotation {
+  -webkit-transform: rotate(-2deg);
+  -moz-transform: rotate(-2deg);
+  -ms-transform: rotate(-2deg);
+  -o-transform: rotate(-2deg);
+  transform: rotate(-2deg);
+  padding-bottom: 30px;
+}
+
+h1 {
+  color: lighten(@bsg-dark-blue , 10%);
+}
+h2 {
+  color: @bsg-dark-blue;
+  .rotation
+}
+h3 {
+  color: darken( @bsg-dark-blue , 5%);
+  .rotation
 }

@@ -1,14 +1,19 @@
 package dk.dm844.bsg
 
 class ShipTagLib {
+
+    static namespace = "bsg"
+
     static defaultEncodeAs = [taglib:'html']
-    static encodeAsForTags = [rallyingCry: [taglib:'none'], randomQuote: [taglib:'none']]
+    static encodeAsForTags = [rallyingCry: [taglib:'none'], randomQuote: [taglib:'none'], showErrorCodes: [taglib:'none']]
 
     QuoteService quoteService
 
     def randomQuote = {
+        String quoteTitle = g.message(code: 'random.quote.label')
         String quote = quoteService.randomQuote
-        out << "<h2> $quote </h2>"
+        out << "<h2>$quoteTitle</h2>"
+        out << "<h3>$quote</h3>"
     }
 
 
@@ -31,5 +36,19 @@ class ShipTagLib {
 		}
 	}
 
+    def showErrorCodes = { attrs ->
+        Ship bean = attrs.bean
+        if( bean.hasErrors()) {
+            out << "<ol>"
+            bean.errors.allErrors.each{
+                out << "<li><ul>"
+                it.codes.each { code ->
+                    out << "<li> $code </li>"
+                }
+                out << "</ul></li>"
+            }
+            out << "</ol>"
+        }
+    }
 
 }

@@ -13,6 +13,9 @@ class ShipSearchController {
         render("This is the default action")
     }
 
+    def lessDemo() {
+
+    }
 
     def search1() {
         String shipname = params.shipname

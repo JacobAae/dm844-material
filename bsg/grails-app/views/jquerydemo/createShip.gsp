@@ -12,7 +12,11 @@
 	<h2>${flash.message}</h2>
 </g:if>
 <g:if test="${ship.hasErrors()}">
+
 	<g:renderErrors bean="${ship}"/>
+
+	<h3>Error codes</h3>
+	<bsg:showErrorCodes bean="${ship}"/>
 </g:if>
 
 
