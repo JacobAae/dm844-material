@@ -1,0 +1,174 @@
+= Database Integration
+
+== Intro
+
+* Configuring datasourses
+* MySQL
+* PostgreSQL (and extensions)
+* MongoDB
+
+
+== DataSources and Environments
+
+== Driver
+
+You need a JDBC Driver, defined in _BuildConfig.groovy_
+
+[source,groovy,indent=0]
+----
+dependencies {
+    runtime 'org.postgresql:postgresql:9.3-1101-jdbc41'
+}
+----
+
+If the jar is not in Maven, you can put it in the _lib_ folder
+
+== Configuring DataSource
+
+The  DataSource descriptor file located at _grails-app/conf/DataSource.groovy_
+
+Here, the driver, connectivity, sql-dialect and other settings are defined.
+
+TIP: Samples later, for a few databases
+
+== Schema updates
+
+The `dbCreate` property defines how Grails handles changes to the database at startup and shutdown. The values available are
+
+* *create* Drops the existing schema and creates the schema on startup, dropping existing tables, indexes, etc. first.
+* *create-drop* - Same as create, but also drops the tables when the application shuts down cleanly.
+* *update* - Creates missing tables and indexes, and updates the current schema without dropping any tables or data. Note that this _can't_ properly handle many schema changes like column renames (you're left with the old column containing the existing data).
+* *validate* - Makes no changes to your database. Compares the configuration with the existing database schema and reports warnings.
+
+Any other value doesn't do anything
+
+== Environment
+
+The DataSource definition is _environment aware_ i.e. you can define a different datasource for each environment, which is already done in the initial file for the H2 database.
+
+
+[source,groovy,indent=0]
+----
+environments {
+    development {
+        dataSource {
+            dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
+            url = "jdbc:h2:devDB:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
+        }
+    }
+    test {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
+        }
+    }
+    production {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
+            properties {
+               // See http://grails.org/doc/latest/guide/conf.html#dataSource for documentation
+               jmxEnabled = true
+               initialSize = 5
+                ...
+               testOnReturn = false
+               jdbcInterceptors = "ConnectionState"
+               defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
+            }
+        }
+    }
+}
+----
+
+
+== Handling Updates to the Schema
+
+* At the start of development, create or create-drop works fine, and data can be created in the bootstrap
+* For test, create-drop is fine, so you always start with the database in the same state
+* Later in the development phase, update is great, and if you only extend the datamodel (and don't delete or rename any properties in domain classes), it works.
+* For production, the proper setting is validate (or nothing).
+
+WARNING: We need a way to handle updates to the database schema.
+
+== Database migrations
+
+The database migration plugin can help us track changes.
+
+ grails dbm-generate-changelog changelog.groovy
+
+Will generate the initial state of the database in the changelog.groovy file.
+
+
+
+
+
+== Multiple Datasources
+
+== Logging SQL
+
+
+== Transactions
+
+
+
+
+== PostgreSQL
+
+As adminisrator in psql
+
+ CREATE USER dm844demo_dev WITH PASSWORD 'dm844';
+ CREATE DATABASE dm844demo_dev;
+ GRANT ALL ON DATABASE dm844demo_dev TO dm844demo_dev;
+
+Update the Datasource file
+
+[source,groovy,indent=0]
+----
+development {
+    dataSource {
+        driverClassName = "org.postgresql.Driver"
+        dialect = "org.hibernate.dialect.PostgreSQLDialect"
+        username = "dm844demo_dev"
+        password = "dm844"
+        dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
+        url = "jdbc:postgresql://localhost:5432/dm844demo_dev"
+    }
+}
+----
+
+== MySQL
+
+
+
+
+
+== MongoDB
+
+
+
+== Literature
+
+* http://grails.github.io/grails-doc/2.4.4/guide/conf.html#dataSource[]
+* https://grails.org/plugin/database-migration[]
+* https://grails.org/plugin/postgresql-extensions[]
+* https://grails.org/plugin/mongodb[]
+* https://grails.org/plugin/mongodb-create-drop[]
+* http://grails.org/plugin/atomikos[]
+
+////
+
+[source,html,indent=0]
+.views/gone.gsp
+----
+
+----
+
+
+[source,groovy,indent=0]
+.views/gone.gsp
+----
+
+----
+
+
+////
