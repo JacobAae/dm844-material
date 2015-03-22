@@ -94,33 +94,158 @@ WARNING: We need a way to handle updates to the database schema.
 
 The database migration plugin can help us track changes.
 
+You should remove the createDB property (or set it to `none`), for all environments and let the dbm scripts handle the updates.
+
+Start by
+
  grails dbm-generate-changelog changelog.groovy
 
 Will generate the initial state of the database in the changelog.groovy file.
 
+
+If you have not created the tables yet (or need to do on another machine) use
+
+ grails dbm-update
+
+Or if you need to synchronize:
+
+ grails dbm-changelog-sync
+
+<<<
+
+If we change something, fx add a cabinNumber property to Person, you should use generate the migration for this
+
+ grails dbm-gorm-diff 001-added-cabinNumber.groovy -add
+
+Which will create the changes as a file, and include this in changelog.groovy
+
+If you rename a column, add a nullable constraint to a table where there are data or you delete a column, you can create your custom migration.
+
+See docs (literature list has links)
+
+
+== JNDI Datasource
+
+If you put a JNDI datasource in your deployment container, you can configure it in your application like this:
+
+[source,groovy,indent=0]
+----
+dataSource {
+    jndiName = "java:comp/env/myDataSource"
+}
+----
+
+<<<
+
+TODO!!!!
+
+[source,html,indent=0]
+----
+
+----
 
 
 
 
 == Multiple Datasources
 
+You can have multiple datasources, by adding an underscore followed by the name like this
+
+[source,groovy,indent=0]
+.views/gone.gsp
+----
+dataSource {
+    dbCreate = "update"
+    url = "jdbc:h2:devFileDb"
+}
+dataSource_logging {
+    dbCreate = "create-drop"
+    url = "jdbc:h2:mem:devDb"
+}
+----
+
+<<<
+
+The datasource for a domain class can be set like this
+
+
+[source,groovy,indent=0]
+----
+static mapping = {
+  datasource 'logging'
+}
+----
+
+And in the service that use the domain classes
+
+[source,groovy,indent=0]
+----
+static datasource = 'logging'
+----
+
+
 == Logging SQL
+
+If you need to see the sql that are used by Hibernate, you should insert this in the hibernate block
+
+
+[source,groovy,indent=0]
+----
+format_sql = true
+use_sql_comments = true
+----
+
+And in Config.groovy, update the lo4j closure to output the statements
+
+[source,groovy,indent=0]
+----
+debug 'org.hibernate.SQL'
+trace 'org.hibernate.type.descriptor.sql.BasicBinder'
+----
 
 
 == Transactions
 
+Services are transactional by default. You can make a whole service non-transactional by add ing
+
+ static transactional = false
+
+Or you can control it on a per-method basis using annotations
+`@Transactional` and `@NotTransactional`
+
+TIP: Once you use annotations, you must add annotation on all methods that should be transactional.
 
 
+== Databases
 
-== PostgreSQL
+And how they are configured
 
-As adminisrator in psql
+== PostgreSQL, installation
+
+First lets get local under control
+
+ export LANGUAGE=en_US.UTF-8
+ export LANG=en_US.UTF-8
+ export LC_ALL=en_US.UTF-8
+ locale-gen en_US.UTF-8
+ sudo dpkg-reconfigure locales
+
+Installing the server
+
+ sudo apt-get install postgresql
+ sudo pg_createcluster 9.3 main --start
+
+== PostgreSQL, configuration
+
+ sudo -u postgres psql
 
  CREATE USER dm844demo_dev WITH PASSWORD 'dm844';
  CREATE DATABASE dm844demo_dev;
  GRANT ALL ON DATABASE dm844demo_dev TO dm844demo_dev;
 
-Update the Datasource file
+<<<
+
+Update the Datasource file (and remember the driver)
 
 [source,groovy,indent=0]
 ----
@@ -136,20 +261,107 @@ development {
 }
 ----
 
-== MySQL
+== MySQL, installation
+
+ sudo apt-get install mysql-server
+ mysql -u root -p
+
+Then create the database
+
+ CREATE USER 'dm844demo_dev'@'localhost' IDENTIFIED BY 'dm844';
+ CREATE DATABASE dm844demo_dev;
+ GRANT ALL ON dm844demo_dev.* TO dm844demo_dev;
+
+== MySQL, configuration
+
+Update the Datasource file (and remember the driver)
+
+[source,groovy,indent=0]
+----
+development {
+    dataSource {
+        driverClassName = "org.postgresql.Driver"
+        dialect = "org.hibernate.dialect.MySQLInnoDBDialect"
+        username = "dm844demo_dev"
+        password = "dm844"
+        dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
+        url = "jdbc:postgresql://localhost:5432/dm844demo_dev"
+    }
+}
+----
 
 
 
+== MongoDB, installation
+
+ sudo apt-get install mongodb-server
+
+Check by
+
+ mongo
+ show dbs
+
+== MongoDB, configuration
+
+Remove the hibernate and migrations plugin, and install the mongo-db plugin
+
+ compile ":mongodb:3.0.3"
+
+Replace content of DataSource.groovy to
+
+[source,groovy,indent=0]
+.DataSource.groovy
+----
+environments {
+	development {
+		grails {
+			mongo {
+				connectionString = "mongodb://localhost/dm844_dev"
+			}
+		}
+	}
+}
+----
 
 
-== MongoDB
+== Verifying data
 
+ mongo
+ show dbs
+ use dm844_dev
+ show collections
+ db.ship.find()
 
+== Mongodb, create-drop
+
+Add this plugin
+
+ compile ":mongodb-create-drop:1.0.2"
+
+And update the DataSource.groovy
+
+[source,groovy,indent=0]
+.DataSource.groovy
+----
+environments {
+	development {
+		grails {
+			mongo {
+				connectionString = "mongodb://localhost/dm844_dev"
+				createDrop      = "database"    // Recreate whole database.
+				databaseName    = "dm844_dev"
+			}
+		}
+	}
+}
+----
 
 == Literature
 
 * http://grails.github.io/grails-doc/2.4.4/guide/conf.html#dataSource[]
 * https://grails.org/plugin/database-migration[]
+* http://caseyscarborough.com/blog/2014/04/02/database-migrations-in-grails/[]
+* http://wpgreenway.com/posts/grails-db-migration-tutorial/[]
 * https://grails.org/plugin/postgresql-extensions[]
 * https://grails.org/plugin/mongodb[]
 * https://grails.org/plugin/mongodb-create-drop[]
