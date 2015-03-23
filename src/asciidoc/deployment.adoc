@@ -26,7 +26,7 @@ You can verify this by a browser on `ip.address.of.server:8080` where you should
 
 == Configuring tomcat
 
-There is is a known issue with Ubuntu and Tomcat, startup is slow, due to the use of `/dev/random` as its RNG, due to a lack of entropy (upwards of 5 minutes).
+There is is a known issue with Ubuntu and Tomcat, startup is slow, due to the use of `/dev/random` as its RNG, due to a lack of entropy (5 minutes +).
 You can correct this by modifying `/etc/default/tomcat7`.
 On the the JAVA_OPTS line, add the following:
 
@@ -43,11 +43,188 @@ CATALINA_OPTS="-server -noverify -Xshare:off -Xms512M -Xmx512M -XX:MaxPermSize=2
 
 == Configuring apache
 
+Lets update the virtual host file, to serve both jenkins and tomcat:
+
+[source,xml,indent=0]
+----
+<VirtualHost *:80>
+  ServerAdmin jamik@imada.sdu.dk
+  DocumentRoot "/var/www"
+  ErrorLog /var/log/jenkins/jenkins.log
+  ProxyRequests off
+  ProxyPass /jenkins http://127.0.0.1:8090/jenkins nocanon
+  ProxyPass / http://127.0.0.1:8080/ nocanon
+  ProxyPassReverse /jenkins  http://127.0.0.1:8080/jenkins
+  ProxyPassReverse /  http://127.0.0.1:8080/
+  ProxyPreserveHost on
+
+  <Proxy http://localhost:8080/*>
+    Order deny,allow
+    Allow from all
+  </Proxy>
+  <Proxy http://localhost:8090/jenkins>
+    Order deny,allow
+    Allow from all
+  </Proxy>
+</VirtualHost>
+----
+
+<<<
+
+ service apache2 reload
+
+== Jenkins job for building the war-artefact
+
+image::jenkins-war-1.png[]
+
+<<<
+
+image::jenkins-war-2.png[]
 
 
 == Jenkins job for deploy
 
+image::jenkins-deploy-1.png[]
 
+<<<
+
+image::jenkins-deploy-2.png[]
+
+<<<
+
+image::jenkins-deploy-3.png[]
+
+
+== Rights for jenkins
+
+Add a file to `/etc/sudoers.d/`
+
+[source,html,indent=0]
+.jenkins
+----
+Defaults:jenkins !requiretty
+jenkins ALL=(root) NOPASSWD: /etc/init.d/tomcat7
+jenkins ALL=(tomcat7) NOPASSWD: ALL
+jenkins ALL=(postgres) NOPASSWD: /usr/bin/pg_dump
+----
+
+
+== Database backup
+
+Lets add a dropbox account adn backup the database to it
+
+ groupadd dropbox
+
+ useradd -r -d /etc/dropbox -g dropbox -s /bin/false dropbox
+ wget -O /tmp/dropbox.tar.gz https://www.dropbox.com/download?plat=lnx.x86_64
+ mkdir -p /usr/local/dropbox /etc/dropbox
+
+ chown dropbox:dropbox /etc/dropbox
+
+ chmod 700 /etc/dropbox
+ tar xvzf /tmp/dropbox.tar.gz -C /usr/local/dropbox --strip 1
+
+ rm /tmp/dropbox.tar.gz
+
+<<<
+
+Add this to `/etc/init.d/dropbox`
+
+[source,bash,indent=0]
+----
+### BEGIN INIT INFO
+# Provides: dropbox
+# Required-Start: $local_fs
+# Required-Stop: $local_fs
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: starts the dropbox service
+# Description: starts dropbox using start-stop-daemon
+### END INIT INFO
+
+DROPBOX_USERS="dropbox"
+DAEMON=/usr/local/dropbox/dropboxd
+
+start() {
+  echo "Starting dropbox..."
+  for dbuser in $DROPBOX_USERS; do
+    HOMEDIR=`getent passwd $dbuser | cut -d: -f6`
+    if [ -x $DAEMON ]; then
+      echo "Now starting"
+      HOME="$HOMEDIR" start-stop-daemon -b -o -c $dbuser -S -u $dbuser -x $DAEMON
+    else
+      echo "Command is not correct - cannot start dropbox"
+    fi
+  done
+}
+
+stop() {
+  echo "Stopping dropbox..."
+  for dbuser in $DROPBOX_USERS; do
+    HOMEDIR=`getent passwd $dbuser | cut -d: -f6`
+    if [ -x $DAEMON ]; then
+      start-stop-daemon -o -c $dbuser -K -u $dbuser -x $DAEMON
+    else
+      echo "Command is not correct for stopping dropbox"
+    fi
+  done
+}
+
+status() {
+  for dbuser in $DROPBOX_USERS; do
+    dbpid=`pgrep -u $dbuser dropbox`
+  if [ -z $dbpid ] ; then
+    echo "dropboxd for USER $dbuser: not running."
+  else
+    echo "dropboxd for USER $dbuser: running (pid $dbpid)"
+  fi
+  done
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart|reload|force-reload)
+    stop
+    start
+    ;;
+  status)
+    status
+  ;;
+ *)
+   echo "Usage: /etc/init.d/dropbox {start|stop|reload|force-reload|restart|status}"
+   exit 1
+  esac
+
+exit 0
+----
+
+<<<
+
+ su -l dropbox -s /bin/bash
+ umask 0027
+ /usr/local/dropbox/
+ ./dropboxd
+
+Visit the link while the service is running
+
+ cd /etc/dropbox/Dropbox
+ mkdir backupfolder
+ exit
+ service dropbox start
+
+<<<
+
+Now configure jenkins with a shell job
+
+ DATE=$(date +"%Y%m%d%H%M")
+ sudo -u postgres pg_dump dbname > /etc/dropbox/Dropbox/backupfolder/database-dm844-$DATE.sql
+
+TIP: You can also make your reports (test, coverage, codenarc) available in your dropbox for easy access.
 
 
 
