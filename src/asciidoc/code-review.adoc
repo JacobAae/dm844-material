@@ -1,0 +1,69 @@
+= Code Review
+
+
+== Code Review
+
+image::friendly-code-review.png[]
+
+
+== Why and How
+
+*Why*
+
+* Better quality code
+* Feedback - so we learn from each other
+* More uniform codebase
+* Potential problems spottet early
+
+*How*
+
+* _Over-the-shoulder_ – One developer looks over the author's shoulder as the latter walks through the code.
+* _Email pass-around_ – Source code management system emails code to reviewers automatically after checkin is made.
+* _Pair Programming_ – Two authors develop code together at the same workstation, such is common in Extreme Programming.
+* _Tool-assisted code review_ – Authors and reviewers use software tools, informal ones such as pastebins and IRC, or specialized tools designed for peer code review.
+
+
+== General
+
+* Does the code do what it was supposed to solve
+* Is it understandable
+* Is it readable
+
+== Naming
+
+Is the naming correct of:
+
+* Artefacts: Domain Classes, Controllers, Services, TagLibs
+* Classes and methods
+* packages
+* Variables - and does the name make sence?
+
+
+== Readability
+
+* Use of _one-liners_ that are hard to read
+* Spock tests and labels
+* White space where needed (around operators)
+* Curly braces where needed
+
+
+== Comments
+
+* Is the comments correct
+* Does methods have javadoc?
+
+== Complexity
+
+* Could the code be written simpler/more elegant
+
+== Tone of feedback
+
+* Be nice
+* Comment also when there is something positive
+
+
+== Literature
+
+* https://tedvinke.wordpress.com/2015/03/15/basic-groovy-and-grails-code-review-guidelines/[Basic Groovy and Grails Code Review Guidelines]
+* http://www.syncano.com/friendly-code-review/[How to Facilitate Friendlier Code Reviews]
+
