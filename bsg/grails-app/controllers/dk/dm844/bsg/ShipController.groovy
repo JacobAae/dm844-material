@@ -10,8 +10,8 @@ class ShipController {
     }
 
     def errorDemo() {
-        Ship shipInstance = new Ship(params)
-
+        Ship shipInstance = new Ship(crewsize: 7)
+        shipInstance.validate()
         shipInstance.errors.reject('dk.dm844.bsg.ship.random.error.code', [42, 'some value'] as Object[], 'Default reason whith arguments {0} and {1}' )
 
         [ship: shipInstance]

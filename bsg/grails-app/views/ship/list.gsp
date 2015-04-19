@@ -57,7 +57,7 @@
 		</article>
 	</section>
 
-	<section>
+	<section class="shiplist">
 		<g:each in="${shipInstanceList}" status="i" var="shipInstance">
 			<article>
 			<dl>
@@ -77,6 +77,7 @@
 				<dd><g:fieldValue field="description" bean="${shipInstance}"/></dd>
 
 			</dl>
+				<g:link controller="ship" action="edit" id="${shipInstance.id}">Edit</g:link>
 			</article>
 		</g:each>
 

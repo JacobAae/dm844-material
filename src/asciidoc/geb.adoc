@@ -1,0 +1,701 @@
+= Testing and Geb
+
+== Test phases
+
+Grails by default have 3 test phases
+
+. Unit
+. Integration
+. Functional
+
+== Unit tests
+
+image::unit-test.png[]
+
+
+
+== Integration tests
+
+image::integration-test.png[]
+
+
+
+== Functional tests
+
+image::functional-test.png[]
+
+
+
+
+== Running test phases
+
+[source,groovy,indent=0]
+.Examples of running tests
+----
+grails test-app                          //<1>
+grails test-app unit:                    //<2>
+grails test-app integration:             //<3>
+grails test-app functional:              //<4>
+grails test-app :spock                   //<5>
+grails test-app unit: ShipControllerSpec //<6>
+grails test-app functional: -war         //<7>
+----
+
+<1> All test are executed in this order: unit, integration, functional
+<2> Only unit tests are executed
+<3> Only integration tests are executed
+<4> Only functional tests are executed
+<5> Only spock tests are executed (not Junit etc)
+<6> Only the unit tests in `ShipControllerSpec``are executed
+<7> Only functional tests are executed, but against the application deployed as war file
+
+== Parameters to test-app
+
+* `-echoOut` outputs println's from the code
+* `-war` test against the application deployed as war file
+
+TIP: In interactive mode `open test-report` opens the test report in a browser
+
+
+== Selecting a Test Phase for a Test
+
+. *Always have functional tests.* Verify the system like your user sees it.
+. *Prefer black-box unit tests.* Let your test know as little of the internal implemetation as possible (i.e. few mocks)
+. *Use the interactive console.* Tests run much faster
+
+TIP: If you are in doubt if  unit or an integration test is the right choise: choose an integraton test
+
+
+== Mocking in Grails
+
+*Unit test*
+
+* Mocking domain classes: `@Mock([Person,Ship])`
+* Mocking controllers: `@TestFor(ShipController)`
+** Also provides an instance in the `controller` variable
+** And `params` and `model`
+* Mocking TagLibs: `@TestFor(ShipTagLib)`
+** Also provides an instance in the `tagLib` variable
+
+== Geb Intro
+
+* Functional test framework
+* Build on top of Selenium WebDriver
+* Drivers for multiple browsers (Firefox is default)
+* Have some support for in-memory browsers (HtmlUnit and PhantomJS)
+
+== Geb Intraction
+
+* JQuery like syntax for selection
+* Returns `Navigator` objects with support for
+** *Subselects* fx `find`, `filter`, `has`
+** *Extract data* fx `tag`, `text` and `value`
+** *Actions* fx `click`
+
+[source,groovy,indent=0]
+.Select `dd` element with the text 'Colonial One'
+----
+$('dd', text: 'Colonial One')
+----
+
+== Installing Geb
+
+[source,groovy,indent=0]
+.BuildConfig.groovy
+----
+grails.project.dependency.resolution = {
+
+    def gebVersion = "0.10.0"
+    def seleniumVersion = "2.45.0"
+    ...
+    repositories {
+        ...
+	    jcenter()
+        ...
+    }
+
+    dependencies {
+        ...
+        test("org.seleniumhq.selenium:selenium-support:$seleniumVersion") // Required fx to set values in select
+        test("org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion")
+        test "org.gebish:geb-spock:$gebVersion"
+    }
+
+    plugins {
+        ...
+        test "org.grails.plugins:geb:$gebVersion"
+    }
+}
+----
+
+== Geb Spec Basics
+
+[source,groovy,indent=0]
+----
+package scenarios
+
+import geb.spock.GebReportingSpec
+
+@Stepwise // Ensures the tests are run sequentially
+class ShiplistAndEditSpec extends GebReportingSpec {
+
+    // Spock specs here
+}
+----
+
+== Scenario
+
+*Lets test the following*
+
+. Goto list of ships page
+. Click edit link for 'Colonial One'
+. Update category
+. Return to list page and check it is really updated
+
+
+
+== Geb Spec
+
+The naive inmaintainable way
+
+[source,groovy,indent=0]
+----
+void "Goto list of ships page"() {
+    when:
+    go 'http://localhost:8080/bsg/ship/list'
+
+    then:
+    $('h1').text() == 'The Fleet'
+}
+----
+
+<<<
+
+[source,groovy,indent=0]
+----
+void "Edit link brings me to edit page"() {
+    when: 'Click on the edit link for Colonial One'
+    Navigator dd = $('dd', text: 'Colonial One')
+    Navigator article = dd.closest("article")
+    Navigator link = article.find("a")
+
+    and:
+    link.click()
+
+    then:
+    $('h1').text() == 'Edit Ship'
+}
+----
+
+<<<
+
+[source,groovy,indent=0]
+----
+void "Update category"() {
+    when:
+    $('#shiptype').value('FREIGHT')
+    $('input', type: 'submit').click()
+
+    then:
+    $('h1').text() == 'Show Ship'
+}
+----
+
+<<<
+
+[source,groovy,indent=0]
+----
+void "Check new value at ship list page"() {
+    when:
+    go 'http://localhost:8080/bsg/ship/list'
+
+    and:
+    Navigator dd = $('dd', text: 'Colonial One')
+    Navigator article = dd.closest("article")
+
+    then:
+    article.find('dd', text: 'FREIGHT')
+}
+----
+
+
+== Geb Spec - The Better Way
+
+If we make a few scenarios, there will be
+
+* Much duplication
+* Many places to correct if we change the layout / DOM
+
+We can correct this using _pages_ and _modules_
+
+
+== Page Objects
+
+*Describes a web page*
+
+* Url
+* How to check if we are at the correct place
+* Content we wish to interact with
+
+<<<
+
+[source,groovy,indent=0]
+----
+package pages.ship
+
+import geb.Page
+
+class ShowPage extends Page {
+
+    static url = "ship/show"
+
+    static at = {
+        title ==~ /Show Ship/
+    }
+
+    static content = {
+        // TODO Could delete this or add elements to use
+    }
+}
+----
+
+
+
+== Modules
+
+*Describes repeated content*
+
+* Across pages
+* Within the same page
+
+<<<
+
+[source,groovy,indent=0]
+----
+package pages.ship
+
+import geb.Page
+import modules.ship.ShipFormModule
+import modules.ship.ShipInfoModule
+
+class EditPage extends Page {
+
+    static url = "ship/edit"
+
+    static at = {
+        title ==~ /Edit Ship/
+    }
+
+    static content = {
+//      form{ module ShipFormModule, $('form') } // Like this, the module does not need a base
+        form { module ShipFormModule }
+        submitButton { $('input', type: 'submit') }
+    }
+}
+----
+
+<<<
+
+[source,groovy,indent=0]
+----
+package modules.ship
+
+import geb.Module
+
+class ShipFormModule extends Module {
+
+    static base = { $('form') }
+
+    static content = {
+        nameInput { $('#name').value() }
+        shiptypeInput { $('#name').value() }
+    }
+}
+----
+
+
+
+== Module for repeated content in a page
+
+
+[source,groovy,indent=0]
+----
+package modules.ship
+
+import geb.Module
+
+class ShipInfoModule extends Module {
+
+    static content = {
+        dds { $("dd", it) }
+        name { dds(0).text() }
+        shiptype{ dds(1).text() }
+        crewsize{ dds(2).text() }
+        // Could add more here
+        editlink { $("a") }
+    }
+}
+----
+
+<<<
+
+
+[source,groovy,indent=0]
+----
+package pages.ship
+
+import geb.Page
+import modules.ship.ShipInfoModule
+
+class ListPage extends Page {
+
+    static url = "ship/list"
+
+    static at = {
+        title ==~ /The Fleet/
+    }
+
+    static content = {
+        ships { moduleList ShipInfoModule, $('section.shiplist article')}
+    }
+
+    ShipInfoModule findModuleForName(String name) {
+        ships.find{ it.name == name }
+    }
+
+}
+----
+
+
+== Geb Spec - structured
+
+Lets try to restructure the ugly spec from before
+
+<<<
+
+[source,groovy,indent=0]
+----
+void "Goto list of ships page"() {
+    when:
+    to ListPage
+
+    then:
+    at ListPage
+}
+----
+
+<<<
+
+[source,groovy,indent=0]
+----
+void "Edit link brings me to edit page"() {
+    when: 'Click on the edit link for Colonial One'
+    def link = findModuleForName('Colonial One').editlink
+
+    and:
+    link.click()
+
+    then:
+    at EditPage
+}
+----
+
+<<<
+
+[source,groovy,indent=0]
+----
+void "Update category"() {
+    when:
+    form.shiptype = 'FREIGHT'
+    submitButton.click()
+
+    then:
+    at ShowPage
+}
+----
+
+<<<
+
+[source,groovy,indent=0]
+----
+void "Check new value at ship list page"() {
+    when:
+    to ListPage
+
+    then:
+    findModuleForName('Colonial One').shiptype == 'FREIGHT'
+}
+----
+
+
+== Test reports
+
+TIP: Besides the test-report, Geb provides a screenshot of how the test ended up looking like, and the html code for it.
+
+
+== Interacting with the application
+
+If you wish to interact with elements in your application, fx perform actions that are not available with the GUI (yet) etc. you would try this - which will not work!
+
+[source,groovy,indent=0]
+----
+void "This does not work, as you are not running in the same JVM when performing Geb tests"() {
+    setup: 'Create the ship - imagine this was not a publicly available action'
+    Ship ship = new Ship(name: "Demetrious", shiptype: Shiptype.MISC, crewsize: 17, description: 'Demetrius is a sewage processing ship')
+    ship.save()
+    def id = ship.id
+
+    when: 'Go to list page'
+    to ListPage
+
+    then: 'Check Demetrious is actually shown'
+    findModuleForName('Demetrious')
+    findModuleForName('Demetrious').shiptype == 'MISC'
+
+    cleanup: 'You can delete it again if you do not need it'
+    Ship.get(id).delete()
+}
+----
+
+WARNING: You are runing in separate JVMs and that is why it doen NOT work
+
+== The Remote Control Plugin
+
+The Remote Control plugin can help with this
+
+[source,groovy,indent=0]
+----
+repositories {
+    ...
+    mavenRepo "http://dl.bintray.com/alkemist/maven/"
+}
+
+plugins {
+    ...
+    compile ":remote-control:2.0"
+}
+----
+
+== Remote Control example
+
+[source,groovy,indent=0]
+----
+package scenarios
+
+import dk.dm844.bsg.Ship
+import dk.dm844.bsg.Shiptype
+import geb.spock.GebReportingSpec
+import grails.plugin.remotecontrol.RemoteControl
+import pages.ship.ListPage
+
+class RemoteControlDemoSpec extends GebReportingSpec {
+
+    def remote = new RemoteControl()
+
+    void "Demo test interaction with the application through remote control"() {
+        setup: 'Create the ship - imagine this was not a publicly available action'
+        def id = remote {
+            Ship ship = new Ship(name: "Demetrious", shiptype: Shiptype.MISC, crewsize: 17, description: 'Demetrius is a sewage processing ship')
+            ship.save()
+            id = ship.id
+        }
+
+        when: 'Go to list page'
+        to ListPage
+
+        then: 'Check Demetrious is actually shown'
+        findModuleForName('Demetrious')
+        findModuleForName('Demetrious').shiptype == 'MISC'
+
+        cleanup: 'You can delete it again if you do not need it'
+        remote {
+            Ship.get(id).delete()
+        }
+    }
+}
+----
+
+== Using another driver
+
+[source,groovy,indent=0]
+.GebConfig.groovy
+----
+import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.Dimension
+import org.openqa.selenium.Point
+import java.awt.*
+
+def chromeDriver = new File('target/drivers/chrome/chromedriver')
+downloadDriver(chromeDriver, driverLocationDependingOnOperatingSystem())
+System.setProperty('webdriver.chrome.driver', chromeDriver.absolutePath)
+
+driver = {
+    def driverInstance = new ChromeDriver()
+    def screenSize = Toolkit.defaultToolkit.screenSize
+    def browserWindow = driverInstance.manage().window()
+    browserWindow.size = new Dimension(screenSize.width.toInteger(), screenSize.height.toInteger())
+    browserWindow.position = new Point(0, 0)
+    driverInstance
+}
+
+private void downloadDriver(File file, String path) {
+    if (!file.exists()) {
+        println "Downloading chrome driver: ${path}"
+        def ant = new AntBuilder()
+        ant.get(src: path, dest: 'driver.zip')
+        ant.unzip(src: 'driver.zip', dest: file.parent)
+        ant.delete(file: 'driver.zip')
+        ant.chmod(file: file, perm: '700')
+    }
+}
+
+private String driverLocationDependingOnOperatingSystem() {
+    String os = System.getProperty("os.name").toLowerCase();
+    if( os.contains('mac')) {
+        return "http://chromedriver.storage.googleapis.com/2.9/chromedriver_mac32.zip"
+    }
+    if( os.contains('win')) {
+        return "http://chromedriver.storage.googleapis.com/2.9/chromedriver_win32.zip"
+    }
+    return "http://chromedriver.storage.googleapis.com/2.9/chromedriver_linux64.zip"
+
+}
+----
+
+== Jenkins Setup
+
+First make some swap space if you havent allready done so (see literature list)
+
+
+== Installing Headless Server
+
+ apt-get install xvfb xfonts-base xfonts-75dpi xfonts-100dpi
+
+Add init.d script:
+
+./etc/init.d/xvfb
+----
+#!/bin/bash
+
+if [ -z "$1" ]; then
+echo "`basename $0` {start|stop}"
+exit
+fi
+
+case "$1" in
+start)
+/usr/bin/Xvfb :99 -ac -screen 0 1024x768x8 &
+;;
+
+stop)
+killall Xvfb
+;;
+esac
+----
+
+<<<
+
+ chmod 755 /etc/init.d/xvfb
+
+To make the server automatically start at boot
+
+  update-rc.d xvfb defaults 10
+
+Start the server
+
+ service xvfb start
+
+== Installing Browser
+
+It is possible to use Firefox, but here we will do the installation with Chrome
+
+ wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+ sudo sh -c 'echo deb http://dl.google.com/linux/chrome/deb/ stable main > /etc/apt/sources.list.d/google.list'
+ apt-get update
+ apt-get install google-chrome-stable
+
+TIP: Make sure the tests run using the Chrome Browser
+
+== Fixing startup time
+
+Startup time is still affected by random entropy issue. To fix this fx do
+
+Edit `java.security` in JRE library  `/usr/lib/jvm/java-8-oracle/jre/lib/security`
+
+Edit this line
+
+ securerandom.source=file:/dev/random
+
+To
+
+ securerandom.source=file:/dev/urandom
+
+== Add Display Variable
+
+In _Manage Jenkins_ -> _Configure System_
+
+image::jenkins-display.png[]
+
+Make sure Jenkins know where the "screen" is
+
+TIP: Remember to configure your test job to not only run `unit:` test
+
+
+== Debugging the Setup
+
+In case you run into problems, use Imagemagick to take a creenshot
+
+ DISPLAY=:99 import -window root filename.png
+
+
+
+
+
+== Exercise
+
+You can clone this project from git using
+
+ git clone https://github.com/JacobAae/dm844-sample-project.git
+
+Try to do the following
+
+* Change so the name of each ship become a link to the show-page for each ship. Make a scenario that checks that the link works
+* Try to make a scenario to create a new ship, and check that it appears on the show page
+* Insert a delete button for each ship (with javascript confirm). Make a scenario that checks the button:
+. Does not delete the ship if you don't accept
+. Deletes the ship if you accept
+* Setup your server to run functional tests :)
+
+
+== Literature
+
+* Chapter 9 in Grails in Action
+* https://gebish.org/[]
+* https://grails.org/plugin/geb[]
+* https://grails.org/plugin/remote-control
+* https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04[]
+* http://www.labelmedia.co.uk/blog/setting-up-selenium-server-on-a-headless-jenkins-ci-build-machine.html[]
+
+
+////
+
+
+
+
+
+
+
+
+[source,html,indent=0]
+----
+
+----
+
+
+[source,groovy,indent=0]
+----
+
+----
+
+
+////

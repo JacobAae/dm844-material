@@ -1,15 +1,4 @@
-= Log4j in Grails
-Jacob Aae Mikkelsen
-
-
-
-//
-
-[#file-in-use]
-== Files to edit
-
-* `grails-app/conf/config.groovy`
-* Some file where we log something
+= Logging in Grails
 
 
 //
@@ -20,7 +9,7 @@ IMPORTANT: *All controllers, domain classes and services have a variable `log` i
 
 [float]
 ==== Configuration
-In `grails-app/conf/config.groovy` you can define your logging properties. 
+In `grails-app/conf/config.groovy` you can define your logging properties.
 
 It is in the `log4j` closure
 
@@ -168,7 +157,7 @@ Appenders can help us with that
 [#appenders-1]
 == Appenders
 
-image::logging.png[Appenders in the logging pipeline, 50%]
+image::images/logging.png[Appenders in the logging pipeline, 50%]
 
 
 One logger instance can have multiple appenders  attached to it.
@@ -376,35 +365,6 @@ log4j.main = {
 [#environment]
 == Environment specific configuration
 
-You can configure logging for each environment
-
-[source,groovy,indent=0]
-----
-environments {
-    production {
-        // Override previous setting for 'grails.app'
-        debug "grails.app"
-    }
-}
-----
-
-
-<<<
-
-Except in the `root` closure, there you need to do it like this:
-
-[source,groovy,indent=0]
-----
-root {
-    if(Environment.current == Environment.PRODUCTION){
-        info 'file', 'errormail'
-    } else if(Environment.current == Environment.DEVELOPMENT){
-        info 'stdout','testlog'
-    } else if(Environment.current == Environment.TEST){
-        info 'stdout'
-    }
-}
-----
 
 
 
@@ -413,9 +373,13 @@ root {
 [#masking-params]
 == Masking parameters
 
-If you do not wish to expose certain parameters in case a stacktrace occurs, you can exclude them:
+And filtering stacktraces
 
- grails.exceptionresolver.params.exclude = ['password', 'cpr', 'ssn']
+
+
+//
+[#logger-inheritance]
+== Logger inheritance
 
 
 
@@ -423,51 +387,6 @@ If you do not wish to expose certain parameters in case a stacktrace occurs, you
 //
 [#error-mails]
 == Mail Appender
-
-
-[source,groovy,indent=0]
-----
-appender new org.apache.log4j.net.SMTPAppender(
-        name: 'errormail',
-        to: 'info@needed.on.error.dk',
-        from: 'MySystem<error@mySystem.dk>',
-        subject: "Error Log from My System",
-        SMTPHost: 'localhost',
-        SMTPUsername: 'username',
-        SMTPPort: 25,
-        SMTPPassword: 'password',
-        layout: pattern(conversionPattern: layoutPattern),
-        threshold: org.apache.log4j.Level.ERROR)
-----
-
-[source,groovy,indent=0]
-----
-root {
-        info 'file', 'errormail'
-}
-----
-
-
-
-//
-[#rolling-log]
-== Rolling Appender
-
-You may wish to decide where to log, knowing you deploy to a Tomcat server
-
- def catalinaBase = System.properties.getProperty('catalina.base') ?: '.' // just in case
- def logDirectory = "${catalinaBase}/logs/bsg"  // Make sur bsg lib exists
-
-
-[source,groovy,indent=0]
-----
-appender new org.apache.log4j.DailyRollingFileAppender(
-        name:"file",
-        fileName:"${logDirectory}/bsg.log",
-        datePattern: '.yyyy-MM-dd',
-        layout:pattern(conversionPattern: layoutPattern))
-----
-
 
 
 
@@ -486,6 +405,19 @@ def beforeInterceptor = {
 ----
 
 
+
+
+
+//
+[#logback]
+== Other Logging Libraries
+
+Logback
+
+Howto
+
+
+
 //
 [#advanced-config]
 == Advanced configuration
@@ -501,17 +433,6 @@ log4j.main = { root ->
 ----
 
 
-
-//
-[#logback]
-== Other Logging Libraries
-
-Check the documentation if you wish to use another logging library, fx _logback_
-
-
-
-
-
 //
 [#literature]
 == Litterature
@@ -519,228 +440,3 @@ Check the documentation if you wish to use another logging library, fx _logback_
 
  * http://grails.github.io/grails-doc/2.4.4/guide/conf.html#logging
 
-
-
-
-////
-
-
-TIP: Tip
-
-IMPORTANT: Important
-
-WARNING: Warning
-
-CAUTION: Caution
-
-NOTE: Note
-
-icon:exclamation[] ruby, asciidoctor
-
-icon:tags[role="blue"] ruby, asciidoctor
-
-icon:shield[rotate=90, flip=vertical]
-
-
-
-//
-
-[#how-to-overview]
-== How to Make a Deck
-
-[steps.headings]
-Write Slides::
-Slide content is simple HTML.
-
-Choose Themes::
-One for slide styles and one for deck transitions.
-
-Include Extensions::
-Add extra functionality to your deck, or leave it stripped down.
-
-
-
-
-//
-
-[#quick-start]
-== Quick Start
-
-When you {download-link} deck.js, it will include a file named +boilerplate.html+.
-You can immediately start editing slides in this page and viewing them in your web browser.
-Later on, when you are comfortable customizing the deck, you can edit the various pieces of the boilerplate or make your own to suit your needs.
-
-//
-
-[#markup]
-== The Markup
-
-Slides are just HTML elements with a slide of +slide+.
-
-[source]
-----
-<section class="slide">
-  <h2>How to Make a Deck</h2>
-  <ol>
-    <li>
-      <h3>Write Slides</h3>
-      <p>Slide content is simple HTML.</p>
-    </li>
-    <li>
-      <h3>Choose Themes</h3>
-      <p>One for slide styles and one for deck transitions.</p>
-    </li>
-  </ol>
-</section>
-----
-
-//
-
-[#themes]
-== Style Themes
-
-Customizes the colors, typography, and layout of slide content.
-
-[source]
-----
-<link rel="stylesheet" href="/path/to/css/style-theme.css">
-----
-
-[float]
-== Transition Themes
-
-Defines transitions between slides using CSS3 transitions.
-Less capable browsers fall back to cutaways.
-But *you* aren't using _those_ browsers to give your presentations, are you...
-
-[source]
-----
-<link rel="stylesheet" href="/path/to/css/transition-theme.css">
-----
-
-//
-
-[#extensions]
-== Extensions
-
-Core gives you basic slide functionality with left and right arrow navigation, but you may want more.
-Here are the ones included in this deck:
-
-[%step]
-- *deck.goto*:
-  Adds a shortcut key to jump to any slide number.
-  Hit g, type in the slide number, and hit enter.
-
-- *deck.hash*:
-  Enables internal linking within slides, deep linking to individual slides, and updates the address bar & a permalink anchor with each slide change.
-
-- *deck.menu*:
-  Adds a menu view, letting you see all slides in a grid.
-  Hit m to toggle to menu view, continue navigating your deck, and hit m to return to normal view.
-  Touch devices can double-tap the deck to switch between views.
-
-- *deck.navigation*:
-  Adds clickable left and right buttons for the less keyboard inclined.
-
-- *deck.status*:
-  Adds a page number indicator. (current/total)
-
-- *deck.scale*:
-  Scales each slide to fit within the deck container using CSS Transforms for those browsers that support them.
-
-[#extension-folders.slide]
-Each extension folder in the download package contains the necessary JavaScript, CSS, and HTML files.
-For a complete list of extension modules included in deck.js, check out the {docs-link}.
-
-//
-
-[#nested]
-== Nested Slides
-
-That last slide had a few steps.
-To create substeps in slides, just nest them:
-
-[source]
-----
-<section class="slide">
-  <h2>Extensions</h2>
-  <p>Core gives you basic slide functionality...</p>
-  <ul>
-    <li class="slide">
-      <h3>deck.goto</h3>
-      <p>Adds a shortcut key to jump to any slide number...</p>
-    </li>
-    <li class="slide">...</li>
-    <li class="slide">...</li>
-    <li class="slide">...</li>
-  </ul>
-</section>
-----
-
-//
-
-[#elements-images]
-== Other Elements: Images
-
-image::http://placekitten.com/600/375[Kitties]
-
-[source]
-----
-<img src="http://placekitten.com/600/375" alt="Kitties">
-----
-
-//
-
-[#elements-blockquotes]
-== Other Elements: Blockquotes
-
-[quote,Fran Lebowitz]
-Food is an important part of a balanced diet.
-
-[source]
-----
-<blockquote cite="http://example.org">
-  <p>Food is an important part of a balanced diet.</p>
-  <p><cite>Fran Lebowitz</cite></p>
-</blockquote>
-----
-
-//
-
-[#elements-videos]
-== Other Elements: Video Embeds
-
-Embed videos from your favorite online video service or with an HTML5 video element.
-
-video::1063136[vimeo,400,225]
-
-[source]
-----
-<iframe src="http://player.vimeo.com/video/1063136?title=0&amp;byline=0&amp;portrait=0" width="400" height="225" frameborder="0"></iframe>
-----
-
-//
-
-[#elements-source-code]
-== Source code
-
-[source,ruby]
-----
-require 'asciidoctor'  # <1>
-
-puts Asciidoctor.render_file('sample.adoc', :header_footer => true)  # <2>
-----
-<1> Imports the library
-<2> Reads, parses and renders the file
-
-
-
-
-//
-
-[#digging-deeper]
-== Digging Deeper
-
-If you want to learn about making your own themes, extending deck.js, and more, check out the {docs-link}.
-
-////

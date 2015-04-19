@@ -10,6 +10,9 @@
 <div class="content scaffold-list" role="main">
 
 	<h1>Demo of errors</h1>
+
+	<bsg:showErrorCodes bean="${ship}"/>
+
 	<g:hasErrors bean="${ship}">
 		<section class="errors">
 			<g:renderErrors bean="${ship}"/>

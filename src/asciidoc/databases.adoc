@@ -4,7 +4,7 @@
 
 * Configuring datasourses
 * MySQL
-* PostgreSQL (and extensions)
+* PostgreSQL
 * MongoDB
 
 
@@ -137,11 +137,23 @@ dataSource {
 
 <<<
 
-TODO!!!!
+
 
 [source,html,indent=0]
+.Context.xml
 ----
-
+<Resource name="jdbc/myDataSource" auth="Container"
+    type="oracle.ucp.jdbc.PoolDataSource"
+    factory="oracle.ucp.jdbc.PoolDataSourceImpl"
+    connectionFactoryClassName="oracle.jdbc.pool.OracleDataSource"
+    url="jdbc:oracle:thin:jdbc_host:1521:jdbc_service"
+    user="username" password="pwd"
+    inactiveConnectionTimeout="20"
+    minPoolSize="2" maxPoolSize="50"
+    connectionPoolName="UCPPool0"
+    validateConnectionOnBorrow="true"
+    sqlForValidateConnection="select 1 from DUAL"
+    connectionProperties="defaultNChar=true"/>
 ----
 
 
@@ -152,7 +164,6 @@ TODO!!!!
 You can have multiple datasources, by adding an underscore followed by the name like this
 
 [source,groovy,indent=0]
-.views/gone.gsp
 ----
 dataSource {
     dbCreate = "update"
@@ -260,6 +271,21 @@ development {
     }
 }
 ----
+
+== PostreSQL, extensions
+
+If you need to use some of PostgreSQL's specific abilities, like hstore and arrays, you need the
+_postgresql-extensions_ plugin.
+
+Then you can make criteria queries with fx
+
+ pgHstoreContainsKey "attributes", wantedKey
+
+or
+
+ pgArrayContains 'favoriteNumbers', numbers
+
+
 
 == MySQL, installation
 

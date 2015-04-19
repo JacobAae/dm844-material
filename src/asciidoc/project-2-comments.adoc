@@ -1,0 +1,464 @@
+= Comments - Project 1
+
+
+== General Comments
+
+[options="step"]
+* Please put group number on frontpage of the report
+* Jenkins login and url?
+* Coverage report as part of your report (appendix)
+* Codenarc report as part of your report (appendix) + plus description of rules
+* When emailing weekly reports, please cc all members in the group
+** And those should be weekly!
+* Consider removing not used languages in i18n
+* A few groups have chosen no security as default
+* Remember negative testing - what happens if input is unexpected
+* "You must upload the report in pdf version to blackboard. Please let the title be group-XX.pdf, where XX is your group number"
+
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+class ProjectGetterService {
+
+    def getAvailableProjects() {
+        def a = Project.executeQuery('SELECT p FROM Project p where p.id not in (SELECT t.project FROM Team t where t.project is not null) ')
+        return a
+    }
+}
+----
+
+<<<
+
+* Variable named a
+* Method returning def
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def makeOrder() {
+    render(view: "makeOrder")
+}
+----
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+<div class="<bs:row/>">
+    <section class="<bs:col_lg_12/>">
+        <h1><g:message code="order.overview.pending"/></h1>
+    </section>
+</div>
+----
+
+<<<
+
+* Taglis not used properly
+* HTML tags not appropriate
+** div or section should be header
+
+== Snippets
+
+[source,html,indent=0]
+----
+<tr>
+    <td>
+        ${Shoppable.findByShoppingItem(it['item'])}
+    </td>
+    <td>
+        ${it['qty']}
+    </td>
+    <td>
+        <g:form controller="product" action="addToCart" id="${Shoppable.findByShoppingItem(it['item']).id}">
+            <g:submitButton name="Add 1" class="btn btn-success"/>
+        </g:form>
+    </td>
+    <td>
+        <g:form controller="product" action="removeFromCart" id="${Shoppable.findByShoppingItem(it['item']).id}">
+            <g:submitButton name="Remove 1" class="form-control btn btn-warning" />
+        </g:form>
+    </td>
+    <td>
+        <g:form controller="product" action="removeAllFromCart" id="${Shoppable.findByShoppingItem(it['item']).id}">
+            <g:submitButton name="Remove All" class="form-control btn btn-danger" />
+        </g:form>
+    </td>
+</tr>
+----
+
+<<<
+
+* Access to database from view... multiple times for the same item.
+* Buttons not i18n
+* Just because a plugin exist that does this, does not mean it is ok ;)
+
+== Snippets
+
+Own coding guidelines:
+
+ Use explicit types as default in declarations.
+
+[source,groovy,indent=0]
+----
+def count() {
+    def items = shoppingCartService.getItems()
+    def count = items ? items.size() : 0
+    render(contentType: 'text/json') {[
+            'count': count
+    ]}
+}
+----
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+<div class="col-md-6">
+<div class="form-group">
+    <label for="firstname" class="col-lg-2">First name</label>
+    <div class="col-lg-6">
+    <g:textField name="firstname" required="required" class="form-control" placeholder="Yensen"/>
+    </div>
+</div>
+<div class="form-group">
+    <label for="lastname" class="col-lg-2">Last name</label>
+    <div class="col-lg-6">
+        <g:textField name="lastname" required="required" class="form-control" placeholder="Martin"/>
+    </div>
+</div>
+<div class="form-group">
+    <label for="username" class="col-lg-2">Email </label>
+    <div class="col-lg-6">
+        <input type="email" id="username" name="username" required="required" class="form-control" placeholder="mysupermail@mail.com"/>
+    </div>
+</div>
+<div class="form-group">
+    <label for="password" class="col-lg-2">Password </label>
+    <div class="col-lg-6">
+        <input type="password" id="password" name="password" required="required" class="form-control" placeholder="eg. X8df!90EO"/>
+    </div>
+</div>
+----
+
+<<<
+
+* Duplication - not dry. Use taglibs
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def insertOrder(SearchInputCommandOrders input){
+    if(!input.validate()){
+        return []
+    }
+    new Orders(ordersId: input.ordersId, numberOfDiners: input.numberOfDiners, dateOfCreation: new Date(), dateOfOrders: input.dateOfOrders).save(failOnError:true)
+}
+----
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+<g:select id="product" name="product.id" from="${dk.imadaEnterprise.Product.list()}" optionKey="id" optionValue="productName" value="${orderInstance?.productName}" required="" class="many-to-one"/>
+----
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def project = new Project(name: params.name, startDate: params.start_date, customer: params.customer, product:params.product)
+println("Yujuu")
+if (project.validate()){
+    println("Yujuu2")
+    project.save(flush:true)
+    redirect(controller: "project", action: "list")
+}else {
+    project.hasErrors()
+    for (e in project.errors) {
+
+        println(e)
+    }
+    List<Customer> customers = Customer.getAll()
+    List<Product> products = Product.getAll()
+    render(view : "create_custom", model : [products:products, customers: customers])
+}
+----
+
+<<<
+
+* Use log instead of println
+
+
+== Coverage and codenarc
+
+image::part2-coverage.png[]
+
+image::part2-codenarc.png[]
+
+
+
+== Snippets
+
+[source,javascript,indent=0]
+----
+$("#about").click(function(){
+    $("#dynamic").load("/cleaningcompany/aboutus");
+    $("#about").parent().parent().children().removeClass('active')
+    $("#about").parent().addClass('active')
+});
+$("#prodser").click(function(){
+    $("#dynamic").load("/cleaningcompany/productsservices");
+    $("#prodser").parent().parent().children().removeClass('active')
+    $("#prodser").parent().addClass('active')
+});
+
+$("#customers").click(function(){
+    $("#dynamic").load("/cleaningcompany/customers");
+    $("#customers").parent().parent().children().removeClass('active')
+    $("#customers").parent().addClass('active')
+});
+
+$("#contact").click(function(){
+    $("#dynamic").load("/cleaningcompany/contact");
+    $("#contact").parent().parent().children().removeClass('active')
+    $("#contact").parent().addClass('active')
+});
+...
+----
+
+<<<
+
+* Duplication
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+@TestFor(OrderController)
+@Mock(Order)
+class OrderControllerSpec extends Specification {
+
+    def populateValidParams(params) {
+        assert params != null
+        // TODO: Populate valid properties like...
+        //params["name"] = 'someValidName'
+    }
+
+    void "Test the index action returns the correct model"() {
+
+        when:"The index action is executed"
+            controller.index()
+
+        then:"The model is correct"
+            !model.orderInstanceList
+            model.orderInstanceCount == 0
+    }
+}
+----
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def deleteRegistration (Member member, Team team) {
+
+    def regToDelete
+
+    member.registrations.each { reg ->
+        if(reg.team.name == team.name) {
+            regToDelete = reg
+        }
+    }
+
+    member.removeFromRegistrations(regToDelete)
+    team.removeFromRegistrations(regToDelete)
+    regToDelete.delete(flush:true)
+
+    println("Removed registration " + member.name + " from " + team.name)
+}
+----
+
+<<<
+
+* Negative tests must be missing
+* def as return type
+* Use log instead of println
+
+
+== Snippets
+
+[source,css,indent=0]
+.user.css
+----
+header{
+    margin-top: 0;
+    padding-top: 0;
+    width:100%;
+    height: 25%;
+    overflow:auto;
+    background: #000080; /* Old browsers */
+    background: -moz-linear-gradient(top, #000080 0%, #2c539e 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#000080), color-stop(100%,#2c539e)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #000080 0%,#2c539e 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #000080 0%,#2c539e 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #000080 0%,#2c539e 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #000080 0%,#2c539e 100%); /* W3C */
+
+    color:#ccc;
+}
+----
+
+<<<
+
+* Duplication - avoid using Less `#000080 0%,#2c539e 100%`
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def getAvailableEmployees() {
+    return Employee.where {isNull("team")}.list()
+}
+----
+<<<
+Could have been
+
+[source,groovy,indent=0]
+----
+List<Employee> getAvailableEmployees() {
+    Employee.findByTeamIsNull()
+}
+----
+
+
+
+== Snippets
+
+ commit 1795e34be46cd885d718453b98801bd4b4c5fb40
+ Author: XXXXXXX <XXXXXX@gmail.com>
+ Date:   Tue Mar 24 13:29:20 2015 +0100
+
+     modified
+
+<<<
+
+Git message could be more descriptive ;)
+
+== Snippets
+
+[source,css,indent=0]
+.custom-boostrap.css
+----
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+----
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+Long projectOwnerID
+try{
+    projectOwnerID = Project.get(params.projectID).projectOwner.id
+}
+catch(Exception e){
+    projectOwnerID = -1
+}
+----
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def setup() {
+}
+
+def cleanup() {
+}
+
+void "test something"() {
+}
+----
+
+
+== Snippets
+
+[source,groovy,indent=0]
+.In a service
+----
+def createNewProject(params) {
+    def projectOwner = ProjectOwner.get(params.projectOwnerID)
+    def project = new Project(title:params.projectTitle, shortDescription: params.projectShortDesc, description: params.projectDesc, projectOwner:projectOwner)
+
+    project.save(failOnError: true)
+    projectOwner.addToProjects(project)
+}
+----
+
+<<<
+
+* What about a command object instead of params
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def auth() {
+
+    def config = SpringSecurityUtils.securityConfig
+
+    if (springSecurityService.isLoggedIn()) {
+        redirect uri: config.successHandler.defaultTargetUrl
+        return
+    }
+
+    String view = 'auth'
+    String postUrl = "${request.contextPath}${config.apf.filterProcessesUrl}"
+    render view: view, model: [postUrl: postUrl,
+                               rememberMeParameter: config.rememberMe.parameter]
+}
+----
+
+<<<
+
+* Why is the view a variable? And why not just return the model, as the view name match the controller method
+
+
+
+== Award Time
+
+"Best project part 2 measured by fulfilling the tasks in the assignments, quality of implementation, report and nice craftmanship"
+-- Criteria
+
+[options="step"]
+* 3rd place: *Group 3*
+* 2nd place: *Group 8*
+* 1st place: *Group 1*
+
+
+
+
+

@@ -16,8 +16,8 @@ class ShipSearchControllerSpec extends Specification {
     def cleanup() {
     }
 
-    @Unroll
-    void "Test manual databinding"() {
+//    @Unroll
+    void "Manual databinding"() {
         setup:
         params.shipname = shipname
         params.minCrew = min
