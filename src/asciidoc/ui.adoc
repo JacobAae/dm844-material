@@ -1,0 +1,239 @@
+= Web Usability
+
+[canvas-image="images/usability.jpg"]
+== Ignored
+
+[role="canvas-caption", position="top-left"]
+*Web Usability*
+
+
+
+
+== Definitions
+
+* *Web Usability:* The ease of use of a website
+* *UX - User Experience Design:* The process of enhancing customer satisfaction and loyalty by improving the usability, ease of use, and pleasure provided in the interaction between the customer and the product.
+* *UI - User Interface Design:* UI Design is closer to what we refer to as graphic design
+
+image::ui-types.png[]
+
+
+== UI vs. UX
+
+image::ui-design.jpg[]
+
+
+
+== Don't Make Me Think
+
+Get rid of questionmarks
+
+image::ui-interface.png[]
+
+TIP: The principle of least surprise
+
+== Design vs reality
+
+Eye-tracking
+
+image::ui-ketchup.jpg[]
+
+
+== How We Use the Web
+
+*Facts of life*
+
+. We don't read pages. We scan them
+. We don't make optimal choices. We sacrifice.
+. We don't figure out how things woork. We muddle through.
+
+== Web Design 101
+
+* Design pages for scanning - not for reading
+* Create a clear visual hierarchy
+* Use conventions
+* Break up pages into clearly defined areas
+* Make it obvious what is clickable
+* Keep the noise down
+
+<<<
+
+image::ui-trunk-6.png[]
+
+
+== Tablets
+
+* Dropdowns and tablets -> bad together
+* Mouse-overs
+
+
+== Omit Needless Words
+
+image::ui-remote.jpeg[]
+
+
+== Designing Navigation
+
+
+Go to http://sdu.dk and find the course description for dm844. Keep track of how you came to it.
+
+<<<
+
+How did you do it?
+
+Do you think this is great UI?
+
+
+== Navigation
+
+* Persistent navigation -> _Don't Panic_
+* Searching
+* You are here
+
+
+== Top 10 Mistakes
+
+. Bad Search
+. PDF Files for Online Reading
+. Not Changing the Color of Visited Links
+. Non-Scannable Text
+. Fixed Font Size
+. Page Titles With Low Search Engine Visibility
+. Anything That Looks Like an Advertisement
+. Violating Design Conventions
+. Opening New Browser Windows
+. Not Answering Users' Questions
+
+
+
+== FizzBuzz
+
+*DISCLAIMER: Not UI related*
+
+"Write a program that prints the numbers from 1 to 100. +
+But for multiples of three print "Fizz" instead of the number and for the multiples of five print "Buzz". +
+For numbers which are multiples of both three and five print "FizzBuzz"."
+-- FizzBuzz Assignment
+
+Upload result at: https://dm844.dk/sourceCode/create
+
+== The trunk test
+
+Imagine you are blindfolded and locked in the trunk of a car.
+Driven around for a while, and dumped on a page somewhere in a website!
+
+If the page is well designed, you should be able to answer these questions without hesitation:
+
+* What site is this? (Site ID)
+* What page am i on? (Page name)
+* What are the major sections at this level?
+* What are my options at this level? (Local navigation)
+* Where am I in the scheme of things? (You are here indicator)
+* How can I search
+
+http://www.amazon.com/Dont-Make-Think-Revisited-Usability/dp/0321965515/ref=pd_rhf_gw_s_cp_5_4AS2?ie=UTF8&refRID=1XKQXWPW71NY8J6XWTQ4[1]
+
+<<<
+
+image::ui-trunk-1.png[]
+
+<<<
+
+image::ui-trunk-2.png[]
+
+<<<
+
+image::ui-trunk-3.png[]
+
+<<<
+
+image::ui-trunk-4.png[]
+
+<<<
+
+image::ui-trunk-5.png[]
+
+
+
+
+== Overview
+
+TIP: Elements to consider
+
+<<<
+
+*Accessibility*
+
+* Browsers
+* Screensize: mobile, tablet, full-screens
+* load times
+* Indexing with search engines
+
+<<<
+
+*Branding identity*
+
+* 5 sec test -> important elements revealed
+* Visually aestetic
+
+<<<
+
+*Navigation*
+
+* Main navigation identifiable?
+* Link-style clear and consistant
+
+<<<
+
+*Content*
+
+* Digestable
+* Critical elements above the fold
+* Easy to use
+
+
+== Misc
+
+
+image::ui-design-vs-experience.jpg[]
+
+
+
+== Remember
+
+"Always code as if the guy who ends up maintaining your code will be a violent psychopath who knows where you live."
+-- Martin Golding﻿
+
+image::ui-time-spend.jpg[]
+
+
+== Literature
+
+* http://blog.careerfoundry.com/the-difference-between-ux-and-ui-design-a-laymans-guide/
+* http://www.webdesignerdepot.com/2012/06/ui-vs-ux-whats-the-difference/
+* http://www.nngroup.com/articles/top-10-mistakes-web-design/
+* http://www.tomdalling.com/blog/software-design/fizzbuzz-in-too-much-detail/
+
+
+////
+
+
+
+
+
+
+
+
+[source,html,indent=0]
+----
+
+----
+
+
+[source,groovy,indent=0]
+----
+
+----
+
+
+////

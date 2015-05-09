@@ -1,0 +1,301 @@
+= Monitoring, DNS, etc.
+
+== Intro
+
+* Monitoring the application is alive
+* Monitoring performance
+* Domain name and DNS
+* SSL
+
+
+== Monitoring/Alarms
+
+You will most likely want to be notified in case your application is not available.
+
+http://uptimerobot.com/ is one way.
+
+<<<
+
+image::uptime-robot-1.png[]
+
+<<<
+
+image::uptime-robot-2.png[]
+
+
+
+
+
+== Monitoring Performance
+
+New relic can be installed, to give you a view of how your server is. And give a hint where you could have performance bottlenecks.
+
+Sign up at http://newrelic.com
+
+You need to monitor with APM a Java application
+
+image::newrelic-1.png[]
+
+image::newrelic-2.png[]
+
+<<<
+
+You should retrieve your licence key, and the java agent.
+
+On your server, you can make a dir for newrelic, at fx
+
+ /var/lib/tomcat7/newrelic
+
+Extract the files in the zip (use unzip newrelic-java-3.15.0.zip), and make sure tomcat is the owner of the files
+
+ chown -R tomcat7:tomcat7 newrelic/
+
+<<<
+
+In the _newrelic.yml_ file, you should include your licence key, where it says to:
+
+  # ============================== LICENSE KEY ===============================
+  # You must specify the license key associated with your New Relic
+  # account. For example, if your license key is 12345 use this:
+  # license_key: '12345'
+  # The key binds your Agent's data to your account in the New Relic service.
+  license_key: '<%= license_key %>'
+
+You should also change the name of your application.
+
+TIP: Notice you can also in here disable the monitoring just by a boolean flag.
+
+
+<<<
+
+You should make a  _setenv.sh_ file to store settings. Make a lib called bin at
+
+ /var/lib/tomcat7/bin
+
+And make a file there `setenv.sh` with this content:
+
+ export CATALINA_OPTS="${CATALINA_OPTS} -javaagent:/opt/po/newrelic/newrelic.jar"
+
+Make sure everything is owned by tomcat7!
+
+ chown tomcat7:tomcat7 -R ./bin
+
+WARNING: Study `/usr/share/tomcat7/bin/catalina.sh` to see why this naming and placement is important.
+
+
+<<<
+
+When you restart your tomcat server
+
+ service tomcat7 restart
+
+You should see something similar to this in the log
+
+ Apr 28, 2015 15:08:55 -0400 [9868 1] com.newrelic INFO: New Relic Agent: Loading configuration file "/var/lib/tomcat7/newrelic/./newrelic.yml"
+ Apr 28, 2015 15:08:56 -0400 [9868 1] com.newrelic INFO: New Relic Agent: Writing to log file: /var/lib/tomcat7/newrelic/logs/newrelic_agent.log
+
+This log you find at logs/catalina.out
+
+The log for new relic you can find at: newrelic/logs/newrelic_agent.log and you can configure placement, level etc in the newrelic.yml file.
+
+<<<
+
+image::newrelic-3.png[]
+
+<<<
+
+image::newrelic-4.png[]
+
+<<<
+
+image::newrelic-5.png[]
+
+
+
+
+
+== Domain Name
+You can register your domain name muliple places.
+One of them is http://www.gratisdns.dk
+
+There you can also handle DNS.
+
+<<<
+
+image::domain-1.png[]
+
+
+<<<
+
+Assuming you go for a .dk domain, you will later need to login at DK Hostmaster and confirm your domain registration.
+
+You will receive an email and a paper letter with this:
+
+image::dk-hostmaster.png[]
+
+You will also receive an email with DNS info.
+
+<<<
+
+image::dk-hostmasters-bekraeftet.png[]
+
+
+== DNS
+
+image::DNS-1.png[]
+
+TIP: If you need mail for your domain, this is also the pace to configure the DNS for it
+
+<<<
+
+Until you have confirmed the domain, and the DNS is updated, your output wil look like this:
+
+ nslookup dm844demo.dk
+ ;; Got SERVFAIL reply from 127.0.1.1, trying next server
+ ;; Got SERVFAIL reply from 192.168.9.121, trying next server
+ Server:		192.168.9.122
+ Address:	192.168.9.122#53
+
+ server can't find dm844demo.dk: SERVFAIL
+
+
+<<<
+
+Later it looks like this
+
+ nslookup dm844demo.dk
+
+ Server:		127.0.1.1
+ Address:	127.0.1.1#53
+
+ Non-authoritative answer:
+ Name:	dm844demo.dk
+ Address: 188.166.10.168
+
+
+== SSL + Apache
+
+It is time to add a bit of security to the network part of our application.
+
+ a2enmod ssl
+ a2enmod rewrite
+ service apache2 restart
+
+Will enable the ssl module for apache
+
+<<<
+
+Create a dir and a certificate
+
+ mkdir /etc/apache2/ssl
+ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/apache2/ssl/apache.key -out /etc/apache2/ssl/apache.crt
+
+Answer the questions, and make sure you in the *Common name* you should use your new domain name (or your IP)
+
+
+== Configuring apache
+
+You should reconfigure the apache virtual host to be ssl enabled!
+
+----
+<VirtualHost *:80>
+  ServerAdmin jamik@imada.sdu.dk
+  DocumentRoot "/var/www"
+
+  RewriteEngine on
+  ReWriteCond %{SERVER_PORT} !^443$
+  RewriteRule ^/(.*) https://%{HTTP_HOST}/$1 [NC,R,L]
+
+</VirtualHost>
+<VirtualHost *:443>
+  ServerAdmin jamik@imada.sdu.dk
+#  ServerName dm844demo.dk
+
+  Alias /docs/ /var/www/docs/
+
+  ErrorLog /var/log/jenkins/jenkins.log
+  ProxyRequests off
+  ProxyPass /jenkins http://127.0.0.1:8090/jenkins nocanon
+  ProxyPass / http://127.0.0.1:8080/ nocanon
+  ProxyPassReverse /jenkins  http://127.0.0.1:8080/jenkins
+  ProxyPassReverse /  http://127.0.0.1:8080/
+  ProxyPreserveHost on
+
+  <Proxy http://localhost:8080/*>
+    Order deny,allow
+    Allow from all
+  </Proxy>
+  <Proxy http://localhost:8090/jenkins>
+    Order deny,allow
+    Allow from all
+  </Proxy>
+
+  SSLEngine on
+  SSLProtocol all  -SSLv2 -SSLv3
+
+  SSLCertificateFile /etc/apache2/ssl/apache.crt
+  SSLCertificateKeyFile /etc/apache2/ssl/apache.key
+
+</VirtualHost>
+----
+
+
+<<<
+
+You wil still see these warnings, since you have made a self-signed certificate.
+
+image::ssl-1.png[]
+
+<<<
+
+image::ssl-2.png[]
+
+<<<
+
+image::ssl-3.png[]
+
+
+If you wish to do this the right way, you need to buy a certificate
+
+See fx https://ssl.gratisdns.dk/dcorder.php
+
+RapidSSL is likely the cheapest (350 for 1 year, single domain)
+
+For config see http://www.geotrust.com/resources/csr/apache_mod_ssl.htm
+
+
+
+== Literature/links
+
+* http://web.gratisdns.dk/
+* https://newrelic.com/
+* https://www.dk-hostmaster.dk/
+* https://www.digitalocean.com/community/tutorials/how-to-create-a-ssl-certificate-on-apache-for-ubuntu-12-04
+* https://ssl.gratisdns.dk/dcorder.php
+* http://www.geotrust.com/resources/csr/apache_mod_ssl.htm
+
+
+////
+
+
+License key:
+
+a92b9114e0953ec5c48b4f47b5bd1d2e58c36cb0
+
+
+
+[source,html,indent=0]
+.views/gone.gsp
+----
+
+----
+
+
+[source,groovy,indent=0]
+.views/gone.gsp
+----
+
+----
+
+
+////

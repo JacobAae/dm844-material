@@ -1,0 +1,73 @@
+= Own Plugins
+
+
+== Creating
+
+ grails create-plugin <plugin-name>
+
+== Differences from a Grails Application
+
+Look especially in `<plugin-name>GrailsPlugin.groovy` which is the plugin descriptor
+
+This file needs a bit of work and cleaning up.
+
+== Demo
+
+* Lets extract the Chuck Norris plugin functionality to a plugin, and make both a service and a taglib available, along with styling for the taglib.
+
+
+== Using your plugin
+
+* Inline the plugin
+* Install into local maven
+* Public (or custom) repo
+
+== Inline your plugin
+
+In BuildConfig.groovy (outside all closures)
+
+ grails.plugin.location.'<your-plugin-name>' = "../<your-plugin-name>"
+
+Assuming you have relative paths
+
+TIP: Here auto reloading works, but should only be used locally
+
+== Local repo
+
+In your plugin
+
+ grails maven-install
+
+In your application, update the build config:
+
+ compile ":<your-plugin-name>:0.1"
+
+
+== Jenkins setup
+
+Make sure Jenkins will install the plugin into your local maven cache
+
+To work with plugins, we need to install Grails into jenkins, as the plugins does not come with the Grails Wrapper
+
+
+== Other solutions
+
+You can upload your plugin to Bintray, but it is only free for open source projects
+
+Or you can install a local repository, fx Artifactory.
+
+
+== Literature
+
+* http://www.infoq.com/presentations/grails-plugins[]
+
+
+////
+
+[source,groovy,indent=0]
+----
+
+----
+
+
+////

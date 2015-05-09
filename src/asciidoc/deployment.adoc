@@ -207,7 +207,7 @@ exit 0
 
  su -l dropbox -s /bin/bash
  umask 0027
- /usr/local/dropbox/
+ cd /usr/local/dropbox/
  ./dropboxd
 
 Visit the link while the service is running

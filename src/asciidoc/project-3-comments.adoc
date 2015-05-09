@@ -1,0 +1,587 @@
+= Comments - Project 3
+
+
+== General Comments
+
+[options="step"]
+* Read the entire project description, and make sure you don't miss simple but important issues
+* When emailing weekly reports, please cc all members in the group
+** And those should be weekly!
+** And the subject should have a special format
+* Remember negative testing - what happens if input is unexpected
+* "You must upload the report in pdf version to blackboard. Please let the title be group-XX.pdf, where XX is your group number"
+** And deadline means DEADLINE
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def deleteUser(String userName){
+    User user = User.findAllByUsername(userName)
+    boolean success = UserService.deleteUser(user)
+
+    if(!success){
+        log.error("Couldn't delete user "+userName)
+        redirect(action: 'index')
+    } else {
+        redirect(action: 'index')
+    }
+}
+----
+
+<<<
+
+* Why not just hand the name to the service - why make the db lookup in the controller?
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def advice() {
+    render(view: "advice")
+}
+
+----
+
+<<<
+
+* Default view.
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def saveMember(){
+    // member flag is a hidden field in the forms
+    if (params.memberFlag == "customer"){
+        adminSaveService.savingCustomer(params)
+        flash.message = "Customer successfully created"
+    }else if(params.memberFlag == "translator"){
+        adminSaveService.savingTranslator(params)
+        flash.message = "Translator successfully created"
+    }
+    flash.error = "Could not save member"
+    render(view: "jobs")
+}
+
+----
+
+<<<
+
+* Always have same flash message
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+@Transactional
+class AdminService {
+
+    def theId
+    def projectID
+
+    def findProjectRequest() {
+        ProductRequest theProject = ProductRequest.findById(theId)
+
+        return theProject
+    }
+
+    def findProject() {
+        return Project.findById(projectID)
+
+    }
+...
+----
+
+<<<
+
+* Not thread safe.
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def createProject(params) {
+    ProductRequest req = findProjectRequest()
+    Product prod = Product.findByProductTitel(req.product)
+    Person pers = Person.findByEmail(req.email)
+    Customer cust = Customer.findByPerson(pers)
+
+    Project newP = new Project(projectName:params.navn, beskrivelse:req.beskrivelse, product:prod,
+            customer:cust, developer:null, manager:null)
+
+    String test = params.theQual.toString()
+    test = test - '[' - ']'
+    def splitted = test.split(',')
+
+    for (int i = 0; i < splitted.length; i++) {
+        String theUsed = splitted[i]
+        theUsed = theUsed.replaceAll('\\s', '')
+        Qualification qual = Qualification.findByQualification(theUsed)
+        newP.addToQualificationsNeeded(qual)
+
+        newP.validate()
+        newP.save()
+    }
+}
+----
+
+<<<
+
+* Variable naming
+* Magic code
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+Boolean jobValidating(Map data){
+    def customerId = data.customerId
+    ContractType contractType = data.contractType
+    Date fromDate = data.fromDate
+    Date toDate = data.toDate
+    String language = data.languageName
+    String dialect = data.dialectName
+
+    String siteName = data.jobSiteName
+    String siteStreet = data.street
+    String siteCity = data.city
+    String siteZip = data.zip
+    String siteCountry = data.country
+
+    String contactName = data.contactPersonName
+    String contactMail = data.contactEmail
+    String contactPhone = data.contactPhoneNumber
+
+    if ( customerId && contractType && fromDate && toDate && language && dialect && siteName && siteStreet && siteCity
+    && siteZip && siteCountry && contactName && contactMail && contactPhone){
+        if ( fromDate.before(toDate) && toDate.after(new Date()) && fromDate.after(new Date()) ) {
+                return true
+            }
+    }
+    return false
+}
+----
+
+<<<
+
+* Why not use a command object - and use validation in there
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+} else if(areaIn.bookings.getClass() == org.codehaus.groovy.runtime.NullObject){
+----
+
+<<<
+
+* Not elegant
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def index() {
+    Integer newnum = Orders.findAllByAcceptedNotEqual(true).size()
+
+    render(view: 'admin', model: [num: newnum])
+}
+----
+
+<<<
+
+* Variable naming
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+if(success){
+    flash.message = "Succesfully deleted booking!"
+    redirect(action: 'adminHome')
+} else{redirect(action: 'adminHome')}
+----
+
+<<<
+
+* Be consistent with newlines etc.
+* Why duplicate redirect
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+List<Chef> searchForChefs(SearchInputCommandChef input) {
+    if( !input.validate() ) {
+        return []
+    }
+    return Chef.findAllByName(input.chefname, [sort: 'name', order: 'asc'])
+}
+----
+
+<<<
+
+* Very nice - no problems :)
+
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def addEmployees(teamId, empList){
+    def t = Team.get(teamId)
+    if (t.teamMembers.size() + empList.size() > Team.MaxMembers){
+        return false
+    }
+
+    for(emp_id in empList){
+        t.addToTeamMembers(Employee.get(emp_id))
+    }
+
+    if(t.validate()){
+        t.save()
+        return true
+    }else{
+        return false
+    }
+}
+----
+
+<<<
+
+* Consstency in naming.
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+void "Test no blank name"() {
+    given:
+    Employee employee = validEmployee
+    employee.name = ""
+
+    when:
+    employee.save()
+
+    then:
+    assertFalse employee.validate()
+}
+----
+
+<<<
+
+* Review Spock syntax
+* No need to save to validate
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+void "Choose a new order"() {
+    given:
+    to DashboardPage
+
+    when:
+    $('#newOrders > tbody > tr').click()
+
+    // Please look here for more details when testing async http://www.gebish.org/async
+    waitFor {
+        $('#orderModal').displayed
+    }
+
+    waitFor {
+        $('#assignDriver').displayed
+    }
+
+    $('#assignDriver').click()
+    $('#assignDriver').find("option").find { it.text() == "driver@gmail.com" }.click()
+
+    $('#window-close-button').click()
+
+    then:
+    at DashboardPage
+
+}
+
+----
+
+<<<
+
+* Not using the page object much
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+boolean checkDoubleBook(Area area, TimeSlot timeSlot, WeekDay weekDay){
+
+    def bookingsOnArea = getBookingsByArea(area)
+    boolean doubleBooking = true
+    println("Number of bookings on area: " + bookingsOnArea.size())
+    bookingsOnArea.each { booking ->
+        if(booking.timeSlot == timeSlot && booking.weekDay == weekDay){
+            println("Returning false - the no space for this booking...")
+            doubleBooking = false
+        }
+    }
+
+    return doubleBooking
+}
+----
+
+<<<
+
+* println
+* Can make the searching more elegang using find
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+@Secured('ROLE_USER')
+def add() {
+    def client = springSecurityService.currentUser.client
+    jobHandlerService.addJob(params.desc as String,
+                            params.loc as String,
+                            params.start as Date,
+                            params.end as Date,
+                            client as Client)
+
+    redirect action:'index', controller:'webSite'
+}
+----
+
+<<<
+
+* Consider a command object
+* `client as client`
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+@Stepwise
+class FunctionalSpec extends GebReportingSpec {
+    def "Log in as admin"() { //Authentication should be tested further in another case
+        given:
+        go HomePage.url
+        go LoginPage.url
+        when:
+        $("#username").value("Bad")
+        $("#password").value("credentials")
+        $("#loginButton").click()
+        then:
+        title.contains("Aarhus Airport | Member sign in")
+        when:
+        $("#username").value("User")
+        $("#password").value("password")
+        $("#loginButton").click()
+        then:
+        at HomePage
+    }
+----
+
+<<<
+
+* Class name not descriptive
+* Pages should be used
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def save = {
+    def jobInstance = jobService.saveJob(params, true, null)
+    if (!jobInstance.address.hasErrors() && jobInstance.address.save()) {
+        if (jobInstance.product.save()) {
+            if (jobInstance.customer.save()) {
+                if (!jobInstance.hasErrors() && jobInstance.save(flush: true)) {
+
+                    flash.message = "${message(code: 'default.created.message', args: [message(code: 'job.label', default: 'Service'), jobInstance.id])}"
+                    redirect(action: "show", id: jobInstance.id)
+                }
+                else {
+                    render(view: "create", model: [jobInstance: jobInstance])
+                }
+            } else {
+                render(view: "create", model: [jobInstance: jobInstance])
+            }
+        } else {
+            render(view: "create", model: [jobInstance: jobInstance])
+
+        }
+    } else {
+        render(view: "create", model: [jobInstance: jobInstance])
+    }
+}
+----
+
+<<<
+
+* Should be simplied
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+private def isOnExcludedDay(Event event, Date date) {
+    date = (new DateTime(date)).withTime(0, 0, 0, 0).toDate()
+    event.excludeDays?.contains(date)
+}
+----
+
+<<<
+
+* Not pretty or readable
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def createShoppingCart() {
+    def sessionID = SessionUtils.getSession().id
+
+    def shoppingCart = new ShoppingCart(sessionID:sessionID)
+    shoppingCart.save()
+
+    return shoppingCart
+}
+----
+
+<<<
+
+* Nice use of session id
+* Hope there is a way to cleanup old unused carts
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+def getSkillsByEmployee(id) {
+
+    def employee = Employee.get(id)
+    def skillOfEmployee = []
+
+    if (employee.validate()) {
+        for (def s in employee.skills) {
+            skillOfEmployee.add(s.displayName)
+        }
+    }
+    return skillOfEmployee
+}
+----
+
+<<<
+
+* What is returned
+* variable names
+
+
+
+== Snippets
+
+[source,groovy,indent=0]
+----
+int addSalary(long tempid, Date activeFrom, int rate) {
+    Temp temp = Temp.findById(tempid)
+    Salary currentSalary = temp.salary.find { it.id == temp.currentSalaryId }
+    Date now = new Date().clearTime()
+
+    if (now > activeFrom) {
+        return -1
+    }
+
+    if (now == activeFrom) {
+        if (currentSalary == null) {
+            def newSalary = new Salary(temp:temp, effectiveFrom:activeFrom, rate:rate).save(failOnError:true)
+            temp.addToSalary(newSalary)
+            temp.currentSalaryId = newSalary.id
+            temp.save()
+            return 1
+        }
+        return 0
+    }
+
+    if (temp.nextSalaryChange == null || temp.nextSalaryChange > activeFrom) {
+        temp.addToSalary(new Salary(temp:temp, effectiveFrom:activeFrom, rate:rate).save())
+        temp.nextSalaryChange = activeFrom
+        temp.save()
+        return 2
+    } else if (temp.nextSalaryChange == activeFrom) {
+        return 3
+    }
+    temp.addToSalary(new Salary(temp:temp, effectiveFrom:activeFrom, rate:rate).save()).save()
+    return 4
+}
+
+----
+
+<<<
+
+* Return values are magic
+
+
+== Snippets
+
+[source,groovy,indent=0]
+.EmployeeController
+----
+def showListOfReservations() {
+    def user = springSecurityService.currentUser
+    def reservationList = []
+    Employee admin = Employee.findByUser(User.findById(user.id))
+
+    for (reservation in admin.store.reservations) {
+        if (reservation.employee == null) {
+            reservationList << reservation
+        }
+    }
+
+    return [reservations:reservationList]
+}
+----
+
+<<<
+
+* Logic should go in services
+
+
+
+////
+
+
+== Award Time
+
+"Best project part 2 measured by fulfilling the tasks in the assignments, quality of implementation, report and nice craftmanship"
+-- Criteria
+
+[options="step"]
+* 3rd place: *Group 3*
+* 2nd place: *Group 8*
+* 1st place: *Group 1*
+
+
+////
